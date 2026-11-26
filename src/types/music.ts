@@ -9,6 +9,8 @@ export interface Song {
   duration: number;
   plays?: string;
   artworkGradient?: string;
+  coverImage?: string;
+  frameColor?: string;
 }
 
 export interface Playlist {

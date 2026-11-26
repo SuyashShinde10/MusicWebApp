@@ -6,7 +6,9 @@
     "genre": "Relax",
     "duration": 204,
     "plays": "1.8M",
-    "artworkGradient": "from-amber-600 via-orange-800 to-stone-950"
+    "artworkGradient": "from-amber-600 via-orange-800 to-stone-950",
+    "coverImage": "/covers/golden-days.jpg",
+    "frameColor": "#8c2f16"
   },
   {
     "id": 2,
@@ -15,7 +17,9 @@
     "genre": "Energetic",
     "duration": 165,
     "plays": "940K",
-    "artworkGradient": "from-emerald-600 via-teal-800 to-slate-950"
+    "artworkGradient": "from-emerald-600 via-teal-800 to-slate-950",
+    "coverImage": "/covers/fading-horizon.jpg",
+    "frameColor": "#0c4a40"
   },
   {
     "id": 3,
@@ -24,7 +28,9 @@
     "genre": "Sad",
     "duration": 252,
     "plays": "3.2M",
-    "artworkGradient": "from-indigo-600 via-violet-900 to-slate-950"
+    "artworkGradient": "from-indigo-600 via-violet-900 to-slate-950",
+    "coverImage": "/covers/waves-of-time.jpg",
+    "frameColor": "#1e2a55"
   },
   {
     "id": 4,
@@ -33,7 +39,9 @@
     "genre": "Party",
     "duration": 188,
     "plays": "2.1M",
-    "artworkGradient": "from-orange-500 via-amber-700 to-stone-950"
+    "artworkGradient": "from-orange-500 via-amber-700 to-stone-950",
+    "coverImage": "/covers/electric-dreams.jpg",
+    "frameColor": "#9a5b13"
   },
   {
     "id": 5,
@@ -42,7 +50,9 @@
     "genre": "Romance",
     "duration": 232,
     "plays": "870K",
-    "artworkGradient": "from-slate-600 via-zinc-800 to-neutral-950"
+    "artworkGradient": "from-slate-600 via-zinc-800 to-neutral-950",
+    "coverImage": "/covers/shadows-and-light.jpg",
+    "frameColor": "#22464f"
   },
   {
     "id": 6,
@@ -51,7 +61,9 @@
     "genre": "Energetic",
     "duration": 222,
     "plays": "4.5M",
-    "artworkGradient": "from-rose-600 via-red-800 to-neutral-950"
+    "artworkGradient": "from-rose-600 via-red-800 to-neutral-950",
+    "coverImage": "/covers/echoes-of-midnight.jpg",
+    "frameColor": "#821d20"
   },
   {
     "id": 7,
@@ -60,7 +72,8 @@
     "genre": "Jazz",
     "duration": 215,
     "plays": "620K",
-    "artworkGradient": "from-purple-600 via-fuchsia-900 to-slate-950"
+    "artworkGradient": "from-purple-600 via-fuchsia-900 to-slate-950",
+    "frameColor": "#4c1d59"
   },
   {
     "id": 8,
@@ -69,7 +82,8 @@
     "genre": "Lo-Fi",
     "duration": 198,
     "plays": "1.1M",
-    "artworkGradient": "from-cyan-600 via-sky-900 to-slate-950"
+    "artworkGradient": "from-cyan-600 via-sky-900 to-slate-950",
+    "frameColor": "#134763"
   },
   {
     "id": 9,
@@ -78,7 +92,8 @@
     "genre": "Party",
     "duration": 210,
     "plays": "1.6M",
-    "artworkGradient": "from-pink-600 via-rose-900 to-slate-950"
+    "artworkGradient": "from-pink-600 via-rose-900 to-slate-950",
+    "frameColor": "#7a1b3d"
   },
   {
     "id": 10,
@@ -87,7 +102,8 @@
     "genre": "Acoustic",
     "duration": 194,
     "plays": "780K",
-    "artworkGradient": "from-amber-500 via-yellow-800 to-stone-950"
+    "artworkGradient": "from-amber-500 via-yellow-800 to-stone-950",
+    "frameColor": "#7c4a12"
   },
   {
     "id": 11,
@@ -96,7 +112,8 @@
     "genre": "Lo-Fi",
     "duration": 176,
     "plays": "2.4M",
-    "artworkGradient": "from-blue-600 via-indigo-900 to-slate-950"
+    "artworkGradient": "from-blue-600 via-indigo-900 to-slate-950",
+    "frameColor": "#1b336b"
   },
   {
     "id": 12,
@@ -105,7 +122,8 @@
     "genre": "Jazz",
     "duration": 248,
     "plays": "530K",
-    "artworkGradient": "from-orange-700 via-red-900 to-stone-950"
+    "artworkGradient": "from-orange-700 via-red-900 to-stone-950",
+    "frameColor": "#7b2d18"
   },
   {
     "id": 13,
@@ -114,7 +132,8 @@
     "genre": "Sad",
     "duration": 227,
     "plays": "1.3M",
-    "artworkGradient": "from-sky-700 via-slate-900 to-zinc-950"
+    "artworkGradient": "from-sky-700 via-slate-900 to-zinc-950",
+    "frameColor": "#1c3b52"
   },
   {
     "id": 14,
@@ -123,6 +142,7 @@
     "genre": "Relax",
     "duration": 261,
     "plays": "990K",
-    "artworkGradient": "from-teal-600 via-emerald-900 to-stone-950"
+    "artworkGradient": "from-teal-600 via-emerald-900 to-stone-950",
+    "frameColor": "#124c3c"
   }
 ]
