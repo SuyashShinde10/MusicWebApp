@@ -410,7 +410,11 @@ function ElasticSlider({
 
   useEffect(() => {
     const m = motion.current;
-    return () => cancelAnimationFrame(m.raf);
+    return () => {
+      cancelAnimationFrame(m.raf);
+      m.raf = 0;
+      m.last = 0;
+    };
   }, []);
 
   const along = event => {

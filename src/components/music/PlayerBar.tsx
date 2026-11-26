@@ -70,6 +70,7 @@ export function PlayerBar({
   const [isVolumeOpen, setIsVolumeOpen] = useState(false);
   const footerRef = useRef<HTMLElement>(null);
   const volumeBoxRef = useRef<HTMLDivElement>(null);
+  const volumePopoverRef = useRef<HTMLDivElement>(null);
   const desktopLikeRef = useRef<HTMLButtonElement>(null);
   const desktopPlayRef = useRef<HTMLButtonElement>(null);
 
@@ -81,6 +82,15 @@ export function PlayerBar({
       { y: 0, opacity: 1, duration: 0.28, ease: 'power3.out', clearProps: 'transform,opacity' }
     );
   }, []);
+
+  useEffect(() => {
+    if (!isVolumeOpen || !volumePopoverRef.current || prefersReducedMotion()) return;
+    gsap.fromTo(
+      volumePopoverRef.current,
+      { y: 8, scale: 0.94, opacity: 0 },
+      { y: 0, scale: 1, opacity: 1, duration: 0.2, ease: 'power3.out', clearProps: 'transform,opacity' }
+    );
+  }, [isVolumeOpen]);
 
   const duration = currentSong?.duration ?? 0;
   const volumePercent = Math.round(volume * 100);
@@ -383,9 +393,10 @@ export function PlayerBar({
 
             {isVolumeOpen && (
               <div
+                ref={volumePopoverRef}
                 role="dialog"
                 aria-label="Volume control"
-                className="absolute bottom-full right-0 mb-3 p-3.5 rounded-2xl bg-white/95 border-slate-200 dark:bg-[#15171c]/95 dark:border-white/15 backdrop-blur-xl border shadow-2xl flex flex-col items-center gap-2.5 z-50"
+                className="absolute bottom-full right-0 mb-3 p-3.5 rounded-2xl bg-white border-slate-200 text-slate-800 dark:bg-[#161920] dark:border-white/15 dark:text-white border shadow-[0_20px_50px_-12px_rgba(15,23,42,0.28)] dark:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.85)] flex flex-col items-center gap-2.5 z-50"
               >
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-gray-400">
                   Volume
@@ -397,8 +408,8 @@ export function PlayerBar({
                   showValue
                   liquidColor="#198f85"
                   glassColor={isDark ? '#0b0d11' : '#e2e8f0'}
-                  width={68}
-                  height={144}
+                  width={72}
+                  height={148}
                   radius={16}
                   ticks={4}
                   viscosity={0.18}
@@ -406,13 +417,24 @@ export function PlayerBar({
                   splash={0.42}
                   unit="%"
                   ariaLabel="Volume"
+                  className="ring-1 ring-slate-200/80 dark:ring-white/10"
                 />
                 <button
                   type="button"
                   onClick={() => onVolumeChange(volumePercent === 0 ? 0.75 : 0)}
-                  className="text-[11px] font-semibold text-slate-600 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 dark:bg-white/[0.06] dark:hover:bg-white/[0.12] dark:text-gray-300 dark:hover:text-white transition active:scale-95"
                 >
-                  {volumePercent === 0 ? 'Unmute (75%)' : 'Mute'}
+                  {volumePercent === 0 ? (
+                    <>
+                      <Volume2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                      <span>Unmute (75%)</span>
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX className="w-3.5 h-3.5 text-slate-500 dark:text-gray-400" />
+                      <span>Mute</span>
+                    </>
+                  )}
                 </button>
               </div>
             )}

@@ -130,6 +130,7 @@ export default function SloshGauge({
   useLayoutEffect(() => {
     if (value === undefined) return;
     if (grip.current && Math.round(sim.current.L) === value) return;
+    if (sim.current.L === value && sim.current.x === value) return;
     setLevel(value, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
@@ -147,6 +148,8 @@ export default function SloshGauge({
     return () => {
       mq?.removeEventListener?.('change', sync);
       cancelAnimationFrame(s.raf);
+      s.raf = 0;
+      s.last = 0;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
