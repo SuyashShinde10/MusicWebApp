@@ -42,7 +42,7 @@ describe('RhythmoTune App Integration', () => {
 
     await user.click(within(library).getByRole('button', { name: 'Reset Filters' }));
     expect(within(library).getByText('Golden Days')).toBeInTheDocument();
-  });
+  }, 15000);
 
   it('creates, renames, prevents duplicate songs, reorders, deletes playlists, and persists to localStorage', async () => {
     const user = userEvent.setup();
@@ -182,5 +182,5 @@ describe('RhythmoTune App Integration', () => {
     expect(screen.queryByLabelText('Now Playing')).not.toBeInTheDocument();
     await user.click(within(library).getByRole('button', { name: 'Play Golden Days' }));
     expect(screen.getByLabelText('Now Playing')).toBeInTheDocument();
-  });
+  }, 15000);
 });

@@ -15,6 +15,7 @@ interface FeaturedShowcaseProps {
 }
 
 const SWIPE_THRESHOLD = 46;
+const AUTO_SCROLL_INTERVAL_MS = 3500;
 
 export function FeaturedShowcase({
   songs,
@@ -31,6 +32,11 @@ export function FeaturedShowcase({
   const [activeIndex, setActiveIndex] = useState(initialIdx);
   const [slideDirection, setSlideDirection] = useState<-1 | 0 | 1>(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocusWithin, setIsFocusWithin] = useState(false);
+  const [isPageHidden, setIsPageHidden] = useState(
+    () => typeof document !== 'undefined' && document.hidden
+  );
 
   const stageRef = useRef<HTMLDivElement>(null);
   const mobileCardRef = useRef<HTMLDivElement>(null);
@@ -48,31 +54,49 @@ export function FeaturedShowcase({
   const activeSong = featured[safeIndex];
 
   useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+    const handleVisibility = () => setIsPageHidden(document.hidden);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (count <= 1 || isHovered || isDragging || isFocusWithin || isPageHidden) return undefined;
+
+    const timerId = window.setInterval(() => {
+      setSlideDirection(1);
+      setActiveIndex((prev) => ((prev + 1) % count + count) % count);
+    }, AUTO_SCROLL_INTERVAL_MS);
+
+    return () => window.clearInterval(timerId);
+  }, [count, isHovered, isDragging, isFocusWithin, isPageHidden, safeIndex]);
+
+  useEffect(() => {
     if (prefersReducedMotion()) return;
-    const enterX = slideDirection * 32;
+    const enterX = slideDirection * 42;
 
     const ctx = gsap.context(() => {
       if (stageRef.current) {
         gsap.fromTo(
           '.showcase-center',
-          { x: enterX, scale: 0.93, opacity: 0.78 },
+          { x: enterX, scale: 0.93, opacity: 0.8 },
           {
             x: 0,
             scale: 1,
             opacity: 1,
-            duration: 0.42,
+            duration: 0.52,
             ease: 'power3.out',
             clearProps: 'transform,opacity',
           }
         );
         gsap.fromTo(
           '.showcase-flank',
-          { x: enterX * 0.55, y: 5, opacity: 0.7 },
+          { x: enterX * 0.55, y: 4, opacity: 0.72 },
           {
             x: 0,
             y: 0,
             opacity: 1,
-            duration: 0.36,
+            duration: 0.46,
             stagger: 0.025,
             ease: 'power2.out',
             clearProps: 'transform,opacity',
@@ -82,12 +106,12 @@ export function FeaturedShowcase({
       if (mobileCardRef.current) {
         gsap.fromTo(
           mobileCardRef.current,
-          { x: enterX * 0.8, scale: 0.97, opacity: 0.85 },
+          { x: enterX * 0.8, scale: 0.97, opacity: 0.86 },
           {
             x: 0,
             scale: 1,
             opacity: 1,
-            duration: 0.36,
+            duration: 0.44,
             ease: 'power3.out',
             clearProps: 'transform,opacity',
           }
@@ -229,7 +253,18 @@ export function FeaturedShowcase({
   };
 
   return (
-    <section aria-label="Featured Showcase" className="relative space-y-2">
+    <section
+      aria-label="Featured Showcase"
+      className="relative space-y-2"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocusCapture={() => setIsFocusWithin(true)}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+          setIsFocusWithin(false);
+        }
+      }}
+    >
       {/* Mobile Draggable Hero Card (< md) */}
       <div className="md:hidden space-y-2">
         <div className="flex items-center justify-between">
