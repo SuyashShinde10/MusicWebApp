@@ -8,6 +8,8 @@
     "types": ["vite/client", "vitest/globals"],
 
     /* Bundler mode */
+    "allowJs": true,
+    "checkJs": false,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
