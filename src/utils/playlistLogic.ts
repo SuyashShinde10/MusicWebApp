@@ -179,6 +179,27 @@ export function reorderPlaylistSongs(
 }
 
 /**
+ * Replaces a playlist's song order with an explicitly ordered list of song IDs.
+ */
+export function setPlaylistSongOrder(
+  playlists: Playlist[],
+  playlistId: string,
+  orderedSongIds: SongId[]
+): Playlist[] {
+  const now = Date.now();
+  return playlists.map((playlist) => {
+    if (playlist.id !== playlistId) {
+      return playlist;
+    }
+    return {
+      ...playlist,
+      songIds: [...orderedSongIds],
+      updatedAt: now,
+    };
+  });
+}
+
+/**
  * Resolves a playlist's song IDs against the loaded song library.
  */
 export function resolvePlaylistSongs(playlist: Playlist, songsById: Map<SongId, Song>): Song[] {

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import type { Song } from '../../types/music';
 import { formatDuration, getSongGradient } from '../../utils/formatters';
+import { TiltedCard, TiltedCardLayer } from '../reactbits';
 
 export interface SongRowProps {
   song: Song;
@@ -26,13 +27,7 @@ export interface SongRowProps {
   onRemove?: () => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
-  draggable?: boolean;
-  isDragging?: boolean;
-  isDragOver?: boolean;
-  onDragStart?: () => void;
-  onDragOver?: (e: React.DragEvent<HTMLDivElement>) => void;
-  onDrop?: () => void;
-  onDragEnd?: () => void;
+  showDragHandle?: boolean;
 }
 
 function EqualizerBars() {
@@ -59,118 +54,131 @@ export function SongRow({
   onRemove,
   canMoveUp = false,
   canMoveDown = false,
-  draggable = false,
-  isDragging = false,
-  isDragOver = false,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onDragEnd,
+  showDragHandle = false,
 }: SongRowProps) {
   const gradient = getSongGradient(song);
   const formattedDuration = formatDuration(song.duration);
 
   if (variant === 'card') {
     return (
-      <div
-        className={`group rounded-2xl p-3 border transition-all duration-300 flex flex-col justify-between min-w-0 ${
-          isCurrent
-            ? 'bg-brand-500/10 border-brand-500/40 shadow-glow-sm'
-            : 'bg-surface-card hover:bg-surface-cardHover border-white/5 hover:-translate-y-0.5 hover:shadow-xl'
-        }`}
+      <TiltedCard
+        containerWidth="100%"
+        containerHeight="286px"
+        imageWidth="100%"
+        imageHeight="286px"
+        rotateAmplitude={10}
+        scaleOnHover={1.03}
+        glare={0.35}
+        glareColor="#ff7b54"
+        shadow={0.45}
+        radius={18}
+        showTooltip={false}
+        intro={false}
+        className="w-full min-w-0"
       >
-        <div>
-          <div
-            className={`w-full aspect-square rounded-xl overflow-hidden relative mb-3 bg-gradient-to-br ${gradient} flex items-center justify-center`}
-          >
-            <Music2 className="w-11 h-11 text-white/30 group-hover:scale-110 transition-transform duration-500" />
-            <button
-              type="button"
-              onClick={() => onPlay(song)}
-              aria-label={isCurrent && isPlaying ? `Pause ${song.title}` : `Play ${song.title}`}
-              className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${
-                isCurrent ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
+        <div
+          className={`group w-full h-full rounded-[18px] p-3 border flex flex-col justify-between min-w-0 transition-colors ${
+            isCurrent
+              ? 'bg-brand-500/15 border-brand-500/45'
+              : 'bg-surface-card border-white/10 hover:bg-surface-cardHover'
+          }`}
+        >
+          <div>
+            <div
+              className={`w-full h-36 rounded-xl overflow-hidden relative mb-3 bg-gradient-to-br ${gradient} flex items-center justify-center`}
+            >
+              <TiltedCardLayer depth={16} className="flex items-center justify-center">
+                <Music2 className="w-11 h-11 text-white/35 group-hover:scale-110 transition-transform duration-500" />
+              </TiltedCardLayer>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPlay(song);
+                }}
+                aria-label={isCurrent && isPlaying ? `Pause ${song.title}` : `Play ${song.title}`}
+                className={`absolute inset-0 z-10 bg-black/40 flex items-center justify-center transition-opacity ${
+                  isCurrent
+                    ? 'opacity-100'
+                    : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
+                }`}
+              >
+                <span className="w-11 h-11 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center shadow-glow-sm transition-transform group-hover:scale-105">
+                  {isCurrent && isPlaying ? (
+                    <Pause className="w-4 h-4 fill-current" />
+                  ) : (
+                    <Play className="w-4 h-4 fill-current ml-0.5" />
+                  )}
+                </span>
+              </button>
+              <span className="absolute top-2 right-2 z-10 text-[10px] font-mono bg-black/65 backdrop-blur-md px-2 py-0.5 rounded-md text-gray-200 border border-white/10">
+                {formattedDuration}
+              </span>
+              <span className="absolute bottom-2 left-2 z-10 text-[10px] font-semibold bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full text-gray-200 border border-white/10">
+                {song.genre}
+              </span>
+            </div>
+
+            <h4
+              className={`text-sm font-bold truncate transition-colors ${
+                isCurrent ? 'text-brand-400' : 'text-white group-hover:text-brand-400'
               }`}
             >
-              <span className="w-11 h-11 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center shadow-glow-sm transition-transform group-hover:scale-105">
-                {isCurrent && isPlaying ? (
-                  <Pause className="w-4 h-4 fill-current" />
-                ) : (
-                  <Play className="w-4 h-4 fill-current ml-0.5" />
-                )}
-              </span>
-            </button>
-            <span className="absolute top-2 right-2 text-[10px] font-mono bg-black/65 backdrop-blur-md px-2 py-0.5 rounded-md text-gray-200 border border-white/10">
-              {formattedDuration}
-            </span>
-            <span className="absolute bottom-2 left-2 text-[10px] font-semibold bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full text-gray-200 border border-white/10">
-              {song.genre}
-            </span>
+              {song.title}
+            </h4>
+            <p className="text-xs text-gray-400 truncate mt-0.5">{song.artist}</p>
           </div>
 
-          <h4
-            className={`text-sm font-bold truncate transition-colors ${
-              isCurrent ? 'text-brand-400' : 'text-white group-hover:text-brand-400'
-            }`}
-          >
-            {song.title}
-          </h4>
-          <p className="text-xs text-gray-400 truncate mt-0.5">{song.artist}</p>
+          <div className="pt-2.5 border-t border-white/10 flex items-center justify-between gap-2 text-[11px] text-gray-400">
+            <span className="truncate">{song.plays ? `${song.plays} plays` : song.genre}</span>
+            {onAddToPlaylist && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAddToPlaylist(song);
+                }}
+                aria-label={`Add ${song.title} to playlist`}
+                title={isInActivePlaylist ? 'Add to another playlist' : 'Add to playlist'}
+                className={`relative z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition shrink-0 ${
+                  isInActivePlaylist
+                    ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30 hover:bg-brand-500/25'
+                    : 'bg-white/5 text-gray-200 hover:bg-brand-500 hover:text-white border border-white/10'
+                }`}
+              >
+                {isInActivePlaylist ? (
+                  <>
+                    <Check className="w-3 h-3" />
+                    <span>Added</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-3 h-3" />
+                    <span>Add</span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
         </div>
-
-        <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between gap-2 text-[11px] text-gray-400">
-          <span className="truncate">{song.plays ? `${song.plays} plays` : song.genre}</span>
-          {onAddToPlaylist && (
-            <button
-              type="button"
-              onClick={() => onAddToPlaylist(song)}
-              aria-label={`Add ${song.title} to playlist`}
-              title={isInActivePlaylist ? 'Add to another playlist' : 'Add to playlist'}
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition shrink-0 ${
-                isInActivePlaylist
-                  ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30 hover:bg-brand-500/25'
-                  : 'bg-white/5 text-gray-200 hover:bg-brand-500 hover:text-white border border-white/10'
-              }`}
-            >
-              {isInActivePlaylist ? (
-                <>
-                  <Check className="w-3 h-3" />
-                  <span>Added</span>
-                </>
-              ) : (
-                <>
-                  <Plus className="w-3 h-3" />
-                  <span>Add</span>
-                </>
-              )}
-            </button>
-          )}
-        </div>
-      </div>
+      </TiltedCard>
     );
   }
 
-  // Row variant (used in playlist queue, mobile library, and desktop list mode)
+  // Row variant (used inside Shredder, AnimatedList, and PlaylistManagerModal)
   return (
     <div
-      draggable={draggable}
-      onDragStart={onDragStart}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      onDragEnd={onDragEnd}
-      className={`flex items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-2xl border transition min-w-0 ${
-        isDragOver
-          ? 'border-brand-400 bg-brand-500/15'
-          : isCurrent
-          ? 'bg-brand-500/10 border-brand-500/30'
-          : 'bg-surface-card/70 hover:bg-surface-cardHover border-white/5'
-      } ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+      className={`flex items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-2xl border transition min-w-0 w-full ${
+        isCurrent
+          ? 'bg-brand-500/10 border-brand-500/35'
+          : 'bg-surface-card/85 hover:bg-surface-cardHover border-white/10'
+      }`}
     >
       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-        {draggable && (
+        {showDragHandle && (
           <span
             className="text-gray-500 hover:text-gray-300 cursor-grab active:cursor-grabbing hidden sm:flex items-center shrink-0"
-            title="Drag to reorder"
+            title="Drag to reorder or pull into slit to remove"
             aria-hidden="true"
           >
             <GripVertical className="w-4 h-4" />
@@ -185,7 +193,11 @@ export function SongRow({
 
         <button
           type="button"
-          onClick={() => onPlay(song)}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onPlay(song);
+          }}
           aria-label={isCurrent && isPlaying ? `Pause ${song.title}` : `Play ${song.title}`}
           className={`relative w-11 h-11 rounded-xl overflow-hidden shrink-0 bg-gradient-to-br ${gradient} flex items-center justify-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400`}
         >
@@ -206,7 +218,11 @@ export function SongRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 min-w-0">
             <h4
-              onClick={() => onPlay(song)}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onPlay(song);
+              }}
               className={`text-sm font-semibold truncate cursor-pointer ${
                 isCurrent ? 'text-brand-400' : 'text-white hover:text-brand-400'
               }`}
@@ -224,7 +240,10 @@ export function SongRow({
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      <div
+        className="flex items-center gap-1.5 sm:gap-2 shrink-0"
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         <span className="text-xs font-mono text-gray-400 tabular-nums mr-1">
           {formattedDuration}
         </span>
@@ -232,9 +251,16 @@ export function SongRow({
         {onAddToPlaylist && (
           <button
             type="button"
-            onClick={() => onAddToPlaylist(song)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToPlaylist(song);
+            }}
             aria-label={`Add ${song.title} to playlist`}
-            title={isInActivePlaylist ? 'Already in active playlist — add to another' : 'Add to playlist'}
+            title={
+              isInActivePlaylist
+                ? 'Already in active playlist — add to another'
+                : 'Add to playlist'
+            }
             className={`w-8 h-8 rounded-xl flex items-center justify-center transition border ${
               isInActivePlaylist
                 ? 'bg-brand-500/15 text-brand-400 border-brand-500/30 hover:bg-brand-500/25'
@@ -248,7 +274,10 @@ export function SongRow({
         {onMoveUp && (
           <button
             type="button"
-            onClick={onMoveUp}
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveUp();
+            }}
             disabled={!canMoveUp}
             aria-label={`Move ${song.title} up`}
             title="Move up"
@@ -261,7 +290,10 @@ export function SongRow({
         {onMoveDown && (
           <button
             type="button"
-            onClick={onMoveDown}
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveDown();
+            }}
             disabled={!canMoveDown}
             aria-label={`Move ${song.title} down`}
             title="Move down"
@@ -274,7 +306,10 @@ export function SongRow({
         {onRemove && (
           <button
             type="button"
-            onClick={onRemove}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
             aria-label={`Remove ${song.title} from playlist`}
             title="Remove from playlist"
             className="w-7 h-7 rounded-lg bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 flex items-center justify-center transition"

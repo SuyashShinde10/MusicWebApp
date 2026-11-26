@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import {
   Disc3,
   Heart,
@@ -8,11 +9,13 @@ import {
   Shuffle,
   SkipBack,
   SkipForward,
+  Volume1,
   Volume2,
   VolumeX,
 } from 'lucide-react';
 import type { Song } from '../../types/music';
 import { formatDuration, getSongGradient } from '../../utils/formatters';
+import { ElasticSlider, SloshGauge } from '../reactbits';
 
 export interface PlayerBarProps {
   currentSong: Song | null;
@@ -57,22 +60,32 @@ export function PlayerBar({
   onVolumeChange,
   onOpenPlaylistManager,
 }: PlayerBarProps) {
+  const [isVolumeOpen, setIsVolumeOpen] = useState(false);
+  const volumeBoxRef = useRef<HTMLDivElement>(null);
+
   const duration = currentSong?.duration ?? 0;
-  const progressPercent = duration > 0 ? Math.min(100, (elapsedSeconds / duration) * 100) : 0;
   const gradient = currentSong ? getSongGradient(currentSong) : 'from-slate-700 to-slate-900';
+  const volumePercent = Math.round(volume * 100);
 
-  const handleSeekClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!currentSong || duration <= 0) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    onSeek(Math.floor(ratio * duration));
-  };
+  useEffect(() => {
+    if (!isVolumeOpen) return;
+    const handleOutside = (e: MouseEvent) => {
+      if (volumeBoxRef.current && !volumeBoxRef.current.contains(e.target as Node)) {
+        setIsVolumeOpen(false);
+      }
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsVolumeOpen(false);
+    };
+    window.addEventListener('mousedown', handleOutside);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('mousedown', handleOutside);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [isVolumeOpen]);
 
-  const handleVolumeClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    onVolumeChange(Number(ratio.toFixed(2)));
-  };
+  const VolumeIcon = volumePercent === 0 ? VolumeX : volumePercent < 50 ? Volume1 : Volume2;
 
   return (
     <footer
@@ -80,21 +93,7 @@ export function PlayerBar({
       className="fixed bottom-[70px] md:bottom-0 left-3 right-3 md:left-0 md:right-0 z-40"
     >
       {/* Mobile Compact Floating Player (< md) */}
-      <div className="md:hidden relative bg-surface-card/95 backdrop-blur-xl border border-white/10 rounded-2xl p-2.5 shadow-floating-player">
-        <div
-          onClick={handleSeekClick}
-          role="progressbar"
-          aria-valuenow={Math.round(progressPercent)}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          className="absolute -top-[1px] left-3 right-3 h-[3px] bg-white/10 rounded-full overflow-hidden cursor-pointer"
-        >
-          <div
-            className="h-full bg-brand-500 rounded-full transition-all duration-300"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-
+      <div className="md:hidden relative bg-surface-card/95 backdrop-blur-xl border border-white/10 rounded-2xl p-2.5 shadow-floating-player space-y-1">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <div
@@ -149,6 +148,37 @@ export function PlayerBar({
             </button>
           </div>
         </div>
+
+        {/* Mobile Elastic Scrubber */}
+        <div className="flex items-center gap-2 px-1">
+          <span className="text-[10px] font-mono text-gray-400 tabular-nums">
+            {formatDuration(elapsedSeconds)}
+          </span>
+          <div className="flex-1 min-w-0">
+            <ElasticSlider
+              value={elapsedSeconds}
+              startingValue={0}
+              maxValue={Math.max(1, duration)}
+              onChange={(val) => onSeek(Math.round(val))}
+              leftIcon={null}
+              rightIcon={null}
+              valuePosition="none"
+              thickness={4}
+              activeThickness={8}
+              restOpacity={0.95}
+              maxStretch={16}
+              bounce={0.4}
+              trackColor="rgba(255, 255, 255, 0.14)"
+              rangeColor="#ff5722"
+              disabled={!currentSong}
+              ariaLabel="Mobile playback progress"
+              className="!w-full"
+            />
+          </div>
+          <span className="text-[10px] font-mono text-gray-400 tabular-nums">
+            {formatDuration(duration)}
+          </span>
+        </div>
       </div>
 
       {/* Tablet & Desktop Full Player Dock (>= md) */}
@@ -193,8 +223,8 @@ export function PlayerBar({
           </button>
         </div>
 
-        {/* Center: Controls + Scrubber */}
-        <div className="flex flex-col items-center gap-2 flex-1 max-w-xl min-w-0">
+        {/* Center: Controls + ElasticSlider Scrubber */}
+        <div className="flex flex-col items-center gap-1 flex-1 max-w-xl min-w-0">
           <div className="flex items-center gap-5">
             <button
               type="button"
@@ -259,25 +289,28 @@ export function PlayerBar({
             <span className="text-[11px] font-mono text-gray-400 w-10 text-right tabular-nums">
               {formatDuration(elapsedSeconds)}
             </span>
-            <div
-              onClick={handleSeekClick}
-              role="slider"
-              aria-label="Playback progress"
-              aria-valuemin={0}
-              aria-valuemax={duration}
-              aria-valuenow={elapsedSeconds}
-              tabIndex={0}
-              className="relative flex-1 py-1.5 cursor-pointer group"
-            >
-              <div className="w-full h-1.5 bg-surface-card rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-300"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-              <div
-                className="absolute top-1/2 -mt-1.5 w-3 h-3 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                style={{ left: `calc(${progressPercent}% - 6px)` }}
+            <div className="flex-1 min-w-0">
+              <ElasticSlider
+                value={elapsedSeconds}
+                startingValue={0}
+                maxValue={Math.max(1, duration)}
+                onChange={(val) => onSeek(Math.round(val))}
+                leftIcon={null}
+                rightIcon={null}
+                valuePosition="bubble"
+                formatValue={(val) => formatDuration(val)}
+                thickness={5}
+                activeThickness={10}
+                restOpacity={0.95}
+                maxStretch={24}
+                bounce={0.45}
+                thumb
+                thumbColor="#ffffff"
+                trackColor="rgba(255, 255, 255, 0.14)"
+                rangeColor="#ff5722"
+                disabled={!currentSong}
+                ariaLabel="Playback progress"
+                className="!w-full"
               />
             </div>
             <span className="text-[11px] font-mono text-gray-400 w-10 tabular-nums">
@@ -286,41 +319,70 @@ export function PlayerBar({
           </div>
         </div>
 
-        {/* Right: Queue & Volume */}
-        <div className="flex items-center justify-end gap-4 w-1/4 min-w-[160px]">
+        {/* Right: Queue & SloshGauge Volume Popover */}
+        <div className="flex items-center justify-end gap-3 w-1/4 min-w-[160px]">
           <button
             type="button"
             onClick={onOpenPlaylistManager}
             aria-label="Open Playlist Manager"
             title="Playlist Manager"
-            className="text-gray-400 hover:text-white transition p-1.5 rounded-lg hover:bg-white/5"
+            className="text-gray-400 hover:text-white transition p-2 rounded-xl hover:bg-white/5"
           >
             <ListMusic className="w-4 h-4" />
           </button>
 
-          <div className="hidden lg:flex items-center gap-2 group">
+          <div ref={volumeBoxRef} className="relative">
             <button
               type="button"
-              onClick={() => onVolumeChange(volume > 0 ? 0 : 0.75)}
-              aria-label={volume === 0 ? 'Unmute' : 'Mute'}
-              className="text-gray-400 hover:text-white transition"
+              onClick={() => setIsVolumeOpen((prev) => !prev)}
+              aria-label={`Volume ${volumePercent}%`}
+              aria-expanded={isVolumeOpen}
+              title="Adjust volume"
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold transition ${
+                isVolumeOpen
+                  ? 'bg-brand-500/20 border-brand-500/40 text-brand-400'
+                  : 'bg-surface-card hover:bg-surface-cardHover border-white/10 text-gray-300 hover:text-white'
+              }`}
             >
-              {volume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              <VolumeIcon className="w-4 h-4" />
+              <span className="font-mono tabular-nums">{volumePercent}%</span>
             </button>
-            <div
-              onClick={handleVolumeClick}
-              role="slider"
-              aria-label="Volume"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={Math.round(volume * 100)}
-              className="w-24 h-1.5 bg-surface-card rounded-full overflow-hidden cursor-pointer"
-            >
+
+            {isVolumeOpen && (
               <div
-                className="h-full bg-gray-300 group-hover:bg-brand-500 transition-colors rounded-full"
-                style={{ width: `${volume * 100}%` }}
-              />
-            </div>
+                role="dialog"
+                aria-label="Volume control"
+                className="absolute bottom-full right-0 mb-3 p-3.5 rounded-2xl bg-surface-card/95 backdrop-blur-xl border border-white/15 shadow-2xl flex flex-col items-center gap-2.5 z-50"
+              >
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  Volume
+                </span>
+                <SloshGauge
+                  value={volumePercent}
+                  onChange={(val) => onVolumeChange(Number((val / 100).toFixed(2)))}
+                  interactive
+                  showValue
+                  liquidColor="#ff5722"
+                  glassColor="#12161f"
+                  width={68}
+                  height={144}
+                  radius={16}
+                  ticks={4}
+                  viscosity={0.18}
+                  tilt={0.45}
+                  splash={0.42}
+                  unit="%"
+                  ariaLabel="Volume"
+                />
+                <button
+                  type="button"
+                  onClick={() => onVolumeChange(volumePercent === 0 ? 0.75 : 0)}
+                  className="text-[11px] font-semibold text-gray-300 hover:text-brand-400 transition"
+                >
+                  {volumePercent === 0 ? 'Unmute (75%)' : 'Mute'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

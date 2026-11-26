@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { Disc3, ListMusic, Pencil, Plus, Trash2 } from 'lucide-react';
 import type { Playlist, Song, SongId } from '../../types/music';
 import { formatPlaylistSummary } from '../../utils/formatters';
 import { computeTotalDuration, resolvePlaylistSongs } from '../../utils/playlistLogic';
 import { EmptyState } from '../music/EmptyState';
 import { SongRow } from '../music/SongRow';
+import { AnimatedList } from '../reactbits';
 import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
 
@@ -41,9 +41,6 @@ export function PlaylistManagerModal({
   onReorderSongs,
   onRemoveSong,
 }: PlaylistManagerModalProps) {
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
   const playlistSongs = activePlaylist ? resolvePlaylistSongs(activePlaylist, songsById) : [];
   const totalSeconds = computeTotalDuration(playlistSongs);
   const summary = formatPlaylistSummary(playlistSongs.length, totalSeconds);
@@ -59,7 +56,7 @@ export function PlaylistManagerModal({
       footer={
         <div className="w-full flex items-center justify-between gap-2">
           <span className="text-[11px] text-gray-400">
-            Drag rows or use arrows to reorder tracks
+            Use Up / Down arrows to reorder or click trash to remove
           </span>
           <Button variant="secondary" size="sm" onClick={onClose}>
             Done
@@ -150,10 +147,18 @@ export function PlaylistManagerModal({
                 onAction={onClose}
               />
             ) : (
-              <div className="space-y-2">
-                {playlistSongs.map((song, idx) => (
+              <AnimatedList
+                items={playlistSongs}
+                width="100%"
+                maxHeight={340}
+                theme="dark"
+                accentColor="#ff5722"
+                animation="pop"
+                frame={false}
+                gap={8}
+                itemClassName="!p-0 !bg-transparent !shadow-none"
+                renderItem={(song, idx) => (
                   <SongRow
-                    key={song.id}
                     song={song}
                     variant="row"
                     index={idx}
@@ -165,30 +170,9 @@ export function PlaylistManagerModal({
                     onMoveUp={() => onReorderSongs(activePlaylist.id, idx, idx - 1)}
                     onMoveDown={() => onReorderSongs(activePlaylist.id, idx, idx + 1)}
                     onRemove={() => onRemoveSong(activePlaylist.id, song.id)}
-                    draggable
-                    isDragging={dragIndex === idx}
-                    isDragOver={dragOverIndex === idx && dragIndex !== idx}
-                    onDragStart={() => setDragIndex(idx)}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      if (dragOverIndex !== idx) {
-                        setDragOverIndex(idx);
-                      }
-                    }}
-                    onDrop={() => {
-                      if (dragIndex !== null && dragIndex !== idx) {
-                        onReorderSongs(activePlaylist.id, dragIndex, idx);
-                      }
-                      setDragIndex(null);
-                      setDragOverIndex(null);
-                    }}
-                    onDragEnd={() => {
-                      setDragIndex(null);
-                      setDragOverIndex(null);
-                    }}
                   />
-                ))}
-              </div>
+                )}
+              />
             )}
           </div>
         )}

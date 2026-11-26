@@ -153,5 +153,13 @@ describe('RhythmoTune App Integration', () => {
     const prevButtons = within(playerBar).getAllByRole('button', { name: 'Previous track' });
     await user.click(prevButtons[0]!);
     expect(within(playerBar).getAllByText('Golden Days').length).toBeGreaterThan(0);
+
+    // Open SloshGauge volume control popover and toggle mute
+    const volumeBtn = within(playerBar).getByRole('button', { name: /volume 75%/i });
+    await user.click(volumeBtn);
+    const volumeDialog = within(playerBar).getByRole('dialog', { name: 'Volume control' });
+    expect(within(volumeDialog).getByRole('slider', { name: 'Volume' })).toBeInTheDocument();
+    await user.click(within(volumeDialog).getByRole('button', { name: 'Mute' }));
+    expect(within(playerBar).getByRole('button', { name: /volume 0%/i })).toBeInTheDocument();
   });
 });

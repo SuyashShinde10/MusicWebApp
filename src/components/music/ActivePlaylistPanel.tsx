@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { Disc3, ListMusic, Pencil, Play, Plus, Trash2 } from 'lucide-react';
 import type { Playlist, Song, SongId } from '../../types/music';
 import { formatPlaylistSummary } from '../../utils/formatters';
 import { computeTotalDuration } from '../../utils/playlistLogic';
+import { Shredder } from '../reactbits';
 import { Button } from '../ui/Button';
 import { EmptyState } from './EmptyState';
 import { SongRow } from './SongRow';
@@ -15,6 +15,7 @@ interface ActivePlaylistPanelProps {
   onPlaySong: (song: Song, playlistId: string) => void;
   onPlayAll: (playlistId: string) => void;
   onMoveSong: (playlistId: string, fromIndex: number, toIndex: number) => void;
+  onSetSongOrder: (playlistId: string, orderedSongIds: SongId[]) => void;
   onRemoveSong: (playlistId: string, songId: SongId) => void;
   onRenamePlaylist: (playlist: Playlist) => void;
   onDeletePlaylist: (playlist: Playlist) => void;
@@ -30,15 +31,13 @@ export function ActivePlaylistPanel({
   onPlaySong,
   onPlayAll,
   onMoveSong,
+  onSetSongOrder,
   onRemoveSong,
   onRenamePlaylist,
   onDeletePlaylist,
   onCreatePlaylist,
   onBrowseLibrary,
 }: ActivePlaylistPanelProps) {
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
   if (!playlist) {
     return (
       <EmptyState
@@ -53,6 +52,7 @@ export function ActivePlaylistPanel({
 
   const totalSeconds = computeTotalDuration(songs);
   const summary = formatPlaylistSummary(songs.length, totalSeconds);
+  const shredderHeight = Math.max(240, songs.length * 78 + 132);
 
   return (
     <section
@@ -111,48 +111,55 @@ export function ActivePlaylistPanel({
           onAction={onBrowseLibrary}
         />
       ) : (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between px-1 text-[11px] text-gray-500">
-            <span>Tracklist · Drag or use arrows to reorder</span>
-            <span>{summary}</span>
+        <div className="space-y-2 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1 text-[11px] text-gray-400">
+            <span>
+              Drag rows to reorder · Pull below the orange slit to shred &amp; remove, or use arrows
+            </span>
+            <span className="text-brand-400 font-semibold shrink-0">{summary}</span>
           </div>
-          {songs.map((song, idx) => (
-            <SongRow
-              key={song.id}
-              song={song}
-              variant="row"
-              index={idx}
-              isCurrent={currentSongId === song.id}
-              isPlaying={currentSongId === song.id && isPlaying}
-              onPlay={(s) => onPlaySong(s, playlist.id)}
-              canMoveUp={idx > 0}
-              canMoveDown={idx < songs.length - 1}
-              onMoveUp={() => onMoveSong(playlist.id, idx, idx - 1)}
-              onMoveDown={() => onMoveSong(playlist.id, idx, idx + 1)}
-              onRemove={() => onRemoveSong(playlist.id, song.id)}
-              draggable
-              isDragging={dragIndex === idx}
-              isDragOver={dragOverIndex === idx && dragIndex !== idx}
-              onDragStart={() => setDragIndex(idx)}
-              onDragOver={(e) => {
-                e.preventDefault();
-                if (dragOverIndex !== idx) {
-                  setDragOverIndex(idx);
-                }
-              }}
-              onDrop={() => {
-                if (dragIndex !== null && dragIndex !== idx) {
-                  onMoveSong(playlist.id, dragIndex, idx);
-                }
-                setDragIndex(null);
-                setDragOverIndex(null);
-              }}
-              onDragEnd={() => {
-                setDragIndex(null);
-                setDragOverIndex(null);
-              }}
+
+          <div className="w-full overflow-hidden rounded-2xl bg-surface-base/40 border border-white/5 pt-3">
+            <Shredder
+              key={playlist.id}
+              items={songs}
+              width={960}
+              height={shredderHeight}
+              inset={10}
+              gap={8}
+              slitHeight={5}
+              fallHeight={104}
+              feedSpeed={190}
+              bite={18}
+              stripWidth={10}
+              curl={1}
+              slitColor="#ff5722"
+              color="#f3f4f6"
+              onReorder={(reordered) =>
+                onSetSongOrder(
+                  playlist.id,
+                  reordered.map((song) => song.id)
+                )
+              }
+              onShred={(song) => onRemoveSong(playlist.id, song.id)}
+              renderItem={(song, idx) => (
+                <SongRow
+                  song={song}
+                  variant="row"
+                  index={idx}
+                  showDragHandle
+                  isCurrent={currentSongId === song.id}
+                  isPlaying={currentSongId === song.id && isPlaying}
+                  onPlay={(s) => onPlaySong(s, playlist.id)}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < songs.length - 1}
+                  onMoveUp={() => onMoveSong(playlist.id, idx, idx - 1)}
+                  onMoveDown={() => onMoveSong(playlist.id, idx, idx + 1)}
+                  onRemove={() => onRemoveSong(playlist.id, song.id)}
+                />
+              )}
             />
-          ))}
+          </div>
         </div>
       )}
 

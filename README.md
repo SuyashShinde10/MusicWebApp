@@ -30,8 +30,9 @@ A responsive **Music Playlist Manager** web application built with **React**, **
 
 - **React 19 + TypeScript** (strict compiler config)
 - **Tailwind CSS** (custom dark surface & coral-orange brand tokens)
+- **React Bits UI Components** (`ElasticSlider` for playback progress, `SloshGauge` for liquid volume control, `Shredder` for drag-to-reorder & shred-to-remove playlist tracks, `AnimatedList` for song lists, and `TiltedCard` for 3D tilt song cards)
 - **Axios** (fetches `/songs.json`)
-- **Lucide React** (vector icons)
+- **Lucide React & Hugeicons** (vector icons)
 - **Vitest + React Testing Library** (unit & integration tests)
 
 ---

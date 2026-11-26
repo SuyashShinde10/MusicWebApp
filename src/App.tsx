@@ -23,6 +23,7 @@ import { PlayerBar } from './components/music/PlayerBar';
 import { PlaylistCard } from './components/music/PlaylistCard';
 import { LibrarySkeleton } from './components/music/Skeletons';
 import { SongRow } from './components/music/SongRow';
+import { AnimatedList } from './components/reactbits';
 import { Button } from './components/ui/Button';
 import { Input } from './components/ui/Input';
 import { Toast } from './components/ui/Toast';
@@ -47,6 +48,7 @@ import {
   renamePlaylist,
   reorderPlaylistSongs,
   resolvePlaylistSongs,
+  setPlaylistSongOrder,
 } from './utils/playlistLogic';
 
 type QueueSource = { type: 'library' } | { type: 'playlist'; playlistId: string };
@@ -348,6 +350,10 @@ export function App() {
 
   const handleReorderSongs = (playlistId: string, fromIndex: number, toIndex: number) => {
     setPlaylists((prev) => reorderPlaylistSongs(prev, playlistId, fromIndex, toIndex));
+  };
+
+  const handleSetSongOrder = (playlistId: string, orderedSongIds: SongId[]) => {
+    setPlaylists((prev) => setPlaylistSongOrder(prev, playlistId, orderedSongIds));
   };
 
   const handleToggleLike = () => {
@@ -743,10 +749,19 @@ export function App() {
                   ))}
                 </div>
               ) : (
-                <div className="space-y-2">
-                  {filteredSongs.map((song, idx) => (
+                <AnimatedList
+                  items={filteredSongs}
+                  width="100%"
+                  maxHeight={520}
+                  theme="dark"
+                  accentColor="#ff5722"
+                  animation="pop"
+                  frame={false}
+                  gap={8}
+                  itemClassName="!p-0 !bg-transparent !shadow-none"
+                  onItemSelect={(song) => playSong(song, { type: 'library' })}
+                  renderItem={(song, idx) => (
                     <SongRow
-                      key={song.id}
                       song={song}
                       variant="row"
                       index={idx}
@@ -756,8 +771,8 @@ export function App() {
                       onPlay={(s) => playSong(s, { type: 'library' })}
                       onAddToPlaylist={(s) => setSongToAdd(s)}
                     />
-                  ))}
-                </div>
+                  )}
+                />
               )}
             </section>
           )}
@@ -816,6 +831,7 @@ export function App() {
                   }
                 }}
                 onMoveSong={handleReorderSongs}
+                onSetSongOrder={handleSetSongOrder}
                 onRemoveSong={handleRemoveSongFromPlaylist}
                 onRenamePlaylist={openRenameModal}
                 onDeletePlaylist={(p) => setPlaylistToDelete(p)}
