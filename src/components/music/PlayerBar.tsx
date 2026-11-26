@@ -28,6 +28,7 @@ export interface PlayerBarProps {
   volume: number;
   hasNext: boolean;
   hasPrev: boolean;
+  isDark?: boolean;
   queueLabel?: string;
   onTogglePlay: () => void;
   onNext: () => void;
@@ -50,6 +51,7 @@ export function PlayerBar({
   volume,
   hasNext,
   hasPrev,
+  isDark = false,
   queueLabel,
   onTogglePlay,
   onNext,
@@ -89,25 +91,29 @@ export function PlayerBar({
 
   const VolumeIcon = volumePercent === 0 ? VolumeX : volumePercent < 50 ? Volume1 : Volume2;
 
+  const sliderRangeColor = isDark ? '#ffffff' : '#0f172a';
+  const sliderTrackColor = isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(15, 23, 42, 0.16)';
+  const sliderThumbColor = isDark ? '#ffffff' : '#198f85';
+
   return (
     <footer
       aria-label="Now Playing"
       className="fixed bottom-[66px] md:bottom-0 left-3 right-3 md:left-0 md:right-0 z-40"
     >
       {/* Mobile Compact Floating Player (< md) */}
-      <div className="md:hidden relative bg-[#15171c]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-2.5 shadow-floating-player space-y-1">
+      <div className="md:hidden relative bg-white/95 border-slate-200 dark:bg-[#15171c]/95 dark:border-white/10 backdrop-blur-xl border rounded-2xl p-2.5 shadow-xl dark:shadow-floating-player space-y-1">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
             {currentSong ? (
               <AlbumArt song={currentSong} isPlaying={isPlaying} size="sm" />
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 shrink-0" />
+              <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 dark:bg-white/5 dark:border-white/10 shrink-0" />
             )}
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-white truncate">
+              <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">
                 {currentSong ? currentSong.title : 'Nothing playing'}
               </p>
-              <p className="text-[11px] text-gray-400 truncate">
+              <p className="text-[11px] text-slate-500 dark:text-gray-400 truncate">
                 {currentSong ? currentSong.artist : 'Choose a song from library'}
               </p>
             </div>
@@ -119,7 +125,7 @@ export function PlayerBar({
               onClick={onPrev}
               disabled={!currentSong || !hasPrev}
               aria-label="Previous track"
-              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-white disabled:opacity-30 transition active:scale-90"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white disabled:opacity-30 transition active:scale-90"
             >
               <SkipBack className="w-4 h-4 fill-current" />
             </button>
@@ -128,7 +134,7 @@ export function PlayerBar({
               onClick={onTogglePlay}
               disabled={!currentSong}
               aria-label={isPlaying ? 'Pause' : 'Play'}
-              className="w-9 h-9 rounded-full border border-white/30 bg-white/15 hover:bg-teal-600 text-white flex items-center justify-center active:scale-90 disabled:opacity-40 transition"
+              className="w-9 h-9 rounded-full bg-[#198f85] hover:bg-[#157a71] text-white flex items-center justify-center active:scale-90 disabled:opacity-40 transition shadow-sm"
             >
               {isPlaying ? (
                 <Pause className="w-4 h-4 fill-current" />
@@ -141,7 +147,7 @@ export function PlayerBar({
               onClick={onNext}
               disabled={!currentSong || !hasNext}
               aria-label="Next track"
-              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-white disabled:opacity-30 transition active:scale-90"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-900 dark:text-gray-300 dark:hover:text-white disabled:opacity-30 transition active:scale-90"
             >
               <SkipForward className="w-4 h-4 fill-current" />
             </button>
@@ -149,7 +155,7 @@ export function PlayerBar({
         </div>
 
         <div className="flex items-center gap-2 px-1">
-          <span className="text-[10px] font-mono text-gray-400 tabular-nums">
+          <span className="text-[10px] font-mono text-slate-500 dark:text-gray-400 tabular-nums">
             {formatDuration(elapsedSeconds)}
           </span>
           <div className="flex-1 min-w-0">
@@ -166,34 +172,34 @@ export function PlayerBar({
               restOpacity={0.95}
               maxStretch={14}
               bounce={0.4}
-              trackColor="rgba(255, 255, 255, 0.16)"
-              rangeColor="#e5e7eb"
+              trackColor={sliderTrackColor}
+              rangeColor="#198f85"
               disabled={!currentSong}
               ariaLabel="Mobile playback progress"
               className="!w-full"
             />
           </div>
-          <span className="text-[10px] font-mono text-gray-400 tabular-nums">
+          <span className="text-[10px] font-mono text-slate-500 dark:text-gray-400 tabular-nums">
             {formatDuration(duration)}
           </span>
         </div>
       </div>
 
-      {/* Tablet & Desktop Full Player Dock (>= md) matching reference bar */}
-      <div className="hidden md:flex h-20 bg-[#101217]/95 backdrop-blur-2xl border-t border-white/[0.08] px-6 items-center justify-between gap-6 shadow-2xl">
+      {/* Tablet & Desktop Full Player Dock (>= md) */}
+      <div className="hidden md:flex h-20 bg-white/95 border-slate-200/90 dark:bg-[#101217]/95 dark:border-white/[0.08] backdrop-blur-2xl border-t px-6 items-center justify-between gap-6 shadow-lg dark:shadow-2xl">
         {/* Left: Cover + Track Info + Transport Buttons */}
         <div className="flex items-center gap-4 min-w-0">
           <div className="flex items-center gap-3 min-w-[175px] max-w-[230px]">
             {currentSong ? (
               <AlbumArt song={currentSong} isPlaying={isPlaying} size="md" />
             ) : (
-              <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 shrink-0" />
+              <div className="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 dark:bg-white/5 dark:border-white/10 shrink-0" />
             )}
             <div className="min-w-0">
-              <h4 className="text-sm font-semibold text-white truncate">
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                 {currentSong ? currentSong.title : 'Select a track'}
               </h4>
-              <p className="text-xs text-gray-400 truncate">
+              <p className="text-xs text-slate-500 dark:text-gray-400 truncate">
                 {currentSong
                   ? `${currentSong.artist}${queueLabel ? ` · ${queueLabel}` : ''}`
                   : 'Ready to play'}
@@ -208,7 +214,7 @@ export function PlayerBar({
               disabled={!currentSong || !hasPrev}
               aria-label="Previous track"
               title="Previous"
-              className="text-gray-300 hover:text-white disabled:opacity-30 transition p-1.5 active:scale-90"
+              className="text-slate-600 hover:text-slate-950 dark:text-gray-300 dark:hover:text-white disabled:opacity-30 transition p-1.5 active:scale-90"
             >
               <SkipBack className="w-4 h-4 fill-current" />
             </button>
@@ -221,7 +227,7 @@ export function PlayerBar({
               }}
               disabled={!currentSong}
               aria-label={isPlaying ? 'Pause' : 'Play'}
-              className="w-10 h-10 rounded-full border border-white/35 bg-white/10 hover:bg-teal-600 hover:border-teal-400 text-white flex items-center justify-center transition-all hover:scale-105 active:scale-90 disabled:opacity-40"
+              className="w-10 h-10 rounded-full border border-slate-300 bg-slate-900 hover:bg-[#198f85] hover:border-[#198f85] text-white dark:border-white/35 dark:bg-white/10 dark:hover:bg-teal-600 dark:hover:border-teal-400 flex items-center justify-center transition-all hover:scale-105 active:scale-90 disabled:opacity-40"
             >
               {isPlaying ? (
                 <Pause className="w-4 h-4 fill-current" />
@@ -235,7 +241,7 @@ export function PlayerBar({
               disabled={!currentSong || !hasNext}
               aria-label="Next track"
               title="Next"
-              className="text-gray-300 hover:text-white disabled:opacity-30 transition p-1.5 active:scale-90"
+              className="text-slate-600 hover:text-slate-950 dark:text-gray-300 dark:hover:text-white disabled:opacity-30 transition p-1.5 active:scale-90"
             >
               <SkipForward className="w-4 h-4 fill-current" />
             </button>
@@ -259,14 +265,14 @@ export function PlayerBar({
             maxStretch={24}
             bounce={0.45}
             thumb
-            thumbColor="#ffffff"
-            trackColor="rgba(255, 255, 255, 0.16)"
-            rangeColor="#ffffff"
+            thumbColor={sliderThumbColor}
+            trackColor={sliderTrackColor}
+            rangeColor={sliderRangeColor}
             disabled={!currentSong}
             ariaLabel="Playback progress"
             className="!w-full"
           />
-          <div className="flex items-center justify-between text-[10px] font-mono text-gray-400 tabular-nums -mt-1 px-0.5">
+          <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-gray-400 tabular-nums -mt-1 px-0.5">
             <span>{formatDuration(elapsedSeconds)}</span>
             <span>{formatDuration(duration)}</span>
           </div>
@@ -284,7 +290,9 @@ export function PlayerBar({
             disabled={!currentSong}
             aria-label={isLiked ? 'Unlike song' : 'Like song'}
             className={`p-2 rounded-full transition disabled:opacity-30 ${
-              isLiked ? 'text-rose-400' : 'text-gray-400 hover:text-white'
+              isLiked
+                ? 'text-rose-500 dark:text-rose-400'
+                : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
             }`}
           >
             <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
@@ -296,7 +304,9 @@ export function PlayerBar({
             aria-label="Toggle shuffle"
             aria-pressed={isShuffle}
             className={`transition p-1.5 rounded-full active:scale-90 ${
-              isShuffle ? 'text-teal-400' : 'text-gray-400 hover:text-white'
+              isShuffle
+                ? 'text-teal-600 dark:text-teal-400'
+                : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
             }`}
             title="Shuffle"
           >
@@ -309,7 +319,9 @@ export function PlayerBar({
             aria-label="Toggle repeat"
             aria-pressed={isRepeat}
             className={`transition p-1.5 rounded-full active:scale-90 ${
-              isRepeat ? 'text-teal-400' : 'text-gray-400 hover:text-white'
+              isRepeat
+                ? 'text-teal-600 dark:text-teal-400'
+                : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
             }`}
             title="Repeat"
           >
@@ -321,7 +333,7 @@ export function PlayerBar({
             onClick={onOpenPlaylistManager}
             aria-label="Open Playlist Manager"
             title="Playlist Manager"
-            className="text-gray-400 hover:text-white transition p-1.5 rounded-full hover:bg-white/5 active:scale-90"
+            className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 transition p-1.5 rounded-full active:scale-90"
           >
             <ListMusic className="w-4 h-4" />
           </button>
@@ -335,8 +347,8 @@ export function PlayerBar({
               title="Adjust volume"
               className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-xs font-semibold transition active:scale-95 ${
                 isVolumeOpen
-                  ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
-                  : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/[0.08] text-gray-300 hover:text-white'
+                  ? 'bg-teal-500/15 border-teal-500/40 text-teal-700 dark:text-teal-400'
+                  : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] dark:border-white/[0.08] dark:text-gray-300 dark:hover:text-white'
               }`}
             >
               <VolumeIcon className="w-4 h-4" />
@@ -347,9 +359,9 @@ export function PlayerBar({
               <div
                 role="dialog"
                 aria-label="Volume control"
-                className="absolute bottom-full right-0 mb-3 p-3.5 rounded-2xl bg-[#15171c]/95 backdrop-blur-xl border border-white/15 shadow-2xl flex flex-col items-center gap-2.5 z-50"
+                className="absolute bottom-full right-0 mb-3 p-3.5 rounded-2xl bg-white/95 border-slate-200 dark:bg-[#15171c]/95 dark:border-white/15 backdrop-blur-xl border shadow-2xl flex flex-col items-center gap-2.5 z-50"
               >
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-gray-400">
                   Volume
                 </span>
                 <SloshGauge
@@ -357,8 +369,8 @@ export function PlayerBar({
                   onChange={(val) => onVolumeChange(Number((val / 100).toFixed(2)))}
                   interactive
                   showValue
-                  liquidColor="#14b8a6"
-                  glassColor="#0b0d11"
+                  liquidColor="#198f85"
+                  glassColor={isDark ? '#0b0d11' : '#e2e8f0'}
                   width={68}
                   height={144}
                   radius={16}
@@ -372,7 +384,7 @@ export function PlayerBar({
                 <button
                   type="button"
                   onClick={() => onVolumeChange(volumePercent === 0 ? 0.75 : 0)}
-                  className="text-[11px] font-semibold text-gray-300 hover:text-teal-400 transition"
+                  className="text-[11px] font-semibold text-slate-600 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400 transition"
                 >
                   {volumePercent === 0 ? 'Unmute (75%)' : 'Mute'}
                 </button>

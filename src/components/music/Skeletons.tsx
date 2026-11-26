@@ -5,22 +5,21 @@ export function LibrarySkeleton() {
         {Array.from({ length: 6 }).map((_, idx) => (
           <div
             key={idx}
-            className="h-9 w-20 rounded-full bg-surface-card animate-pulse shrink-0 border border-white/5"
+            className="h-8 w-20 rounded-full bg-slate-200 dark:bg-surface-card animate-pulse shrink-0"
           />
         ))}
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-        {Array.from({ length: 8 }).map((_, idx) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+        {Array.from({ length: 12 }).map((_, idx) => (
           <div
             key={idx}
-            className="rounded-2xl bg-surface-card border border-white/5 p-3.5 flex items-center gap-3 animate-pulse"
+            className="rounded-2xl bg-white dark:bg-[#15171c] border border-slate-200 dark:border-white/5 p-2 space-y-2.5 animate-pulse h-[226px]"
           >
-            <div className="w-12 h-12 rounded-xl bg-white/10 shrink-0" />
-            <div className="flex-1 space-y-2 min-w-0">
-              <div className="h-3.5 bg-white/10 rounded w-3/4" />
-              <div className="h-3 bg-white/5 rounded w-1/2" />
+            <div className="w-full h-36 rounded-xl bg-slate-200 dark:bg-white/10" />
+            <div className="space-y-1.5 px-1">
+              <div className="h-3 bg-slate-200 dark:bg-white/10 rounded w-3/4 mx-auto" />
+              <div className="h-2.5 bg-slate-100 dark:bg-white/5 rounded w-1/2 mx-auto" />
             </div>
-            <div className="h-4 w-8 bg-white/10 rounded" />
           </div>
         ))}
       </div>

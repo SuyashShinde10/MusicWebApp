@@ -167,5 +167,14 @@ describe('RhythmoTune App Integration', () => {
     expect(screen.getByRole('button', { name: 'Expand sidebar menu' })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Expand sidebar menu' }));
     expect(screen.getByRole('button', { name: 'Collapse sidebar menu' })).toBeInTheDocument();
+
+    // Verify light mode is default and Dark/Light toggle persists
+    const themeToggle = screen.getByRole('button', { name: 'Switch to dark mode' });
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+    await user.click(themeToggle);
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(screen.getByRole('button', { name: 'Switch to light mode' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Switch to light mode' }));
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 });

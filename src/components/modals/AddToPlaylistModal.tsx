@@ -54,7 +54,7 @@ export function AddToPlaylistModal({
         <div className="space-y-2">
           {playlists.length === 0 ? (
             <div className="py-6 text-center space-y-3">
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-slate-500 dark:text-gray-400">
                 You don&apos;t have any playlists yet. Create one first to add this song.
               </p>
               <Button
@@ -82,24 +82,26 @@ export function AddToPlaylistModal({
                   }}
                   className={`w-full flex items-center justify-between gap-3 p-3 rounded-2xl border text-left transition ${
                     alreadyAdded
-                      ? 'bg-brand-500/10 border-brand-500/30 opacity-80 cursor-not-allowed'
-                      : 'bg-surface-sidebar hover:bg-brand-500/15 border-white/10 hover:border-brand-500/40'
+                      ? 'bg-teal-500/10 border-teal-500/30 opacity-85 cursor-not-allowed'
+                      : 'bg-slate-50 hover:bg-teal-500/10 border-slate-200 hover:border-teal-500/40 dark:bg-[#101319] dark:hover:bg-teal-500/15 dark:border-white/10 dark:hover:border-teal-500/40'
                   }`}
                 >
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">{playlist.name}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                      {playlist.name}
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-gray-400">
                       {playlist.songIds.length}{' '}
                       {playlist.songIds.length === 1 ? 'song' : 'songs'}
                     </p>
                   </div>
                   {alreadyAdded ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-brand-500/20 text-brand-400 shrink-0">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-teal-500/20 text-teal-700 dark:text-teal-300 shrink-0">
                       <Check className="w-3 h-3" />
                       Added
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-gray-200 shrink-0">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-200/80 text-slate-700 dark:bg-white/10 dark:text-gray-200 shrink-0">
                       <Plus className="w-3 h-3" />
                       Add
                     </span>

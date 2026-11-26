@@ -31,13 +31,13 @@ export function Toast({ toast, onDismiss }: ToastProps) {
   if (!toast) return null;
 
   const iconMap = {
-    success: <Check className="w-3.5 h-3.5 text-brand-400" />,
-    info: <Info className="w-3.5 h-3.5 text-sky-400" />,
-    error: <AlertCircle className="w-3.5 h-3.5 text-rose-400" />,
+    success: <Check className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />,
+    info: <Info className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />,
+    error: <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />,
   };
 
   const ringMap = {
-    success: 'border-brand-500/35',
+    success: 'border-teal-500/35',
     info: 'border-sky-500/35',
     error: 'border-rose-500/35',
   };
@@ -50,10 +50,10 @@ export function Toast({ toast, onDismiss }: ToastProps) {
     >
       <div
         ref={cardRef}
-        className={`bg-[#141821]/95 backdrop-blur-xl border ${ringMap[toast.variant]} text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between gap-3`}
+        className={`bg-white/95 dark:bg-[#141821]/95 backdrop-blur-xl border ${ringMap[toast.variant]} text-slate-900 dark:text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between gap-3`}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center shrink-0">
+          <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-white/[0.06] flex items-center justify-center shrink-0">
             {iconMap[toast.variant]}
           </div>
           <span className="text-xs font-semibold truncate">{toast.message}</span>
@@ -62,7 +62,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss notification"
-          className="text-gray-400 hover:text-white p-1 rounded-lg transition active:scale-90 shrink-0"
+          className="text-slate-400 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white p-1 rounded-lg transition active:scale-90 shrink-0"
         >
           <X className="w-3.5 h-3.5" />
         </button>

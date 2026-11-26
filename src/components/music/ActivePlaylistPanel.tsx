@@ -12,6 +12,7 @@ interface ActivePlaylistPanelProps {
   songs: Song[];
   currentSongId: SongId | null;
   isPlaying: boolean;
+  isDark?: boolean;
   onPlaySong: (song: Song, playlistId: string) => void;
   onPlayAll: (playlistId: string) => void;
   onMoveSong: (playlistId: string, fromIndex: number, toIndex: number) => void;
@@ -28,6 +29,7 @@ export function ActivePlaylistPanel({
   songs,
   currentSongId,
   isPlaying,
+  isDark = false,
   onPlaySong,
   onPlayAll,
   onMoveSong,
@@ -57,22 +59,24 @@ export function ActivePlaylistPanel({
   return (
     <section
       aria-label={`Playlist ${playlist.name}`}
-      className="rounded-2xl bg-[#15171c] border border-white/[0.07] p-3.5 sm:p-4 space-y-3 min-w-0"
+      className="rounded-2xl bg-white border border-slate-200 dark:bg-[#15171c] dark:border-white/[0.07] p-3.5 sm:p-4 space-y-3 min-w-0 shadow-sm dark:shadow-none"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-white/[0.07]">
-        <div className="min-w-0 flex items-center gap-3">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-teal-400">
-                Active Playlist
-              </span>
-              <span className="text-gray-600" aria-hidden="true">·</span>
-              <span className="text-[11px] font-medium text-gray-400">{summary}</span>
-            </div>
-            <h3 className="text-base sm:text-lg font-bold text-white truncate">
-              {playlist.name}
-            </h3>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-slate-200 dark:border-white/[0.07]">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400">
+              Active Playlist
+            </span>
+            <span className="text-slate-300 dark:text-gray-600" aria-hidden="true">
+              ·
+            </span>
+            <span className="text-[11px] font-medium text-slate-500 dark:text-gray-400">
+              {summary}
+            </span>
           </div>
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
+            {playlist.name}
+          </h3>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap shrink-0">
@@ -115,14 +119,16 @@ export function ActivePlaylistPanel({
         />
       ) : (
         <div className="space-y-2 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1 text-[11px] text-gray-400">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1 text-[11px] text-slate-500 dark:text-gray-400">
             <span>
               Drag rows to reorder · Pull below the teal slit to shred &amp; remove, or use arrows
             </span>
-            <span className="text-teal-400 font-semibold shrink-0">{summary}</span>
+            <span className="text-teal-600 dark:text-teal-400 font-semibold shrink-0">
+              {summary}
+            </span>
           </div>
 
-          <div className="w-full overflow-hidden rounded-xl bg-[#0e1015] border border-white/[0.05] pt-2.5">
+          <div className="w-full overflow-hidden rounded-xl bg-slate-100/80 border border-slate-200 dark:bg-[#0e1015] dark:border-white/[0.05] pt-2.5">
             <Shredder
               key={playlist.id}
               items={songs}
@@ -137,7 +143,7 @@ export function ActivePlaylistPanel({
               stripWidth={10}
               curl={1}
               slitColor="#198f85"
-              color="#f3f4f6"
+              color={isDark ? '#f3f4f6' : '#0f172a'}
               onReorder={(reordered) =>
                 onSetSongOrder(
                   playlist.id,

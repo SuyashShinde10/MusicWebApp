@@ -94,7 +94,7 @@ export function SongRow({
         scaleOnHover={1.03}
         glare={0.25}
         glareColor="#ffffff"
-        shadow={0.42}
+        shadow={0.4}
         radius={16}
         showTooltip={false}
         intro={false}
@@ -103,16 +103,16 @@ export function SongRow({
         <div
           style={{ backgroundColor: frameBg }}
           className={`group w-full h-full rounded-[16px] p-1.5 flex flex-col justify-between min-w-0 transition-all duration-200 ${
-            isCurrent ? 'ring-2 ring-teal-400 ring-offset-2 ring-offset-[#0b0d11]' : 'ring-1 ring-white/10'
+            isCurrent
+              ? 'ring-2 ring-teal-500 ring-offset-2 ring-offset-[#f6f7f9] dark:ring-offset-[#0b0d11]'
+              : 'ring-1 ring-black/10 dark:ring-white/10'
           }`}
         >
-          {/* Upper Artwork */}
           <div className="w-full flex-1 min-h-0 rounded-xl overflow-hidden relative bg-black/25">
             <TiltedCardLayer depth={12}>
               <AlbumArt song={song} isPlaying={isCurrent && isPlaying} size="fill" className="!rounded-xl" />
             </TiltedCardLayer>
 
-            {/* Subtle hover Play/Pause overlay (keeps face clear when playing, shows clean badge) */}
             <button
               ref={playBtnRef}
               type="button"
@@ -165,10 +165,9 @@ export function SongRow({
             )}
           </div>
 
-          {/* Colored Poster Bottom Label */}
           <div className="pt-1.5 pb-0.5 px-1.5 text-center min-w-0">
             <h4 className="text-xs font-bold text-white truncate leading-tight">{song.title}</h4>
-            <p className="text-[10.5px] text-white/75 truncate mt-0.5">
+            <p className="text-[10.5px] text-white/80 truncate mt-0.5">
               {song.artist} · {song.genre}
             </p>
           </div>
@@ -182,13 +181,13 @@ export function SongRow({
       className={`group flex items-center justify-between gap-2 sm:gap-3 px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl border transition-colors duration-150 min-w-0 w-full ${
         isCurrent
           ? 'bg-teal-500/10 border-teal-500/35'
-          : 'bg-[#15171c] hover:bg-[#1b1e25] border-white/[0.06]'
+          : 'bg-white hover:bg-slate-50 border-slate-200/80 dark:bg-[#15171c] dark:hover:bg-[#1b1e25] dark:border-white/[0.06]'
       }`}
     >
       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
         {showDragHandle && (
           <span
-            className="text-gray-500 hover:text-gray-300 cursor-grab active:cursor-grabbing hidden sm:flex items-center shrink-0 transition-colors"
+            className="text-slate-400 hover:text-slate-700 dark:text-gray-500 dark:hover:text-gray-300 cursor-grab active:cursor-grabbing hidden sm:flex items-center shrink-0 transition-colors"
             title="Drag to reorder or pull into slit to remove"
             aria-hidden="true"
           >
@@ -197,7 +196,7 @@ export function SongRow({
         )}
 
         {typeof index === 'number' && (
-          <span className="text-xs font-mono tabular-nums text-gray-500 w-5 text-center shrink-0">
+          <span className="text-xs font-mono tabular-nums text-slate-400 dark:text-gray-500 w-5 text-center shrink-0">
             {index + 1}
           </span>
         )}
@@ -210,7 +209,7 @@ export function SongRow({
             onPlay(song);
           }}
           aria-label={isCurrent && isPlaying ? `Pause ${song.title}` : `Play ${song.title}`}
-          className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 group/play"
+          className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 group/play"
         >
           <AlbumArt song={song} isPlaying={isCurrent && isPlaying} size="sm" />
           {isCurrent && isPlaying ? (
@@ -233,16 +232,18 @@ export function SongRow({
                 onPlay(song);
               }}
               className={`text-[13.5px] font-semibold truncate cursor-pointer transition-colors ${
-                isCurrent ? 'text-teal-400' : 'text-gray-100 group-hover:text-white'
+                isCurrent
+                  ? 'text-teal-700 dark:text-teal-400'
+                  : 'text-slate-900 group-hover:text-slate-950 dark:text-gray-100 dark:group-hover:text-white'
               }`}
             >
               {song.title}
             </h4>
-            <span className="hidden md:inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-white/[0.06] text-gray-300 shrink-0">
+            <span className="hidden md:inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-600 dark:bg-white/[0.06] dark:text-gray-300 shrink-0">
               {song.genre}
             </span>
           </div>
-          <p className="text-xs text-gray-400 truncate mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-gray-400 truncate mt-0.5">
             {song.artist}
             <span className="md:hidden"> · {song.genre}</span>
           </p>
@@ -253,7 +254,7 @@ export function SongRow({
         className="flex items-center gap-1.5 sm:gap-2 shrink-0"
         onPointerDown={(e) => e.stopPropagation()}
       >
-        <span className="text-xs font-mono text-gray-400 tabular-nums mr-1">
+        <span className="text-xs font-mono text-slate-500 dark:text-gray-400 tabular-nums mr-1">
           {formattedDuration}
         </span>
 
@@ -274,8 +275,8 @@ export function SongRow({
             }
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 ${
               isInActivePlaylist
-                ? 'bg-teal-500/20 text-teal-400 hover:bg-teal-500/30'
-                : 'bg-white/[0.06] text-gray-300 hover:bg-[#198f85] hover:text-white'
+                ? 'bg-teal-500/15 text-teal-700 dark:text-teal-400 hover:bg-teal-500/25'
+                : 'bg-slate-100 text-slate-600 hover:bg-[#198f85] hover:text-white dark:bg-white/[0.06] dark:text-gray-300'
             }`}
           >
             {isInActivePlaylist ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -292,7 +293,7 @@ export function SongRow({
             disabled={!canMoveUp}
             aria-label={`Move ${song.title} up`}
             title="Move up"
-            className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-white/10 text-gray-300 hover:text-teal-400 flex items-center justify-center transition active:scale-90 disabled:opacity-25 disabled:pointer-events-none"
+            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-teal-700 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-300 dark:hover:text-teal-400 flex items-center justify-center transition active:scale-90 disabled:opacity-25 disabled:pointer-events-none"
           >
             <ArrowUp className="w-3.5 h-3.5" />
           </button>
@@ -308,7 +309,7 @@ export function SongRow({
             disabled={!canMoveDown}
             aria-label={`Move ${song.title} down`}
             title="Move down"
-            className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-white/10 text-gray-300 hover:text-teal-400 flex items-center justify-center transition active:scale-90 disabled:opacity-25 disabled:pointer-events-none"
+            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-teal-700 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-300 dark:hover:text-teal-400 flex items-center justify-center transition active:scale-90 disabled:opacity-25 disabled:pointer-events-none"
           >
             <ArrowDown className="w-3.5 h-3.5" />
           </button>
@@ -323,7 +324,7 @@ export function SongRow({
             }}
             aria-label={`Remove ${song.title} from playlist`}
             title="Remove from playlist"
-            className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 flex items-center justify-center transition active:scale-90"
+            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-500/15 text-slate-500 hover:text-rose-600 dark:bg-white/[0.05] dark:hover:bg-rose-500/20 dark:text-gray-400 dark:hover:text-rose-400 flex items-center justify-center transition active:scale-90"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

@@ -15,6 +15,7 @@ interface PlaylistManagerModalProps {
   songsById: Map<SongId, Song>;
   currentSongId: SongId | null;
   isPlaying: boolean;
+  theme?: 'light' | 'dark';
   onClose: () => void;
   onSelectPlaylist: (playlistId: string) => void;
   onOpenCreate: () => void;
@@ -32,6 +33,7 @@ export function PlaylistManagerModal({
   songsById,
   currentSongId,
   isPlaying,
+  theme = 'light',
   onClose,
   onSelectPlaylist,
   onOpenCreate,
@@ -55,7 +57,7 @@ export function PlaylistManagerModal({
       maxWidthClass="max-w-2xl"
       footer={
         <div className="w-full flex items-center justify-between gap-2">
-          <span className="text-[11px] text-gray-400">
+          <span className="text-[11px] text-slate-500 dark:text-gray-400">
             Use Up / Down arrows to reorder or click trash to remove
           </span>
           <Button variant="secondary" size="sm" onClick={onClose}>
@@ -65,10 +67,12 @@ export function PlaylistManagerModal({
       }
     >
       <div className="space-y-4">
-        {/* Controls Row */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-white/10">
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <label htmlFor="manager-playlist-select" className="text-xs font-semibold text-gray-400 shrink-0">
+            <label
+              htmlFor="manager-playlist-select"
+              className="text-xs font-semibold text-slate-500 dark:text-gray-400 shrink-0"
+            >
               Playlist:
             </label>
             <select
@@ -76,7 +80,7 @@ export function PlaylistManagerModal({
               value={activePlaylist?.id ?? ''}
               onChange={(e) => onSelectPlaylist(e.target.value)}
               disabled={playlists.length === 0}
-              className="flex-1 min-w-0 bg-surface-sidebar border border-white/10 rounded-xl text-xs sm:text-sm font-semibold text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+              className="flex-1 min-w-0 bg-slate-50 border border-slate-200 text-slate-900 dark:bg-[#101319] dark:border-white/10 dark:text-white rounded-xl text-xs sm:text-sm font-semibold px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
             >
               {playlists.length === 0 ? (
                 <option value="">No playlists available</option>
@@ -122,7 +126,6 @@ export function PlaylistManagerModal({
           </div>
         </div>
 
-        {/* Playlist Summary + Track List */}
         {!activePlaylist ? (
           <EmptyState
             icon={<ListMusic className="w-6 h-6" />}
@@ -134,8 +137,12 @@ export function PlaylistManagerModal({
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-between px-1">
-              <h3 className="text-sm font-bold text-white truncate">{activePlaylist.name}</h3>
-              <span className="text-xs font-medium text-brand-400 shrink-0">{summary}</span>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                {activePlaylist.name}
+              </h3>
+              <span className="text-xs font-medium text-teal-600 dark:text-teal-400 shrink-0">
+                {summary}
+              </span>
             </div>
 
             {playlistSongs.length === 0 ? (
@@ -151,8 +158,8 @@ export function PlaylistManagerModal({
                 items={playlistSongs}
                 width="100%"
                 maxHeight={340}
-                theme="dark"
-                accentColor="#ff5722"
+                theme={theme}
+                accentColor="#198f85"
                 animation="pop"
                 frame={false}
                 gap={8}

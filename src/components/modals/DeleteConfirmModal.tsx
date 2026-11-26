@@ -16,7 +16,7 @@ export function DeleteConfirmModal({ playlist, onClose, onConfirm }: DeleteConfi
       onClose={onClose}
       title="Delete Playlist"
       subtitle="This action cannot be undone."
-      icon={<AlertTriangle className="w-5 h-5 text-rose-400" />}
+      icon={<AlertTriangle className="w-5 h-5 text-rose-500 dark:text-rose-400" />}
       maxWidthClass="max-w-md"
       footer={
         <>
@@ -39,11 +39,13 @@ export function DeleteConfirmModal({ playlist, onClose, onConfirm }: DeleteConfi
       }
     >
       {playlist && (
-        <p className="text-sm text-gray-300 leading-relaxed">
+        <p className="text-sm text-slate-600 dark:text-gray-300 leading-relaxed">
           Are you sure you want to delete{' '}
-          <span className="font-bold text-white">&ldquo;{playlist.name}&rdquo;</span>? It
-          currently contains{' '}
-          <span className="font-semibold text-white">
+          <span className="font-bold text-slate-900 dark:text-white">
+            &ldquo;{playlist.name}&rdquo;
+          </span>
+          ? It currently contains{' '}
+          <span className="font-semibold text-slate-900 dark:text-white">
             {playlist.songIds.length} {playlist.songIds.length === 1 ? 'song' : 'songs'}
           </span>
           . Your songs will remain available in the Song Library.

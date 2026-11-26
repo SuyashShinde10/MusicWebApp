@@ -12,15 +12,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#198f85] hover:bg-[#157a71] text-white border border-teal-400/25 shadow-sm',
+    'bg-[#198f85] hover:bg-[#157a71] text-white border border-teal-500/30 shadow-sm',
   secondary:
-    'bg-[#181b22] hover:bg-[#20242e] text-gray-200 border border-white/10',
+    'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 dark:bg-[#181b22] dark:hover:bg-[#20242e] dark:text-gray-200 dark:border-white/10',
   ghost:
-    'bg-transparent hover:bg-white/[0.07] text-gray-300 hover:text-white border border-transparent',
+    'bg-transparent hover:bg-slate-200/70 text-slate-600 hover:text-slate-900 dark:hover:bg-white/[0.07] dark:text-gray-300 dark:hover:text-white border border-transparent',
   danger:
-    'bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 hover:text-rose-200 border border-rose-500/30',
+    'bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 hover:text-rose-700 border border-rose-500/25 dark:bg-rose-500/15 dark:hover:bg-rose-500/25 dark:text-rose-300 dark:hover:text-rose-200 dark:border-rose-500/30',
   outline:
-    'bg-[#15171c] hover:bg-[#1c1f26] text-gray-200 border border-white/10 hover:border-teal-500/40',
+    'bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 hover:border-teal-500/50 dark:bg-[#15171c] dark:hover:bg-[#1c1f26] dark:text-gray-200 dark:border-white/10 dark:hover:border-teal-500/40',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -45,7 +45,7 @@ export function Button({
     <button
       type={type}
       disabled={disabled}
-      className={`inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/70 active:scale-95 disabled:opacity-40 disabled:pointer-events-none select-none ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
+      className={`inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/70 active:scale-95 disabled:opacity-40 disabled:pointer-events-none select-none ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
       {...rest}
     >
       {leftIcon}

@@ -17,14 +17,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-gray-400 mb-1.5"
           >
             {label}
           </label>
         )}
         <div className="relative flex items-center">
           {leftIcon && (
-            <span className="absolute left-3.5 inset-y-0 flex items-center pointer-events-none text-gray-400">
+            <span className="absolute left-3.5 inset-y-0 flex items-center pointer-events-none text-slate-400 dark:text-gray-400">
               {leftIcon}
             </span>
           )}
@@ -33,12 +33,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             aria-invalid={Boolean(error)}
             aria-describedby={error && inputId ? `${inputId}-error` : undefined}
-            className={`w-full bg-surface-card text-sm text-gray-100 placeholder-gray-500 border transition focus:outline-none focus:ring-2 shadow-inner ${
+            className={`w-full bg-white text-slate-900 placeholder-slate-400 dark:bg-[#15171c] dark:text-gray-100 dark:placeholder-gray-500 text-sm border transition focus:outline-none focus:ring-2 shadow-sm ${
               pill ? 'rounded-full' : 'rounded-xl'
-            } ${leftIcon ? 'pl-10' : 'pl-3.5'} ${rightElement ? 'pr-12' : 'pr-3.5'} py-2.5 ${
+            } ${leftIcon ? 'pl-10' : 'pl-3.5'} ${rightElement ? 'pr-12' : 'pr-3.5'} py-2 ${
               error
                 ? 'border-rose-500/70 focus:ring-rose-500/40'
-                : 'border-white/10 focus:border-brand-500/60 focus:ring-brand-500/40'
+                : 'border-slate-200 focus:border-teal-500/70 focus:ring-teal-500/30 dark:border-white/10 dark:focus:border-teal-500/60 dark:focus:ring-teal-500/35'
             } ${className}`}
             {...rest}
           />
@@ -50,7 +50,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <p
             id={inputId ? `${inputId}-error` : undefined}
             role="alert"
-            className="mt-1.5 text-xs font-medium text-rose-400"
+            className="mt-1.5 text-xs font-medium text-rose-500 dark:text-rose-400"
           >
             {error}
           </p>

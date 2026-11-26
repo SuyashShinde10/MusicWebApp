@@ -3,6 +3,9 @@ import type { Playlist, SongId } from '../types/music';
 const PLAYLISTS_STORAGE_KEY = 'rhythmotune.playlists.v1';
 const ACTIVE_PLAYLIST_STORAGE_KEY = 'rhythmotune.activePlaylistId.v1';
 const LIKED_SONGS_STORAGE_KEY = 'rhythmotune.likedSongIds.v1';
+const THEME_STORAGE_KEY = 'rhythmotune.theme.v1';
+
+export type ThemeMode = 'light' | 'dark';
 
 const DEFAULT_STARTER_PLAYLISTS: Playlist[] = [
   {
@@ -107,6 +110,23 @@ export function loadLikedSongIds(): SongId[] {
 export function saveLikedSongIds(songIds: SongId[]): void {
   try {
     window.localStorage.setItem(LIKED_SONGS_STORAGE_KEY, JSON.stringify(songIds));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+export function loadTheme(): ThemeMode {
+  try {
+    const raw = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return raw === 'dark' ? 'dark' : 'light';
+  } catch {
+    return 'light';
+  }
+}
+
+export function saveTheme(theme: ThemeMode): void {
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch {
     // Ignore storage errors
   }

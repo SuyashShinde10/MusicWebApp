@@ -10,6 +10,7 @@ import {
   List,
   ListMusic,
   Menu,
+  Moon,
   Music,
   PanelLeftClose,
   PanelLeftOpen,
@@ -17,6 +18,7 @@ import {
   Search,
   Settings,
   Sparkles,
+  Sun,
   WifiOff,
   X,
 } from 'lucide-react';
@@ -39,13 +41,16 @@ import {
   loadActivePlaylistId,
   loadLikedSongIds,
   loadPlaylists,
+  loadTheme,
   saveActivePlaylistId,
   saveLikedSongIds,
   savePlaylists,
+  saveTheme,
+  type ThemeMode,
 } from './services/playlistStorage';
 import { fetchSongs } from './services/songService';
 import type { AppSection, Playlist, Song, SongId, ToastItem } from './types/music';
-import { animateStaggerIn, prefersReducedMotion } from './utils/gsapAnimations';
+import { animateMicroPop, animateStaggerIn, prefersReducedMotion } from './utils/gsapAnimations';
 import {
   addSongToPlaylist,
   computeTotalDuration,
@@ -69,6 +74,10 @@ const NAV_ITEMS = [
 ] as const;
 
 export function App() {
+  // Theme state (Light mode by default)
+  const [theme, setTheme] = useState<ThemeMode>(() => loadTheme());
+  const isDark = theme === 'dark';
+
   // Library state
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoadingSongs, setIsLoadingSongs] = useState(true);
@@ -121,6 +130,7 @@ export function App() {
   const mainWorkspaceRef = useRef<HTMLElement>(null);
   const sidebarRef = useRef<HTMLElement>(null);
   const mobileDrawerRef = useRef<HTMLDivElement>(null);
+  const themeBtnRef = useRef<HTMLButtonElement>(null);
   const toastTimerRef = useRef<number | null>(null);
 
   const showToast = useCallback(
@@ -135,6 +145,12 @@ export function App() {
     },
     []
   );
+
+  // Sync theme class on <html> and persist
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+    saveTheme(theme);
+  }, [theme, isDark]);
 
   // Load songs via Axios
   const loadSongLibrary = useCallback(async () => {
@@ -445,6 +461,11 @@ export function App() {
     });
   };
 
+  const handleToggleTheme = () => {
+    if (themeBtnRef.current) animateMicroPop(themeBtnRef.current);
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   const getPlaylistDuration = (playlist: Playlist) =>
     computeTotalDuration(resolvePlaylistSongs(playlist, songsById));
 
@@ -475,12 +496,12 @@ export function App() {
     : false;
 
   return (
-    <div className="min-h-screen lg:h-screen w-full max-w-full overflow-x-hidden lg:overflow-hidden bg-[#0b0d11] text-gray-200 flex relative">
+    <div className="min-h-screen lg:h-screen w-full max-w-full overflow-x-hidden lg:overflow-hidden bg-[#f6f7f9] text-slate-900 dark:bg-[#0b0d11] dark:text-gray-200 flex relative transition-colors duration-200">
       {/* Desktop Sidebar (lg+) full height above PlayerBar */}
       <aside
         ref={sidebarRef}
         style={{ width: 240 }}
-        className="hidden lg:flex bg-[#15171c] border-r border-white/[0.06] flex-col justify-between shrink-0 h-full pb-20 z-20 overflow-hidden"
+        className="hidden lg:flex bg-white border-r border-slate-200/90 dark:bg-[#15171c] dark:border-white/[0.06] flex-col justify-between shrink-0 h-full pb-20 z-20 overflow-hidden transition-colors duration-200"
       >
         <div className="p-4 flex flex-col gap-5 overflow-y-auto no-scrollbar">
           {/* Brand Header + Menu Toggle Button */}
@@ -494,8 +515,8 @@ export function App() {
                 <AudioLines className="w-4 h-4" />
               </div>
               {!isSidebarCollapsed && (
-                <span className="text-[17px] font-bold tracking-tight text-orange-400 truncate">
-                  Rhythmo<span className="text-white">Tune</span>
+                <span className="text-[17px] font-bold tracking-tight text-orange-600 dark:text-orange-400 truncate">
+                  Rhythmo<span className="text-slate-900 dark:text-white">Tune</span>
                 </span>
               )}
             </div>
@@ -506,7 +527,7 @@ export function App() {
               aria-label={isSidebarCollapsed ? 'Expand sidebar menu' : 'Collapse sidebar menu'}
               aria-expanded={!isSidebarCollapsed}
               title={isSidebarCollapsed ? 'Expand menu' : 'Collapse menu'}
-              className="w-8 h-8 rounded-lg bg-white/[0.05] hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+              className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
             >
               {isSidebarCollapsed ? (
                 <PanelLeftOpen className="w-4 h-4" />
@@ -531,8 +552,8 @@ export function App() {
                     isSidebarCollapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3.5 py-2.5'
                   } rounded-xl text-[13.5px] font-medium transition-colors text-left ${
                     active
-                      ? 'bg-white/[0.09] text-white font-semibold'
-                      : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+                      ? 'bg-teal-500/10 text-teal-800 dark:bg-white/[0.09] dark:text-white font-semibold'
+                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/[0.04]'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
@@ -543,11 +564,11 @@ export function App() {
           </nav>
 
           {/* Sidebar Playlists */}
-          <div className="pt-3 border-t border-white/[0.07] space-y-2">
+          <div className="pt-3 border-t border-slate-200 dark:border-white/[0.07] space-y-2">
             {!isSidebarCollapsed ? (
               <div className="flex items-center justify-between px-1.5">
-                <span className="text-xs font-semibold text-gray-300 flex items-center gap-2">
-                  <ListMusic className="w-3.5 h-3.5 text-gray-400" />
+                <span className="text-xs font-semibold text-slate-500 dark:text-gray-300 flex items-center gap-2">
+                  <ListMusic className="w-3.5 h-3.5 text-slate-400 dark:text-gray-400" />
                   <span>Playlists</span>
                 </span>
                 <button
@@ -555,7 +576,7 @@ export function App() {
                   onClick={openCreateModal}
                   aria-label="Create new playlist"
                   title="Create new playlist"
-                  className="w-6 h-6 rounded-md hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition active:scale-90"
+                  className="w-6 h-6 rounded-md hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition active:scale-90"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -566,7 +587,7 @@ export function App() {
                 onClick={openCreateModal}
                 aria-label="Create new playlist"
                 title="Create new playlist"
-                className="w-10 h-10 mx-auto rounded-lg bg-white/[0.06] hover:bg-teal-600 text-gray-300 hover:text-white flex items-center justify-center transition active:scale-90"
+                className="w-10 h-10 mx-auto rounded-lg bg-slate-100 hover:bg-[#198f85] text-slate-600 hover:text-white dark:bg-white/[0.06] dark:text-gray-300 flex items-center justify-center transition active:scale-90"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -574,7 +595,7 @@ export function App() {
 
             {playlists.length === 0 ? (
               !isSidebarCollapsed && (
-                <p className="text-xs text-gray-500 px-1.5">
+                <p className="text-xs text-slate-500 dark:text-gray-500 px-1.5">
                   No playlists yet. Click + to create one.
                 </p>
               )
@@ -600,13 +621,13 @@ export function App() {
           </div>
         </div>
 
-        <div className="p-3.5 border-t border-white/[0.06]">
+        <div className="p-3.5 border-t border-slate-200 dark:border-white/[0.06]">
           <Button
             variant="ghost"
             size={isSidebarCollapsed ? 'icon' : 'md'}
             className={`${
               isSidebarCollapsed ? 'mx-auto flex' : 'w-full justify-start'
-            } text-gray-400 hover:text-white`}
+            } text-slate-600 hover:text-slate-950 dark:text-gray-400 dark:hover:text-white`}
             title="Playlist Manager"
             aria-label="Playlist Manager"
             leftIcon={<ListMusic className="w-4 h-4" />}
@@ -620,14 +641,14 @@ export function App() {
       {/* Mobile / Tablet Slide-over Navigation Drawer (< lg) */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-50 lg:hidden bg-black/70 backdrop-blur-sm flex"
+          className="fixed inset-0 z-50 lg:hidden bg-slate-900/50 dark:bg-black/70 backdrop-blur-sm flex"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           <div
             ref={mobileDrawerRef}
             role="dialog"
             aria-label="Navigation menu"
-            className="w-72 max-w-[82vw] h-full bg-[#15171c] border-r border-white/10 p-5 flex flex-col justify-between shadow-2xl"
+            className="w-72 max-w-[82vw] h-full bg-white border-r border-slate-200 dark:bg-[#15171c] dark:border-white/10 p-5 flex flex-col justify-between shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="space-y-6 overflow-y-auto no-scrollbar">
@@ -636,15 +657,15 @@ export function App() {
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white">
                     <AudioLines className="w-4 h-4" />
                   </div>
-                  <span className="text-lg font-bold tracking-tight text-orange-400">
-                    Rhythmo<span className="text-white">Tune</span>
+                  <span className="text-lg font-bold tracking-tight text-orange-600 dark:text-orange-400">
+                    Rhythmo<span className="text-slate-900 dark:text-white">Tune</span>
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsMobileMenuOpen(false)}
                   aria-label="Close navigation menu"
-                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 flex items-center justify-center"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-300 flex items-center justify-center"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -662,7 +683,9 @@ export function App() {
                         setIsMobileMenuOpen(false);
                       }}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
-                        active ? 'bg-white/[0.09] text-white' : 'text-gray-400 hover:text-white'
+                        active
+                          ? 'bg-teal-500/10 text-teal-800 dark:bg-white/[0.09] dark:text-white'
+                          : 'text-slate-600 hover:text-slate-950 dark:text-gray-400 dark:hover:text-white'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -672,9 +695,9 @@ export function App() {
                 })}
               </nav>
 
-              <div className="pt-4 border-t border-white/[0.07] space-y-2.5">
+              <div className="pt-4 border-t border-slate-200 dark:border-white/[0.07] space-y-2.5">
                 <div className="flex items-center justify-between px-1">
-                  <span className="text-xs font-semibold text-gray-300">
+                  <span className="text-xs font-semibold text-slate-600 dark:text-gray-300">
                     Playlists ({playlists.length})
                   </span>
                   <button
@@ -683,7 +706,7 @@ export function App() {
                       setIsMobileMenuOpen(false);
                       openCreateModal();
                     }}
-                    className="text-xs font-semibold text-teal-400"
+                    className="text-xs font-semibold text-teal-600 dark:text-teal-400"
                   >
                     + New
                   </button>
@@ -712,7 +735,7 @@ export function App() {
               variant="secondary"
               size="md"
               className="w-full"
-              leftIcon={<ListMusic className="w-4 h-4 text-teal-400" />}
+              leftIcon={<ListMusic className="w-4 h-4 text-teal-600 dark:text-teal-400" />}
               onClick={() => {
                 setIsMobileMenuOpen(false);
                 setIsManagerOpen(true);
@@ -726,8 +749,8 @@ export function App() {
 
       {/* Main Content Shell */}
       <div className="flex-1 flex flex-col min-w-0 lg:h-full lg:overflow-y-auto no-scrollbar pb-40 md:pb-24 relative z-10">
-        {/* Sticky Top Header matching reference */}
-        <header className="sticky top-0 z-30 bg-[#0b0d11]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-2.5">
+        {/* Sticky Top Header */}
+        <header className="sticky top-0 z-30 bg-[#f6f7f9]/90 dark:bg-[#0b0d11]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-2.5 border-b border-slate-200/70 dark:border-white/[0.04] transition-colors duration-200">
           <div className="flex items-center justify-between gap-3 max-w-7xl mx-auto">
             {/* Mobile / Tablet Menu Button + Brand Logo */}
             <div className="flex lg:hidden items-center gap-2.5 shrink-0">
@@ -735,12 +758,12 @@ export function App() {
                 type="button"
                 onClick={() => setIsMobileMenuOpen(true)}
                 aria-label="Open navigation menu"
-                className="w-9 h-9 rounded-xl bg-[#15171c] hover:bg-white/10 border border-white/10 text-gray-200 flex items-center justify-center transition active:scale-90"
+                className="w-9 h-9 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 dark:bg-[#15171c] dark:hover:bg-white/10 dark:border-white/10 dark:text-gray-200 flex items-center justify-center transition active:scale-90"
               >
                 <Menu className="w-4 h-4" />
               </button>
-              <span className="text-base font-bold tracking-tight text-orange-400">
-                Rhythmo<span className="text-white">Tune</span>
+              <span className="text-base font-bold tracking-tight text-orange-600 dark:text-orange-400">
+                Rhythmo<span className="text-slate-900 dark:text-white">Tune</span>
               </span>
             </div>
 
@@ -753,47 +776,60 @@ export function App() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for a song..."
                 aria-label="Search songs"
-                className="!bg-[#15171c] !border-white/[0.08]"
                 rightElement={
                   searchQuery ? (
                     <button
                       type="button"
                       onClick={() => setSearchQuery('')}
                       aria-label="Clear search"
-                      className="text-gray-400 hover:text-white p-1"
+                      className="text-slate-400 hover:text-slate-700 dark:text-gray-400 dark:hover:text-white p-1"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   ) : (
-                    <Search className="w-4 h-4 text-gray-400 mr-1" />
+                    <Search className="w-4 h-4 text-slate-400 dark:text-gray-400 mr-1" />
                   )
                 }
               />
             </div>
 
-            {/* Right Controls: New Playlist, User Pill (Molly Hunter), Favorites, Settings */}
-            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* Right Controls: New Playlist, Theme Toggle, Profile, Favorites, Settings */}
+            <div className="flex items-center gap-2 shrink-0">
               <Button
                 variant="outline"
                 size="sm"
-                leftIcon={<Plus className="w-3.5 h-3.5 text-teal-400" />}
+                leftIcon={<Plus className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />}
                 onClick={openCreateModal}
-                className="!bg-[#15171c] !border-white/10 hover:!border-teal-500/50"
               >
                 <span className="hidden sm:inline">New Playlist</span>
                 <span className="sm:hidden">New</span>
               </Button>
 
+              {/* Dark / Light Theme Toggle */}
+              <button
+                ref={themeBtnRef}
+                type="button"
+                onClick={handleToggleTheme}
+                aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                aria-pressed={isDark}
+                title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                className="w-9 h-9 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 dark:bg-[#15171c] dark:hover:bg-white/10 dark:border-white/[0.08] dark:text-amber-300 flex items-center justify-center transition active:scale-90 shadow-sm dark:shadow-none"
+              >
+                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+
               {/* Molly Hunter Profile Pill */}
-              <div className="hidden md:flex items-center gap-2.5 pl-1.5 pr-3 py-1 rounded-full bg-[#15171c] border border-white/[0.08]">
+              <div className="hidden md:flex items-center gap-2.5 pl-1.5 pr-3 py-1 rounded-full bg-white border border-slate-200 dark:bg-[#15171c] dark:border-white/[0.08] shadow-sm dark:shadow-none">
                 <img
                   src="/covers/molly-hunter.jpg"
                   alt="Molly Hunter"
-                  className="w-7 h-7 rounded-full object-cover ring-1 ring-teal-400/60"
+                  className="w-7 h-7 rounded-full object-cover ring-1 ring-teal-500/60"
                 />
                 <div className="leading-none">
-                  <p className="text-xs font-semibold text-white">Molly Hunter</p>
-                  <span className="inline-block mt-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded bg-teal-600/25 text-teal-300">
+                  <p className="text-xs font-semibold text-slate-900 dark:text-white">
+                    Molly Hunter
+                  </p>
+                  <span className="inline-block mt-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded bg-teal-500/15 text-teal-700 dark:bg-teal-600/25 dark:text-teal-300">
                     Premium
                   </span>
                 </div>
@@ -809,10 +845,10 @@ export function App() {
                 aria-label={showFavoritesOnly ? 'Show all songs' : 'Filter liked songs'}
                 aria-pressed={showFavoritesOnly}
                 title={showFavoritesOnly ? 'Showing liked songs' : 'Liked songs'}
-                className={`w-9 h-9 rounded-full border flex items-center justify-center transition active:scale-90 ${
+                className={`w-9 h-9 rounded-full border flex items-center justify-center transition active:scale-90 shadow-sm dark:shadow-none ${
                   showFavoritesOnly
-                    ? 'bg-rose-500/20 border-rose-500/40 text-rose-400'
-                    : 'bg-[#15171c] border-white/[0.08] text-gray-300 hover:text-white'
+                    ? 'bg-rose-500/15 border-rose-500/40 text-rose-500 dark:text-rose-400'
+                    : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 dark:bg-[#15171c] dark:border-white/[0.08] dark:text-gray-300 dark:hover:text-white'
                 }`}
               >
                 <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
@@ -824,7 +860,7 @@ export function App() {
                 onClick={() => setIsManagerOpen(true)}
                 aria-label="Open Playlist Manager"
                 title="Playlist Manager"
-                className="hidden sm:flex w-9 h-9 rounded-full bg-[#15171c] hover:bg-white/10 border border-white/[0.08] text-gray-300 hover:text-white items-center justify-center transition active:scale-90"
+                className="hidden sm:flex w-9 h-9 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 dark:bg-[#15171c] dark:hover:bg-white/10 dark:border-white/[0.08] dark:text-gray-300 dark:hover:text-white items-center justify-center transition active:scale-90 shadow-sm dark:shadow-none"
               >
                 <Settings className="w-4 h-4" />
               </button>
@@ -832,26 +868,25 @@ export function App() {
           </div>
 
           {/* Mobile Search Bar (< sm) */}
-          <div className="mt-3 sm:hidden">
+          <div className="mt-2.5 sm:hidden">
             <Input
               pill
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for a song..."
               aria-label="Search songs"
-              className="!bg-[#15171c] !border-white/[0.08]"
               rightElement={
                 searchQuery ? (
                   <button
                     type="button"
                     onClick={() => setSearchQuery('')}
                     aria-label="Clear search"
-                    className="text-gray-400 hover:text-white p-1"
+                    className="text-slate-400 hover:text-slate-700 dark:text-gray-400 dark:hover:text-white p-1"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 ) : (
-                  <Search className="w-4 h-4 text-gray-400 mr-1" />
+                  <Search className="w-4 h-4 text-slate-400 dark:text-gray-400 mr-1" />
                 )
               }
             />
@@ -863,7 +898,7 @@ export function App() {
           ref={mainWorkspaceRef}
           className="flex-1 px-4 sm:px-6 lg:px-8 py-2 space-y-4 min-w-0 max-w-7xl w-full mx-auto"
         >
-          {/* Featured 5-Card Overlapping Fan Carousel (Home view) */}
+          {/* Featured Draggable 5-Card Overlapping Fan Carousel (Home view) */}
           {activeSection === 'home' && !isLoadingSongs && !songsError && songs.length > 0 && (
             <FeaturedShowcase
               songs={songs}
@@ -878,11 +913,13 @@ export function App() {
           {activeSection === 'home' && (
             <section className="lg:hidden space-y-2.5 min-w-0">
               <div className="flex items-center justify-between gap-2">
-                <h2 className="text-base font-bold text-white">Your Playlists</h2>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                  Your Playlists
+                </h2>
                 <button
                   type="button"
                   onClick={() => setActiveSection('playlists')}
-                  className="text-xs font-semibold text-teal-400 hover:text-teal-300"
+                  className="text-xs font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
                 >
                   Manage all ({playlists.length})
                 </button>
@@ -918,12 +955,12 @@ export function App() {
 
           {/* Song Library Section ("Select Categories" + "Popular songs") */}
           {(activeSection === 'home' || activeSection === 'library') && (
-            <section ref={librarySectionRef} aria-label="Song Library" className="space-y-4 min-w-0">
+            <section ref={librarySectionRef} aria-label="Song Library" className="space-y-3.5 min-w-0">
               {/* Select Categories Row */}
               {!isLoadingSongs && !songsError && (
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                    <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
                       Select Categories
                     </h2>
                     <div className="flex items-center gap-1">
@@ -931,7 +968,7 @@ export function App() {
                         type="button"
                         onClick={() => scrollCategories(-180)}
                         aria-label="Scroll categories left"
-                        className="w-7 h-7 rounded-full hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition"
+                        className="w-7 h-7 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition"
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
@@ -939,7 +976,7 @@ export function App() {
                         type="button"
                         onClick={() => scrollCategories(180)}
                         aria-label="Scroll categories right"
-                        className="w-7 h-7 rounded-full hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition"
+                        className="w-7 h-7 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </button>
@@ -964,7 +1001,7 @@ export function App() {
                           className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-150 shrink-0 active:scale-95 ${
                             active
                               ? 'bg-[#198f85] text-white font-semibold shadow-sm'
-                              : 'bg-[#15171c] hover:bg-white/10 text-gray-300 border border-white/15'
+                              : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 dark:bg-[#15171c] dark:hover:bg-white/10 dark:text-gray-300 dark:border-white/15'
                           }`}
                         >
                           {genre}
@@ -976,26 +1013,26 @@ export function App() {
               )}
 
               {/* Popular Songs Header + View Toggle */}
-              <div className="flex items-center justify-between gap-3 pt-1">
+              <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                  <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
                     {activeSection === 'library' ? 'Song Library' : 'Popular songs'}
                   </h2>
-                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-md bg-[#15171c] text-gray-300 border border-white/10">
+                  <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-md bg-white text-slate-600 border border-slate-200 dark:bg-[#15171c] dark:text-gray-300 dark:border-white/10">
                     {filteredSongs.length}
                   </span>
                   {showFavoritesOnly && (
                     <button
                       type="button"
                       onClick={() => setShowFavoritesOnly(false)}
-                      className="text-[11px] font-semibold text-rose-400 hover:underline"
+                      className="text-[11px] font-semibold text-rose-500 dark:text-rose-400 hover:underline"
                     >
                       Liked only · Clear
                     </button>
                   )}
                 </div>
 
-                <div className="inline-flex rounded-xl bg-[#15171c] border border-white/10 p-1">
+                <div className="inline-flex rounded-xl bg-white border border-slate-200 dark:bg-[#15171c] dark:border-white/10 p-1 shadow-sm dark:shadow-none">
                   <button
                     type="button"
                     onClick={() => setLibraryLayout('grid')}
@@ -1004,7 +1041,7 @@ export function App() {
                     className={`p-1.5 rounded-lg transition ${
                       libraryLayout === 'grid'
                         ? 'bg-[#198f85] text-white'
-                        : 'text-gray-400 hover:text-white'
+                        : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
                     }`}
                   >
                     <LayoutGrid className="w-4 h-4" />
@@ -1017,7 +1054,7 @@ export function App() {
                     className={`p-1.5 rounded-lg transition ${
                       libraryLayout === 'list'
                         ? 'bg-[#198f85] text-white'
-                        : 'text-gray-400 hover:text-white'
+                        : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
                     }`}
                   >
                     <List className="w-4 h-4" />
@@ -1030,7 +1067,7 @@ export function App() {
                 <LibrarySkeleton />
               ) : songsError ? (
                 <EmptyState
-                  icon={<WifiOff className="w-6 h-6 text-rose-400" />}
+                  icon={<WifiOff className="w-6 h-6 text-rose-500 dark:text-rose-400" />}
                   title="Could not load songs"
                   description={songsError}
                   actionLabel="Retry"
@@ -1068,8 +1105,8 @@ export function App() {
                   items={filteredSongs}
                   width="100%"
                   maxHeight={520}
-                  theme="dark"
-                  accentColor="#14b8a6"
+                  theme={theme}
+                  accentColor="#198f85"
                   animation="pop"
                   frame={false}
                   gap={8}
@@ -1094,13 +1131,13 @@ export function App() {
 
           {/* Active Playlist Section */}
           {(activeSection === 'playlists' || activeSection === 'home') && (
-            <section aria-label="Playlists Workspace" className="space-y-4 min-w-0 pt-2">
+            <section aria-label="Playlists Workspace" className="space-y-3 min-w-0 pt-1">
               <div className="flex items-center justify-between gap-2">
                 <div>
-                  <h2 className="text-base font-bold text-white tracking-tight">
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
                     {activeSection === 'playlists' ? 'Your Playlists' : 'Manage Active Playlist'}
                   </h2>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                     Select a playlist, reorder tracks, or manage your collection
                   </p>
                 </div>
@@ -1109,7 +1146,6 @@ export function App() {
                   size="sm"
                   leftIcon={<Plus className="w-3.5 h-3.5" />}
                   onClick={openCreateModal}
-                  className="!bg-[#198f85] hover:!bg-[#157a71] !border-teal-400/30 !shadow-none"
                 >
                   Create Playlist
                 </Button>
@@ -1137,6 +1173,7 @@ export function App() {
                 songs={activePlaylistSongs}
                 currentSongId={currentSongId}
                 isPlaying={isPlaying}
+                isDark={isDark}
                 onPlaySong={(song, plId) => playSong(song, { type: 'playlist', playlistId: plId })}
                 onPlayAll={(plId) => {
                   const first = activePlaylistSongs[0];
@@ -1171,6 +1208,7 @@ export function App() {
         volume={volume}
         hasNext={playbackQueue.length > 0}
         hasPrev={playbackQueue.length > 0}
+        isDark={isDark}
         queueLabel={queueLabel}
         onTogglePlay={() => setIsPlaying((prev) => !prev)}
         onNext={playNext}
@@ -1186,7 +1224,7 @@ export function App() {
       {/* Mobile Bottom Navigation (< md) */}
       <nav
         aria-label="Mobile navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 h-[62px] bg-[#15171c]/95 backdrop-blur-2xl border-t border-white/[0.08] z-30 px-4 flex items-center justify-around"
+        className="md:hidden fixed bottom-0 left-0 right-0 h-[62px] bg-white/95 border-t border-slate-200 dark:bg-[#15171c]/95 dark:border-white/[0.08] backdrop-blur-2xl z-30 px-4 flex items-center justify-around"
       >
         {NAV_ITEMS.map(({ id, label, Icon }) => {
           const active = activeSection === id;
@@ -1196,7 +1234,9 @@ export function App() {
               type="button"
               onClick={() => setActiveSection(id)}
               className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition active:scale-95 ${
-                active ? 'text-teal-400' : 'text-gray-400 hover:text-white'
+                active
+                  ? 'text-teal-600 dark:text-teal-400'
+                  : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -1239,6 +1279,7 @@ export function App() {
         songsById={songsById}
         currentSongId={currentSongId}
         isPlaying={isPlaying}
+        theme={theme}
         onClose={() => setIsManagerOpen(false)}
         onSelectPlaylist={(id) => setActivePlaylistId(id)}
         onOpenCreate={openCreateModal}
