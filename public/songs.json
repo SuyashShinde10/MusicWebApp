@@ -1,0 +1,128 @@
+[
+  {
+    "id": 1,
+    "title": "Golden Days",
+    "artist": "Felix Carter",
+    "genre": "Relax",
+    "duration": 204,
+    "plays": "1.8M",
+    "artworkGradient": "from-amber-600 via-orange-800 to-stone-950"
+  },
+  {
+    "id": 2,
+    "title": "Fading Horizon",
+    "artist": "Ella Hunt",
+    "genre": "Energetic",
+    "duration": 165,
+    "plays": "940K",
+    "artworkGradient": "from-emerald-600 via-teal-800 to-slate-950"
+  },
+  {
+    "id": 3,
+    "title": "Waves of Time",
+    "artist": "Lena Rivers",
+    "genre": "Sad",
+    "duration": 252,
+    "plays": "3.2M",
+    "artworkGradient": "from-indigo-600 via-violet-900 to-slate-950"
+  },
+  {
+    "id": 4,
+    "title": "Electric Dreams",
+    "artist": "Mio Lovell",
+    "genre": "Party",
+    "duration": 188,
+    "plays": "2.1M",
+    "artworkGradient": "from-orange-500 via-amber-700 to-stone-950"
+  },
+  {
+    "id": 5,
+    "title": "Shadows & Light",
+    "artist": "Royal Miles",
+    "genre": "Romance",
+    "duration": 232,
+    "plays": "870K",
+    "artworkGradient": "from-slate-600 via-zinc-800 to-neutral-950"
+  },
+  {
+    "id": 6,
+    "title": "Echoes of Midnight",
+    "artist": "Jon Hickman",
+    "genre": "Energetic",
+    "duration": 222,
+    "plays": "4.5M",
+    "artworkGradient": "from-rose-600 via-red-800 to-neutral-950"
+  },
+  {
+    "id": 7,
+    "title": "Velvet Starlight",
+    "artist": "Clara Nova",
+    "genre": "Jazz",
+    "duration": 215,
+    "plays": "620K",
+    "artworkGradient": "from-purple-600 via-fuchsia-900 to-slate-950"
+  },
+  {
+    "id": 8,
+    "title": "Midnight Echo",
+    "artist": "Kaelen Vance",
+    "genre": "Lo-Fi",
+    "duration": 198,
+    "plays": "1.1M",
+    "artworkGradient": "from-cyan-600 via-sky-900 to-slate-950"
+  },
+  {
+    "id": 9,
+    "title": "Neon Skyline",
+    "artist": "Solaris",
+    "genre": "Party",
+    "duration": 210,
+    "plays": "1.6M",
+    "artworkGradient": "from-pink-600 via-rose-900 to-slate-950"
+  },
+  {
+    "id": 10,
+    "title": "Paper Lanterns",
+    "artist": "Noah Bennett",
+    "genre": "Acoustic",
+    "duration": 194,
+    "plays": "780K",
+    "artworkGradient": "from-amber-500 via-yellow-800 to-stone-950"
+  },
+  {
+    "id": 11,
+    "title": "Rain on Glass",
+    "artist": "Sora Takahashi",
+    "genre": "Lo-Fi",
+    "duration": 176,
+    "plays": "2.4M",
+    "artworkGradient": "from-blue-600 via-indigo-900 to-slate-950"
+  },
+  {
+    "id": 12,
+    "title": "Autumn Reverie",
+    "artist": "Julian Brooks",
+    "genre": "Jazz",
+    "duration": 248,
+    "plays": "530K",
+    "artworkGradient": "from-orange-700 via-red-900 to-stone-950"
+  },
+  {
+    "id": 13,
+    "title": "Solitude in Blue",
+    "artist": "Maya Lin",
+    "genre": "Sad",
+    "duration": 227,
+    "plays": "1.3M",
+    "artworkGradient": "from-sky-700 via-slate-900 to-zinc-950"
+  },
+  {
+    "id": 14,
+    "title": "Whispering Pines",
+    "artist": "Liam Cross",
+    "genre": "Relax",
+    "duration": 261,
+    "plays": "990K",
+    "artworkGradient": "from-teal-600 via-emerald-900 to-stone-950"
+  }
+]
