@@ -87,14 +87,14 @@ export function SongRow({
     return (
       <TiltedCard
         containerWidth="100%"
-        containerHeight="242px"
+        containerHeight="226px"
         imageWidth="100%"
-        imageHeight="242px"
-        rotateAmplitude={8}
+        imageHeight="226px"
+        rotateAmplitude={7}
         scaleOnHover={1.03}
-        glare={0.28}
+        glare={0.25}
         glareColor="#ffffff"
-        shadow={0.45}
+        shadow={0.42}
         radius={16}
         showTooltip={false}
         intro={false}
@@ -112,6 +112,7 @@ export function SongRow({
               <AlbumArt song={song} isPlaying={isCurrent && isPlaying} size="fill" className="!rounded-xl" />
             </TiltedCardLayer>
 
+            {/* Subtle hover Play/Pause overlay (keeps face clear when playing, shows clean badge) */}
             <button
               ref={playBtnRef}
               type="button"
@@ -121,13 +122,9 @@ export function SongRow({
                 onPlay(song);
               }}
               aria-label={isCurrent && isPlaying ? `Pause ${song.title}` : `Play ${song.title}`}
-              className={`absolute inset-0 z-10 flex items-center justify-center transition-all duration-200 ${
-                isCurrent
-                  ? 'opacity-100 bg-black/30'
-                  : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100 bg-black/40'
-              }`}
+              className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 bg-black/35 transition-opacity duration-200"
             >
-              <span className="w-10 h-10 rounded-full bg-white/25 hover:bg-teal-500 backdrop-blur-md border border-white/40 text-white flex items-center justify-center transition-transform duration-200 translate-y-1 group-hover:translate-y-0">
+              <span className="w-10 h-10 rounded-full bg-white/25 hover:bg-[#198f85] backdrop-blur-md border border-white/40 text-white flex items-center justify-center transition-transform duration-200 translate-y-1.5 group-hover:translate-y-0">
                 {isCurrent && isPlaying ? (
                   <Pause className="w-4 h-4 fill-current" />
                 ) : (
@@ -135,6 +132,12 @@ export function SongRow({
                 )}
               </span>
             </button>
+
+            {isCurrent && isPlaying && (
+              <span className="absolute bottom-1.5 right-1.5 z-10 px-2 py-1 rounded-full bg-black/70 backdrop-blur-md border border-teal-400/40 flex items-center gap-1.5 pointer-events-none">
+                <EqualizerBars />
+              </span>
+            )}
 
             <span className="absolute top-1.5 right-1.5 z-10 text-[10px] font-mono tabular-nums bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-white">
               {formattedDuration}
@@ -151,10 +154,10 @@ export function SongRow({
                 }}
                 aria-label={`Add ${song.title} to playlist`}
                 title={isInActivePlaylist ? 'Already in active playlist' : 'Add to playlist'}
-                className={`absolute top-1.5 left-1.5 z-10 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 backdrop-blur-md ${
+                className={`absolute top-1.5 left-1.5 z-20 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 backdrop-blur-md ${
                   isInActivePlaylist
-                    ? 'bg-teal-600 text-white border border-teal-300/40'
-                    : 'bg-black/55 text-white hover:bg-teal-600 border border-white/20 opacity-90 group-hover:opacity-100'
+                    ? 'bg-[#198f85] text-white border border-teal-300/40'
+                    : 'bg-black/55 text-white hover:bg-[#198f85] border border-white/20 opacity-90 group-hover:opacity-100'
                 }`}
               >
                 {isInActivePlaylist ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
@@ -163,7 +166,7 @@ export function SongRow({
           </div>
 
           {/* Colored Poster Bottom Label */}
-          <div className="pt-2 pb-1 px-1.5 text-center min-w-0">
+          <div className="pt-1.5 pb-0.5 px-1.5 text-center min-w-0">
             <h4 className="text-xs font-bold text-white truncate leading-tight">{song.title}</h4>
             <p className="text-[10.5px] text-white/75 truncate mt-0.5">
               {song.artist} · {song.genre}
@@ -176,7 +179,7 @@ export function SongRow({
 
   return (
     <div
-      className={`group flex items-center justify-between gap-2 sm:gap-3 px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-xl border transition-colors duration-150 min-w-0 w-full ${
+      className={`group flex items-center justify-between gap-2 sm:gap-3 px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl border transition-colors duration-150 min-w-0 w-full ${
         isCurrent
           ? 'bg-teal-500/10 border-teal-500/35'
           : 'bg-[#15171c] hover:bg-[#1b1e25] border-white/[0.06]'
@@ -272,7 +275,7 @@ export function SongRow({
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 ${
               isInActivePlaylist
                 ? 'bg-teal-500/20 text-teal-400 hover:bg-teal-500/30'
-                : 'bg-white/[0.06] text-gray-300 hover:bg-teal-600 hover:text-white'
+                : 'bg-white/[0.06] text-gray-300 hover:bg-[#198f85] hover:text-white'
             }`}
           >
             {isInActivePlaylist ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}

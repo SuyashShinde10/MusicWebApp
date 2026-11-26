@@ -8,7 +8,7 @@ const DEFAULT_STARTER_PLAYLISTS: Playlist[] = [
   {
     id: 'pl-vibes-chill',
     name: 'Vibes & Chill',
-    songIds: [1, 3, 5, 8, 14],
+    songIds: [1, 3, 5, 8, 11],
     createdAt: 1700000000000,
     updatedAt: 1700000000000,
   },

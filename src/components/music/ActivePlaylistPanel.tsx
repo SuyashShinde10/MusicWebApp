@@ -41,7 +41,7 @@ export function ActivePlaylistPanel({
   if (!playlist) {
     return (
       <EmptyState
-        icon={<ListMusic className="w-6 h-6" />}
+        icon={<ListMusic className="w-5 h-5" />}
         title="No playlist selected"
         description="Create a playlist or pick one from your collection to organize and reorder tracks."
         actionLabel="Create Playlist"
@@ -52,24 +52,27 @@ export function ActivePlaylistPanel({
 
   const totalSeconds = computeTotalDuration(songs);
   const summary = formatPlaylistSummary(songs.length, totalSeconds);
-  const shredderHeight = Math.max(240, songs.length * 78 + 132);
+  const shredderHeight = Math.max(220, songs.length * 74 + 118);
 
   return (
     <section
       aria-label={`Playlist ${playlist.name}`}
-      className="rounded-2xl bg-[#141821]/85 border border-white/[0.06] p-4 sm:p-5 space-y-4 min-w-0"
+      className="rounded-2xl bg-[#15171c] border border-white/[0.07] p-3.5 sm:p-4 space-y-3 min-w-0"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-brand-400">
-              Active Playlist
-            </span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-white/[0.07]">
+        <div className="min-w-0 flex items-center gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-teal-400">
+                Active Playlist
+              </span>
+              <span className="text-gray-600" aria-hidden="true">·</span>
+              <span className="text-[11px] font-medium text-gray-400">{summary}</span>
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-white truncate">
+              {playlist.name}
+            </h3>
           </div>
-          <h3 className="text-lg sm:text-xl font-extrabold text-white truncate mt-0.5">
-            {playlist.name}
-          </h3>
-          <p className="text-xs font-medium text-gray-400 mt-0.5">{summary}</p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap shrink-0">
@@ -104,7 +107,7 @@ export function ActivePlaylistPanel({
 
       {songs.length === 0 ? (
         <EmptyState
-          icon={<Disc3 className="w-6 h-6" />}
+          icon={<Disc3 className="w-5 h-5" />}
           title="Empty Playlist"
           description={`"${playlist.name}" doesn't have any songs yet. Add tracks from the Song Library.`}
           actionLabel="Add Songs from Library"
@@ -114,12 +117,12 @@ export function ActivePlaylistPanel({
         <div className="space-y-2 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1 text-[11px] text-gray-400">
             <span>
-              Drag rows to reorder · Pull below the orange slit to shred &amp; remove, or use arrows
+              Drag rows to reorder · Pull below the teal slit to shred &amp; remove, or use arrows
             </span>
-            <span className="text-brand-400 font-semibold shrink-0">{summary}</span>
+            <span className="text-teal-400 font-semibold shrink-0">{summary}</span>
           </div>
 
-          <div className="w-full overflow-hidden rounded-2xl bg-surface-base/40 border border-white/5 pt-3">
+          <div className="w-full overflow-hidden rounded-xl bg-[#0e1015] border border-white/[0.05] pt-2.5">
             <Shredder
               key={playlist.id}
               items={songs}
@@ -127,13 +130,13 @@ export function ActivePlaylistPanel({
               height={shredderHeight}
               inset={10}
               gap={8}
-              slitHeight={5}
-              fallHeight={104}
+              slitHeight={4}
+              fallHeight={94}
               feedSpeed={190}
               bite={18}
               stripWidth={10}
               curl={1}
-              slitColor="#ff5722"
+              slitColor="#198f85"
               color="#f3f4f6"
               onReorder={(reordered) =>
                 onSetSongOrder(
@@ -163,7 +166,7 @@ export function ActivePlaylistPanel({
         </div>
       )}
 
-      <div className="pt-1 flex justify-end sm:hidden">
+      <div className="pt-0.5 flex justify-end sm:hidden">
         <Button
           variant="outline"
           size="sm"

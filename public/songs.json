@@ -73,6 +73,7 @@
     "duration": 215,
     "plays": "620K",
     "artworkGradient": "from-purple-600 via-fuchsia-900 to-slate-950",
+    "coverImage": "/covers/velvet-starlight.jpg",
     "frameColor": "#4c1d59"
   },
   {
@@ -83,6 +84,7 @@
     "duration": 198,
     "plays": "1.1M",
     "artworkGradient": "from-cyan-600 via-sky-900 to-slate-950",
+    "coverImage": "/covers/midnight-echo.jpg",
     "frameColor": "#134763"
   },
   {
@@ -93,6 +95,7 @@
     "duration": 210,
     "plays": "1.6M",
     "artworkGradient": "from-pink-600 via-rose-900 to-slate-950",
+    "coverImage": "/covers/neon-skyline.jpg",
     "frameColor": "#7a1b3d"
   },
   {
@@ -103,6 +106,7 @@
     "duration": 194,
     "plays": "780K",
     "artworkGradient": "from-amber-500 via-yellow-800 to-stone-950",
+    "coverImage": "/covers/paper-lanterns.jpg",
     "frameColor": "#7c4a12"
   },
   {
@@ -113,6 +117,7 @@
     "duration": 176,
     "plays": "2.4M",
     "artworkGradient": "from-blue-600 via-indigo-900 to-slate-950",
+    "coverImage": "/covers/rain-on-glass.jpg",
     "frameColor": "#1b336b"
   },
   {
@@ -123,26 +128,7 @@
     "duration": 248,
     "plays": "530K",
     "artworkGradient": "from-orange-700 via-red-900 to-stone-950",
+    "coverImage": "/covers/autumn-reverie.jpg",
     "frameColor": "#7b2d18"
-  },
-  {
-    "id": 13,
-    "title": "Solitude in Blue",
-    "artist": "Maya Lin",
-    "genre": "Sad",
-    "duration": 227,
-    "plays": "1.3M",
-    "artworkGradient": "from-sky-700 via-slate-900 to-zinc-950",
-    "frameColor": "#1c3b52"
-  },
-  {
-    "id": 14,
-    "title": "Whispering Pines",
-    "artist": "Liam Cross",
-    "genre": "Relax",
-    "duration": 261,
-    "plays": "990K",
-    "artworkGradient": "from-teal-600 via-emerald-900 to-stone-950",
-    "frameColor": "#124c3c"
   }
 ]

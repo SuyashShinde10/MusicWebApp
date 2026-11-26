@@ -475,12 +475,12 @@ export function App() {
     : false;
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#0b0d11] text-gray-200 flex relative">
-      {/* Desktop Sidebar (lg+) matching reference panel */}
+    <div className="min-h-screen lg:h-screen w-full max-w-full overflow-x-hidden lg:overflow-hidden bg-[#0b0d11] text-gray-200 flex relative">
+      {/* Desktop Sidebar (lg+) full height above PlayerBar */}
       <aside
         ref={sidebarRef}
         style={{ width: 240 }}
-        className="hidden lg:flex bg-[#15171c] border-r border-white/[0.06] flex-col justify-between shrink-0 sticky top-0 h-screen pb-20 z-20 overflow-hidden"
+        className="hidden lg:flex bg-[#15171c] border-r border-white/[0.06] flex-col justify-between shrink-0 h-full pb-20 z-20 overflow-hidden"
       >
         <div className="p-4 flex flex-col gap-5 overflow-y-auto no-scrollbar">
           {/* Brand Header + Menu Toggle Button */}
@@ -725,9 +725,9 @@ export function App() {
       )}
 
       {/* Main Content Shell */}
-      <div className="flex-1 flex flex-col min-w-0 pb-40 md:pb-24 relative z-10">
+      <div className="flex-1 flex flex-col min-w-0 lg:h-full lg:overflow-y-auto no-scrollbar pb-40 md:pb-24 relative z-10">
         {/* Sticky Top Header matching reference */}
-        <header className="sticky top-0 z-30 bg-[#0b0d11]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-3.5">
+        <header className="sticky top-0 z-30 bg-[#0b0d11]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-2.5">
           <div className="flex items-center justify-between gap-3 max-w-7xl mx-auto">
             {/* Mobile / Tablet Menu Button + Brand Logo */}
             <div className="flex lg:hidden items-center gap-2.5 shrink-0">
@@ -861,7 +861,7 @@ export function App() {
         {/* Main Scrollable Workspace */}
         <main
           ref={mainWorkspaceRef}
-          className="flex-1 px-4 sm:px-6 lg:px-8 py-3 space-y-6 min-w-0 max-w-7xl w-full mx-auto"
+          className="flex-1 px-4 sm:px-6 lg:px-8 py-2 space-y-4 min-w-0 max-w-7xl w-full mx-auto"
         >
           {/* Featured 5-Card Overlapping Fan Carousel (Home view) */}
           {activeSection === 'home' && !isLoadingSongs && !songsError && songs.length > 0 && (
