@@ -7,16 +7,17 @@ export interface PlaylistCardProps {
   totalDurationSeconds: number;
   isActive?: boolean;
   compact?: boolean;
+  collapsed?: boolean;
   onSelect: (playlistId: string) => void;
   onRename?: (playlist: Playlist) => void;
   onDelete?: (playlist: Playlist) => void;
 }
 
 const BADGE_STYLES = [
-  { gradient: 'from-amber-600 to-rose-700', Icon: Headphones },
-  { gradient: 'from-orange-500 to-amber-400', Icon: Zap },
-  { gradient: 'from-red-600 to-purple-800', Icon: Flame },
-  { gradient: 'from-indigo-600 to-cyan-700', Icon: ListMusic },
+  { gradient: 'from-sky-500/90 to-indigo-700', Icon: ListMusic },
+  { gradient: 'from-amber-400 to-orange-600', Icon: Zap },
+  { gradient: 'from-rose-500 to-purple-700', Icon: Flame },
+  { gradient: 'from-emerald-500 to-teal-700', Icon: Headphones },
 ] as const;
 
 function getBadgeStyle(id: string) {
@@ -32,12 +33,77 @@ export function PlaylistCard({
   totalDurationSeconds,
   isActive = false,
   compact = false,
+  collapsed = false,
   onSelect,
   onRename,
   onDelete,
 }: PlaylistCardProps) {
   const { gradient, Icon } = getBadgeStyle(playlist.id);
   const summary = formatPlaylistSummary(playlist.songIds.length, totalDurationSeconds);
+
+  if (collapsed) {
+    return (
+      <button
+        type="button"
+        onClick={() => onSelect(playlist.id)}
+        title={`${playlist.name} (${summary})`}
+        aria-label={`Open playlist ${playlist.name}`}
+        aria-pressed={isActive}
+        className={`w-10 h-10 mx-auto rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
+          isActive ? 'ring-2 ring-brand-400 ring-offset-2 ring-offset-surface-sidebar' : 'opacity-85 hover:opacity-100'
+        }`}
+      >
+        <Icon className="w-4 h-4" />
+      </button>
+    );
+  }
+
+  // Compact sidebar / quick-grid style: clean, borderless editorial row (no heavy card chrome)
+  if (compact) {
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => onSelect(playlist.id)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect(playlist.id);
+          }
+        }}
+        aria-pressed={isActive}
+        className={`relative w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-150 cursor-pointer min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
+          isActive
+            ? 'bg-white/[0.08] text-white'
+            : 'hover:bg-white/[0.04] text-gray-300'
+        }`}
+      >
+        {isActive && (
+          <span
+            aria-hidden="true"
+            className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-brand-500"
+          />
+        )}
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div
+            className={`w-9 h-9 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-sm shrink-0 transition-transform duration-200 group-hover:scale-105`}
+          >
+            <Icon className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1 text-left">
+            <h4
+              className={`text-[13px] font-semibold truncate leading-snug ${
+                isActive ? 'text-white' : 'text-gray-200 group-hover:text-white'
+              }`}
+            >
+              {playlist.name}
+            </h4>
+            <p className="text-[11px] text-gray-400/90 truncate">{summary}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -51,31 +117,27 @@ export function PlaylistCard({
         }
       }}
       aria-pressed={isActive}
-      className={`w-full flex items-center justify-between gap-2 rounded-2xl border transition cursor-pointer min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
-        compact ? 'p-2.5' : 'p-3'
-      } ${
+      className={`w-full flex items-center justify-between gap-2.5 p-3 rounded-2xl border transition-all duration-200 cursor-pointer min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
         isActive
-          ? 'bg-brand-500/15 border-brand-500/45 shadow-glow-sm'
-          : 'bg-surface-card/70 hover:bg-surface-cardHover border-white/5 hover:border-white/15'
+          ? 'bg-white/[0.07] border-brand-500/40'
+          : 'bg-[#141821]/80 hover:bg-[#1a1f2b] border-white/[0.06] hover:border-white/15'
       }`}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <div
-          className={`${
-            compact ? 'w-10 h-10' : 'w-11 h-11'
-          } rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-md shrink-0`}
+          className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white shadow-sm shrink-0 transition-transform duration-200 group-hover:scale-105`}
         >
           <Icon className="w-4 h-4" />
         </div>
         <div className="min-w-0 flex-1 text-left">
           <h4
-            className={`text-xs sm:text-sm font-bold truncate leading-tight ${
+            className={`text-sm font-semibold truncate leading-tight ${
               isActive ? 'text-brand-400' : 'text-gray-100 group-hover:text-white'
             }`}
           >
             {playlist.name}
           </h4>
-          <p className="text-[11px] text-gray-400 truncate mt-0.5">{summary}</p>
+          <p className="text-xs text-gray-400 truncate mt-0.5">{summary}</p>
         </div>
       </div>
 
@@ -90,7 +152,7 @@ export function PlaylistCard({
               }}
               aria-label={`Rename ${playlist.name}`}
               title="Rename playlist"
-              className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/15 text-gray-400 hover:text-white flex items-center justify-center transition"
+              className="w-7 h-7 rounded-lg bg-white/[0.04] hover:bg-white/15 text-gray-400 hover:text-white flex items-center justify-center transition active:scale-90"
             >
               <Pencil className="w-3.5 h-3.5" />
             </button>
@@ -104,7 +166,7 @@ export function PlaylistCard({
               }}
               aria-label={`Delete ${playlist.name}`}
               title="Delete playlist"
-              className="w-7 h-7 rounded-lg bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 flex items-center justify-center transition"
+              className="w-7 h-7 rounded-lg bg-white/[0.04] hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 flex items-center justify-center transition active:scale-90"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>

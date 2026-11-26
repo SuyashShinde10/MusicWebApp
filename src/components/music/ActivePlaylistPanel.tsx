@@ -57,7 +57,7 @@ export function ActivePlaylistPanel({
   return (
     <section
       aria-label={`Playlist ${playlist.name}`}
-      className="rounded-3xl bg-surface-card/70 border border-white/10 p-4 sm:p-5 space-y-4 min-w-0"
+      className="rounded-2xl bg-[#141821]/85 border border-white/[0.06] p-4 sm:p-5 space-y-4 min-w-0"
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
         <div className="min-w-0">

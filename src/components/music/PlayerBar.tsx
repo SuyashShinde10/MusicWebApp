@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  Disc3,
   Heart,
   ListMusic,
   Pause,
@@ -14,8 +13,10 @@ import {
   VolumeX,
 } from 'lucide-react';
 import type { Song } from '../../types/music';
-import { formatDuration, getSongGradient } from '../../utils/formatters';
+import { formatDuration } from '../../utils/formatters';
+import { animateMicroPop } from '../../utils/gsapAnimations';
 import { ElasticSlider, SloshGauge } from '../reactbits';
+import { AlbumArt } from './AlbumArt';
 
 export interface PlayerBarProps {
   currentSong: Song | null;
@@ -62,9 +63,10 @@ export function PlayerBar({
 }: PlayerBarProps) {
   const [isVolumeOpen, setIsVolumeOpen] = useState(false);
   const volumeBoxRef = useRef<HTMLDivElement>(null);
+  const desktopLikeRef = useRef<HTMLButtonElement>(null);
+  const desktopPlayRef = useRef<HTMLButtonElement>(null);
 
   const duration = currentSong?.duration ?? 0;
-  const gradient = currentSong ? getSongGradient(currentSong) : 'from-slate-700 to-slate-900';
   const volumePercent = Math.round(volume * 100);
 
   useEffect(() => {
@@ -90,25 +92,22 @@ export function PlayerBar({
   return (
     <footer
       aria-label="Now Playing"
-      className="fixed bottom-[70px] md:bottom-0 left-3 right-3 md:left-0 md:right-0 z-40"
+      className="fixed bottom-[68px] md:bottom-0 left-3 right-3 md:left-0 md:right-0 z-40"
     >
       {/* Mobile Compact Floating Player (< md) */}
-      <div className="md:hidden relative bg-surface-card/95 backdrop-blur-xl border border-white/10 rounded-2xl p-2.5 shadow-floating-player space-y-1">
+      <div className="md:hidden relative bg-[#12161f]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-2.5 shadow-floating-player space-y-1">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
-            <div
-              className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${gradient} flex items-center justify-center shrink-0 border border-white/10`}
-            >
-              <Disc3
-                className={`w-5 h-5 text-white ${isPlaying && currentSong ? 'animate-spin' : ''}`}
-                style={{ animationDuration: '5s' }}
-              />
-            </div>
+            {currentSong ? (
+              <AlbumArt song={currentSong} isPlaying={isPlaying} size="sm" />
+            ) : (
+              <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 shrink-0" />
+            )}
             <div className="min-w-0">
-              <p className="text-xs font-bold text-white truncate">
+              <p className="text-xs font-semibold text-white truncate">
                 {currentSong ? currentSong.title : 'Nothing playing'}
               </p>
-              <p className="text-[11px] text-brand-400 font-medium truncate">
+              <p className="text-[11px] text-gray-400 truncate">
                 {currentSong ? currentSong.artist : 'Choose a song from library'}
               </p>
             </div>
@@ -120,7 +119,7 @@ export function PlayerBar({
               onClick={onPrev}
               disabled={!currentSong || !hasPrev}
               aria-label="Previous track"
-              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-white disabled:opacity-30 transition"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-white disabled:opacity-30 transition active:scale-90"
             >
               <SkipBack className="w-4 h-4 fill-current" />
             </button>
@@ -129,7 +128,7 @@ export function PlayerBar({
               onClick={onTogglePlay}
               disabled={!currentSong}
               aria-label={isPlaying ? 'Pause' : 'Play'}
-              className="w-9 h-9 rounded-full bg-brand-500 text-white flex items-center justify-center shadow-glow-sm active:scale-95 disabled:opacity-40 transition"
+              className="w-9 h-9 rounded-full bg-brand-500 text-white flex items-center justify-center shadow-glow-sm active:scale-90 disabled:opacity-40 transition"
             >
               {isPlaying ? (
                 <Pause className="w-4 h-4 fill-current" />
@@ -142,14 +141,13 @@ export function PlayerBar({
               onClick={onNext}
               disabled={!currentSong || !hasNext}
               aria-label="Next track"
-              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-white disabled:opacity-30 transition"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-white disabled:opacity-30 transition active:scale-90"
             >
               <SkipForward className="w-4 h-4 fill-current" />
             </button>
           </div>
         </div>
 
-        {/* Mobile Elastic Scrubber */}
         <div className="flex items-center gap-2 px-1">
           <span className="text-[10px] font-mono text-gray-400 tabular-nums">
             {formatDuration(elapsedSeconds)}
@@ -166,7 +164,7 @@ export function PlayerBar({
               thickness={4}
               activeThickness={8}
               restOpacity={0.95}
-              maxStretch={16}
+              maxStretch={14}
               bounce={0.4}
               trackColor="rgba(255, 255, 255, 0.14)"
               rangeColor="#ff5722"
@@ -182,24 +180,21 @@ export function PlayerBar({
       </div>
 
       {/* Tablet & Desktop Full Player Dock (>= md) */}
-      <div className="hidden md:flex h-24 bg-surface-sidebar/95 backdrop-blur-2xl border-t border-white/10 px-6 items-center justify-between gap-6 shadow-2xl">
+      <div className="hidden md:flex h-24 bg-[#0f131b]/95 backdrop-blur-2xl border-t border-white/[0.08] px-6 items-center justify-between gap-6 shadow-2xl">
         {/* Left: Track Info */}
         <div className="flex items-center gap-3.5 w-1/4 min-w-[200px]">
-          <div
-            className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${gradient} flex items-center justify-center shadow-lg shrink-0 border border-white/10`}
-          >
-            <Disc3
-              className={`w-6 h-6 text-white ${isPlaying && currentSong ? 'animate-spin' : ''}`}
-              style={{ animationDuration: '6s' }}
-            />
-          </div>
+          {currentSong ? (
+            <AlbumArt song={currentSong} isPlaying={isPlaying} size="md" />
+          ) : (
+            <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 shrink-0" />
+          )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h4 className="text-sm font-bold text-white truncate">
+              <h4 className="text-sm font-semibold text-white truncate">
                 {currentSong ? currentSong.title : 'Select a track'}
               </h4>
               {currentSong && (
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-white/10 text-gray-300 uppercase shrink-0">
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-white/[0.08] text-gray-300 uppercase shrink-0">
                   HD
                 </span>
               )}
@@ -211,8 +206,12 @@ export function PlayerBar({
             </p>
           </div>
           <button
+            ref={desktopLikeRef}
             type="button"
-            onClick={onToggleLike}
+            onClick={() => {
+              if (desktopLikeRef.current) animateMicroPop(desktopLikeRef.current);
+              onToggleLike();
+            }}
             disabled={!currentSong}
             aria-label={isLiked ? 'Unlike song' : 'Like song'}
             className={`p-2 rounded-full transition disabled:opacity-30 ${
@@ -231,7 +230,7 @@ export function PlayerBar({
               onClick={onToggleShuffle}
               aria-label="Toggle shuffle"
               aria-pressed={isShuffle}
-              className={`transition p-1 ${
+              className={`transition p-1 active:scale-90 ${
                 isShuffle ? 'text-brand-400' : 'text-gray-400 hover:text-white'
               }`}
               title="Shuffle"
@@ -244,16 +243,20 @@ export function PlayerBar({
               disabled={!currentSong || !hasPrev}
               aria-label="Previous track"
               title="Previous"
-              className="text-gray-200 hover:text-white disabled:opacity-30 transition p-1"
+              className="text-gray-200 hover:text-white disabled:opacity-30 transition p-1 active:scale-90"
             >
               <SkipBack className="w-4 h-4 fill-current" />
             </button>
             <button
+              ref={desktopPlayRef}
               type="button"
-              onClick={onTogglePlay}
+              onClick={() => {
+                if (desktopPlayRef.current) animateMicroPop(desktopPlayRef.current);
+                onTogglePlay();
+              }}
               disabled={!currentSong}
               aria-label={isPlaying ? 'Pause' : 'Play'}
-              className="w-11 h-11 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center shadow-glow-coral transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
+              className="w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center shadow-glow-sm transition-all hover:scale-105 active:scale-90 disabled:opacity-40"
             >
               {isPlaying ? (
                 <Pause className="w-4 h-4 fill-current" />
@@ -267,7 +270,7 @@ export function PlayerBar({
               disabled={!currentSong || !hasNext}
               aria-label="Next track"
               title="Next"
-              className="text-gray-200 hover:text-white disabled:opacity-30 transition p-1"
+              className="text-gray-200 hover:text-white disabled:opacity-30 transition p-1 active:scale-90"
             >
               <SkipForward className="w-4 h-4 fill-current" />
             </button>
@@ -276,7 +279,7 @@ export function PlayerBar({
               onClick={onToggleRepeat}
               aria-label="Toggle repeat"
               aria-pressed={isRepeat}
-              className={`transition p-1 ${
+              className={`transition p-1 active:scale-90 ${
                 isRepeat ? 'text-brand-400' : 'text-gray-400 hover:text-white'
               }`}
               title="Repeat"
@@ -326,7 +329,7 @@ export function PlayerBar({
             onClick={onOpenPlaylistManager}
             aria-label="Open Playlist Manager"
             title="Playlist Manager"
-            className="text-gray-400 hover:text-white transition p-2 rounded-xl hover:bg-white/5"
+            className="text-gray-400 hover:text-white transition p-2 rounded-xl hover:bg-white/5 active:scale-90"
           >
             <ListMusic className="w-4 h-4" />
           </button>
@@ -338,10 +341,10 @@ export function PlayerBar({
               aria-label={`Volume ${volumePercent}%`}
               aria-expanded={isVolumeOpen}
               title="Adjust volume"
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold transition ${
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold transition active:scale-95 ${
                 isVolumeOpen
-                  ? 'bg-brand-500/20 border-brand-500/40 text-brand-400'
-                  : 'bg-surface-card hover:bg-surface-cardHover border-white/10 text-gray-300 hover:text-white'
+                  ? 'bg-brand-500/15 border-brand-500/40 text-brand-400'
+                  : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/[0.08] text-gray-300 hover:text-white'
               }`}
             >
               <VolumeIcon className="w-4 h-4" />
@@ -352,7 +355,7 @@ export function PlayerBar({
               <div
                 role="dialog"
                 aria-label="Volume control"
-                className="absolute bottom-full right-0 mb-3 p-3.5 rounded-2xl bg-surface-card/95 backdrop-blur-xl border border-white/15 shadow-2xl flex flex-col items-center gap-2.5 z-50"
+                className="absolute bottom-full right-0 mb-3 p-3.5 rounded-2xl bg-[#141821]/95 backdrop-blur-xl border border-white/15 shadow-2xl flex flex-col items-center gap-2.5 z-50"
               >
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
                   Volume
@@ -363,7 +366,7 @@ export function PlayerBar({
                   interactive
                   showValue
                   liquidColor="#ff5722"
-                  glassColor="#12161f"
+                  glassColor="#0f131b"
                   width={68}
                   height={144}
                   radius={16}

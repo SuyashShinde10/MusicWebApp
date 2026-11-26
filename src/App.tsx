@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import gsap from 'gsap';
 import {
   AudioLines,
   Home,
   LayoutGrid,
   List,
   ListMusic,
+  Menu,
   Music,
+  PanelLeftClose,
+  PanelLeftOpen,
   Plus,
   Search,
   Sparkles,
@@ -37,6 +41,7 @@ import {
 } from './services/playlistStorage';
 import { fetchSongs } from './services/songService';
 import type { AppSection, Playlist, Song, SongId, ToastItem } from './types/music';
+import { animateStaggerIn, prefersReducedMotion } from './utils/gsapAnimations';
 import {
   addSongToPlaylist,
   computeTotalDuration,
@@ -53,17 +58,25 @@ import {
 
 type QueueSource = { type: 'library' } | { type: 'playlist'; playlistId: string };
 
+const NAV_ITEMS = [
+  { id: 'home', label: 'Home', Icon: Home },
+  { id: 'library', label: 'Song Library', Icon: Music },
+  { id: 'playlists', label: 'Playlists', Icon: ListMusic },
+] as const;
+
 export function App() {
   // Library state
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoadingSongs, setIsLoadingSongs] = useState(true);
   const [songsError, setSongsError] = useState<string | null>(null);
 
-  // Filters & view state
+  // Filters, navigation & sidebar state
   const [activeSection, setActiveSection] = useState<AppSection>('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [libraryLayout, setLibraryLayout] = useState<'grid' | 'list'>('grid');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Playlists & persistence
   const [playlists, setPlaylists] = useState<Playlist[]>(() => loadPlaylists());
@@ -99,6 +112,9 @@ export function App() {
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const librarySectionRef = useRef<HTMLElement>(null);
+  const mainWorkspaceRef = useRef<HTMLElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
   const toastTimerRef = useRef<number | null>(null);
 
   const showToast = useCallback(
@@ -146,6 +162,42 @@ export function App() {
     saveLikedSongIds(likedSongIds);
   }, [likedSongIds]);
 
+  // GSAP: Smooth sidebar collapse/expand width transition
+  useEffect(() => {
+    if (!sidebarRef.current) return;
+    if (prefersReducedMotion()) {
+      sidebarRef.current.style.width = isSidebarCollapsed ? '78px' : '256px';
+      return;
+    }
+    gsap.to(sidebarRef.current, {
+      width: isSidebarCollapsed ? 78 : 256,
+      duration: 0.3,
+      ease: 'power3.inOut',
+    });
+  }, [isSidebarCollapsed]);
+
+  // GSAP: Mobile drawer entrance animation
+  useEffect(() => {
+    if (!isMobileMenuOpen || !mobileDrawerRef.current || prefersReducedMotion()) return;
+    gsap.fromTo(
+      mobileDrawerRef.current,
+      { x: '-100%' },
+      { x: '0%', duration: 0.28, ease: 'power3.out', clearProps: 'transform' }
+    );
+  }, [isMobileMenuOpen]);
+
+  // GSAP: Section transition choreography
+  useEffect(() => {
+    if (!mainWorkspaceRef.current || prefersReducedMotion()) return;
+    const ctx = gsap.context(() => {
+      const blocks = mainWorkspaceRef.current?.querySelectorAll(':scope > section');
+      if (blocks && blocks.length > 0) {
+        animateStaggerIn(blocks, { y: 12, duration: 0.36, stagger: 0.06 });
+      }
+    }, mainWorkspaceRef);
+    return () => ctx.revert();
+  }, [activeSection]);
+
   // Derived maps & lists
   const songsById = useMemo(() => {
     const map = new Map<SongId, Song>();
@@ -161,6 +213,18 @@ export function App() {
     () => filterSongs(songs, searchQuery, selectedGenre),
     [songs, searchQuery, selectedGenre]
   );
+
+  // GSAP: Stagger song cards when library finishes loading or genre changes
+  useEffect(() => {
+    if (isLoadingSongs || libraryLayout !== 'grid' || prefersReducedMotion()) return;
+    const ctx = gsap.context(() => {
+      const cards = librarySectionRef.current?.querySelectorAll('.song-card-anim');
+      if (cards && cards.length > 0) {
+        animateStaggerIn(cards, { y: 14, duration: 0.36, stagger: 0.03 });
+      }
+    }, librarySectionRef);
+    return () => ctx.revert();
+  }, [isLoadingSongs, selectedGenre, libraryLayout]);
 
   const activePlaylist = useMemo(
     () => playlists.find((p) => p.id === activePlaylistId) ?? playlists[0] ?? null,
@@ -273,9 +337,13 @@ export function App() {
     return () => window.clearInterval(interval);
   }, [isPlaying, currentSong, isRepeat, playNext]);
 
-  // Global keyboard shortcuts (Cmd/Ctrl+K search, Space play/pause)
+  // Global keyboard shortcuts (Cmd/Ctrl+K search, Space play/pause, Escape close mobile menu)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+        return;
+      }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         searchInputRef.current?.focus();
@@ -294,7 +362,7 @@ export function App() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSong]);
+  }, [currentSong, isMobileMenuOpen]);
 
   // Playlist CRUD handlers
   const handleCreateOrRenamePlaylist = (name: string) => {
@@ -390,71 +458,126 @@ export function App() {
     : false;
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-surface-base text-gray-200 flex">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-surface-base text-gray-200 flex relative">
+      {/* Subtle Studio Ambient Lighting */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 top-0 h-[420px] z-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 65% 55% at 55% -10%, rgba(255, 87, 34, 0.085), transparent 72%)',
+        }}
+      />
+
       {/* Desktop Sidebar (lg+) */}
-      <aside className="hidden lg:flex w-64 bg-surface-sidebar border-r border-white/10 flex-col justify-between shrink-0 sticky top-0 h-screen pb-24">
-        <div className="p-5 flex flex-col gap-6 overflow-y-auto no-scrollbar">
-          {/* Brand Logo */}
-          <div className="flex items-center gap-3 px-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center shadow-glow-sm text-white shrink-0">
-              <AudioLines className="w-5 h-5" />
+      <aside
+        ref={sidebarRef}
+        style={{ width: 256 }}
+        className="hidden lg:flex bg-[#0f131b] border-r border-white/[0.07] flex-col justify-between shrink-0 sticky top-0 h-screen pb-24 z-20 overflow-hidden"
+      >
+        <div className="p-4 flex flex-col gap-5 overflow-y-auto no-scrollbar">
+          {/* Brand Header + Menu Toggle Button */}
+          <div
+            className={`flex items-center ${
+              isSidebarCollapsed ? 'flex-col gap-3 justify-center' : 'justify-between gap-2'
+            } px-1`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center shadow-glow-sm text-white shrink-0">
+                <AudioLines className="w-4 h-4" />
+              </div>
+              {!isSidebarCollapsed && (
+                <span className="text-[19px] font-bold tracking-tight text-white truncate">
+                  Rhythmo<span className="text-brand-400">Tune</span>
+                </span>
+              )}
             </div>
-            <span className="text-xl font-extrabold tracking-tight text-white">
-              Rhythmo<span className="text-brand-400">Tune</span>
-            </span>
+
+            <button
+              type="button"
+              onClick={() => setIsSidebarCollapsed((prev) => !prev)}
+              aria-label={isSidebarCollapsed ? 'Expand sidebar menu' : 'Collapse sidebar menu'}
+              aria-expanded={!isSidebarCollapsed}
+              title={isSidebarCollapsed ? 'Expand menu' : 'Collapse menu'}
+              className="w-8 h-8 rounded-lg bg-white/[0.04] hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+            >
+              {isSidebarCollapsed ? (
+                <PanelLeftOpen className="w-4 h-4" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4" />
+              )}
+            </button>
           </div>
 
-          {/* Primary Nav */}
-          <nav aria-label="Main navigation" className="flex flex-col gap-1.5">
-            {(
-              [
-                { id: 'home', label: 'Home', Icon: Home },
-                { id: 'library', label: 'Song Library', Icon: Music },
-                { id: 'playlists', label: 'Playlists', Icon: ListMusic },
-              ] as const
-            ).map(({ id, label, Icon }) => {
+          {/* Primary Nav (clean, borderless studio rows with left active bar) */}
+          <nav aria-label="Main navigation" className="flex flex-col gap-1">
+            {NAV_ITEMS.map(({ id, label, Icon }) => {
               const active = activeSection === id;
               return (
                 <button
                   key={id}
                   type="button"
                   onClick={() => setActiveSection(id)}
-                  className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-semibold transition text-left ${
+                  title={isSidebarCollapsed ? label : undefined}
+                  aria-label={isSidebarCollapsed ? label : undefined}
+                  className={`relative flex items-center ${
+                    isSidebarCollapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'
+                  } rounded-xl text-[13.5px] font-medium transition-colors text-left ${
                     active
-                      ? 'bg-surface-pill text-white border border-white/10 shadow-inner'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-white/[0.08] text-white font-semibold'
+                      : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${active ? 'text-brand-400' : ''}`} />
-                  <span>{label}</span>
+                  {active && !isSidebarCollapsed && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-brand-500"
+                    />
+                  )}
+                  <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-brand-400' : ''}`} />
+                  {!isSidebarCollapsed && <span className="truncate">{label}</span>}
                 </button>
               );
             })}
           </nav>
 
           {/* Sidebar Playlists */}
-          <div className="pt-4 border-t border-white/10 space-y-3">
-            <div className="flex items-center justify-between px-1">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                Playlists ({playlists.length})
-              </span>
+          <div className="pt-4 border-t border-white/[0.06] space-y-2.5">
+            {!isSidebarCollapsed ? (
+              <div className="flex items-center justify-between px-1.5">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+                  Playlists · {playlists.length}
+                </span>
+                <button
+                  type="button"
+                  onClick={openCreateModal}
+                  aria-label="Create new playlist"
+                  title="Create new playlist"
+                  className="w-6 h-6 rounded-md hover:bg-brand-500 text-gray-400 hover:text-white flex items-center justify-center transition active:scale-90"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
               <button
                 type="button"
                 onClick={openCreateModal}
                 aria-label="Create new playlist"
                 title="Create new playlist"
-                className="w-7 h-7 rounded-lg bg-white/5 hover:bg-brand-500 text-gray-300 hover:text-white flex items-center justify-center transition"
+                className="w-10 h-10 mx-auto rounded-xl bg-white/[0.05] hover:bg-brand-500 text-gray-300 hover:text-white flex items-center justify-center transition active:scale-90"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-4 h-4" />
               </button>
-            </div>
+            )}
 
             {playlists.length === 0 ? (
-              <p className="text-xs text-gray-500 px-1">
-                No playlists yet. Click + to create one.
-              </p>
+              !isSidebarCollapsed && (
+                <p className="text-xs text-gray-500 px-1.5">
+                  No playlists yet. Click + to create one.
+                </p>
+              )
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {playlists.map((pl) => (
                   <PlaylistCard
                     key={pl.id}
@@ -462,6 +585,7 @@ export function App() {
                     totalDurationSeconds={getPlaylistDuration(pl)}
                     isActive={activePlaylist?.id === pl.id}
                     compact
+                    collapsed={isSidebarCollapsed}
                     onSelect={(id) => {
                       setActivePlaylistId(id);
                       setActiveSection('playlists');
@@ -473,32 +597,150 @@ export function App() {
           </div>
         </div>
 
-        <div className="p-4 border-t border-white/10">
+        <div className="p-3.5 border-t border-white/[0.06]">
           <Button
-            variant="outline"
-            size="md"
-            className="w-full"
+            variant="secondary"
+            size={isSidebarCollapsed ? 'icon' : 'md'}
+            className={isSidebarCollapsed ? 'mx-auto flex' : 'w-full'}
+            title="Playlist Manager"
+            aria-label="Playlist Manager"
             leftIcon={<ListMusic className="w-4 h-4 text-brand-400" />}
             onClick={() => setIsManagerOpen(true)}
           >
-            Playlist Manager
+            {!isSidebarCollapsed && 'Playlist Manager'}
           </Button>
         </div>
       </aside>
 
-      {/* Main Content Shell */}
-      <div className="flex-1 flex flex-col min-w-0 pb-40 md:pb-28">
-        {/* Sticky Top Header */}
-        <header className="sticky top-0 z-30 bg-surface-base/90 backdrop-blur-xl border-b border-white/10 px-4 sm:px-6 lg:px-8 py-3.5">
-          <div className="flex items-center justify-between gap-3">
-            {/* Mobile / Tablet Brand Logo */}
-            <div className="flex lg:hidden items-center gap-2 shrink-0">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center shadow-glow-sm text-white">
-                <AudioLines className="w-4 h-4" />
+      {/* Mobile / Tablet Slide-over Navigation Drawer (< lg) */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-50 lg:hidden bg-black/70 backdrop-blur-sm flex"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <div
+            ref={mobileDrawerRef}
+            role="dialog"
+            aria-label="Navigation menu"
+            className="w-72 max-w-[82vw] h-full bg-[#0f131b] border-r border-white/10 p-5 flex flex-col justify-between shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="space-y-6 overflow-y-auto no-scrollbar">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white">
+                    <AudioLines className="w-4 h-4" />
+                  </div>
+                  <span className="text-lg font-bold tracking-tight text-white">
+                    Rhythmo<span className="text-brand-400">Tune</span>
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  aria-label="Close navigation menu"
+                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 flex items-center justify-center"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <span className="text-base sm:text-lg font-extrabold tracking-tight text-white">
-                Rhythmo<span className="text-brand-400">Tune</span>
-              </span>
+
+              <nav className="flex flex-col gap-1">
+                {NAV_ITEMS.map(({ id, label, Icon }) => {
+                  const active = activeSection === id;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => {
+                        setActiveSection(id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
+                        active ? 'bg-white/[0.08] text-white' : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      <Icon className={`w-4 h-4 ${active ? 'text-brand-400' : ''}`} />
+                      <span>{label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              <div className="pt-4 border-t border-white/[0.07] space-y-2.5">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    Playlists ({playlists.length})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      openCreateModal();
+                    }}
+                    className="text-xs font-semibold text-brand-400"
+                  >
+                    + New
+                  </button>
+                </div>
+                <div className="space-y-1">
+                  {playlists.map((pl) => (
+                    <PlaylistCard
+                      key={pl.id}
+                      playlist={pl}
+                      totalDurationSeconds={getPlaylistDuration(pl)}
+                      isActive={activePlaylist?.id === pl.id}
+                      compact
+                      onSelect={(id) => {
+                        setActivePlaylistId(id);
+                        setActiveSection('playlists');
+                        setIsMobileMenuOpen(false);
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <Button
+              variant="secondary"
+              size="md"
+              className="w-full"
+              leftIcon={<ListMusic className="w-4 h-4 text-brand-400" />}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setIsManagerOpen(true);
+              }}
+            >
+              Playlist Manager
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Shell */}
+      <div className="flex-1 flex flex-col min-w-0 pb-40 md:pb-28 relative z-10">
+        {/* Sticky Top Header */}
+        <header className="sticky top-0 z-30 bg-surface-base/85 backdrop-blur-xl border-b border-white/[0.06] px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex items-center justify-between gap-3">
+            {/* Mobile / Tablet Menu Button + Brand Logo */}
+            <div className="flex lg:hidden items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(true)}
+                aria-label="Open navigation menu"
+                className="w-9 h-9 rounded-xl bg-white/[0.05] hover:bg-white/10 text-gray-200 flex items-center justify-center transition active:scale-90"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white">
+                  <AudioLines className="w-4 h-4" />
+                </div>
+                <span className="text-base sm:text-lg font-bold tracking-tight text-white">
+                  Rhythmo<span className="text-brand-400">Tune</span>
+                </span>
+              </div>
             </div>
 
             {/* Search Input */}
@@ -579,7 +821,10 @@ export function App() {
         </header>
 
         {/* Main Scrollable Workspace */}
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-5 space-y-7 min-w-0 max-w-7xl w-full mx-auto">
+        <main
+          ref={mainWorkspaceRef}
+          className="flex-1 px-4 sm:px-6 lg:px-8 py-6 space-y-8 min-w-0 max-w-7xl w-full mx-auto"
+        >
           {/* Featured Showcase (Home view) */}
           {activeSection === 'home' && !isLoadingSongs && !songsError && songs.length > 0 && (
             <FeaturedShowcase
@@ -613,7 +858,7 @@ export function App() {
                   onAction={openCreateModal}
                 />
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {playlists.slice(0, 4).map((pl) => (
                     <PlaylistCard
                       key={pl.id}
@@ -637,21 +882,21 @@ export function App() {
             <section ref={librarySectionRef} aria-label="Song Library" className="space-y-4 min-w-0">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-base sm:text-lg font-extrabold text-white tracking-tight">
+                  <div className="flex items-center gap-2.5">
+                    <h2 className="text-lg font-bold text-white tracking-tight">
                       {activeSection === 'library' ? 'Song Library' : 'Popular & Library Tracks'}
                     </h2>
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/5 text-gray-300 border border-white/10">
+                    <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-md bg-white/[0.06] text-gray-300">
                       {filteredSongs.length}
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Filter by genre, search by title/artist, or add tracks to a playlist
+                    Browse by genre, search instantly, or add tracks to your playlists
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2 self-start sm:self-auto">
-                  <div className="inline-flex rounded-xl bg-surface-card border border-white/10 p-1">
+                  <div className="inline-flex rounded-xl bg-[#141821] border border-white/[0.08] p-1">
                     <button
                       type="button"
                       onClick={() => setLibraryLayout('grid')}
@@ -687,7 +932,7 @@ export function App() {
                 <div
                   role="tablist"
                   aria-label="Filter by genre"
-                  className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"
+                  className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1"
                 >
                   {genres.map((genre) => {
                     const active = selectedGenre === genre;
@@ -698,10 +943,10 @@ export function App() {
                         role="tab"
                         aria-selected={active}
                         onClick={() => setSelectedGenre(genre)}
-                        className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition shrink-0 ${
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-150 shrink-0 active:scale-95 ${
                           active
-                            ? 'bg-brand-500 text-white shadow-glow-sm'
-                            : 'bg-surface-card hover:bg-surface-cardHover text-gray-300 border border-white/5'
+                            ? 'bg-brand-500 text-white shadow-glow-sm font-semibold'
+                            : 'bg-white/[0.04] hover:bg-white/[0.08] text-gray-300'
                         }`}
                       >
                         {genre}
@@ -777,12 +1022,12 @@ export function App() {
             </section>
           )}
 
-          {/* Active Playlist Section (always shown on Playlists view, and shown on Home view below library for quick management) */}
+          {/* Active Playlist Section */}
           {(activeSection === 'playlists' || activeSection === 'home') && (
             <section aria-label="Playlists Workspace" className="space-y-4 min-w-0">
               <div className="flex items-center justify-between gap-2">
                 <div>
-                  <h2 className="text-base sm:text-lg font-extrabold text-white tracking-tight">
+                  <h2 className="text-lg font-bold text-white tracking-tight">
                     {activeSection === 'playlists' ? 'Your Playlists' : 'Manage Active Playlist'}
                   </h2>
                   <p className="text-xs text-gray-400 mt-0.5">
@@ -869,27 +1114,23 @@ export function App() {
       {/* Mobile Bottom Navigation (< md) */}
       <nav
         aria-label="Mobile navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-surface-base/95 backdrop-blur-2xl border-t border-white/10 z-30 px-4 flex items-center justify-around"
+        className="md:hidden fixed bottom-0 left-0 right-0 h-[62px] bg-[#0f131b]/95 backdrop-blur-2xl border-t border-white/[0.08] z-30 px-4 flex items-center justify-around"
       >
-        {(
-          [
-            { id: 'home', label: 'Home', Icon: Home },
-            { id: 'library', label: 'Library', Icon: Music },
-            { id: 'playlists', label: 'Playlists', Icon: ListMusic },
-          ] as const
-        ).map(({ id, label, Icon }) => {
+        {NAV_ITEMS.map(({ id, label, Icon }) => {
           const active = activeSection === id;
           return (
             <button
               key={id}
               type="button"
               onClick={() => setActiveSection(id)}
-              className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
+              className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition active:scale-95 ${
                 active ? 'text-brand-400' : 'text-gray-400 hover:text-white'
               }`}
             >
               <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-semibold">{label}</span>
+              <span className="text-[10px] font-semibold">
+                {id === 'library' ? 'Library' : label}
+              </span>
             </button>
           );
         })}

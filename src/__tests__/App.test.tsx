@@ -26,7 +26,7 @@ describe('RhythmoTune App Integration', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    const library = screen.getByLabelText('Song Library');
+    const library = screen.getByRole('region', { name: 'Song Library' });
     expect(await within(library).findByText('Golden Days')).toBeInTheDocument();
     expect(within(library).getByText('3:24')).toBeInTheDocument();
 
@@ -48,7 +48,7 @@ describe('RhythmoTune App Integration', () => {
     const user = userEvent.setup();
     const { unmount } = render(<App />);
 
-    const library = screen.getByLabelText('Song Library');
+    const library = screen.getByRole('region', { name: 'Song Library' });
     await within(library).findByText('Golden Days');
 
     // Open Create Playlist modal from header
@@ -111,7 +111,7 @@ describe('RhythmoTune App Integration', () => {
     // Verify localStorage survives a simulated refresh (unmount + remount)
     unmount();
     render(<App />);
-    await within(screen.getByLabelText('Song Library')).findByText('Golden Days');
+    await within(screen.getByRole('region', { name: 'Song Library' })).findByText('Golden Days');
     expect(screen.getByLabelText('Playlist Weekend Drive')).toBeInTheDocument();
     expect(
       within(screen.getByLabelText('Playlist Weekend Drive')).getAllByText('2 songs · 8 min').length
@@ -134,7 +134,7 @@ describe('RhythmoTune App Integration', () => {
     mockedAxios.get.mockRejectedValueOnce(new Error('Network error'));
 
     render(<App />);
-    const library = screen.getByLabelText('Song Library');
+    const library = screen.getByRole('region', { name: 'Song Library' });
     expect(await within(library).findByText('Could not load songs')).toBeInTheDocument();
 
     mockedAxios.get.mockResolvedValueOnce({ data: MOCK_SONGS });
@@ -161,5 +161,11 @@ describe('RhythmoTune App Integration', () => {
     expect(within(volumeDialog).getByRole('slider', { name: 'Volume' })).toBeInTheDocument();
     await user.click(within(volumeDialog).getByRole('button', { name: 'Mute' }));
     expect(within(playerBar).getByRole('button', { name: /volume 0%/i })).toBeInTheDocument();
+    // Verify sidebar menu button toggles collapsed/expanded state
+    const collapseBtn = screen.getByRole('button', { name: 'Collapse sidebar menu' });
+    await user.click(collapseBtn);
+    expect(screen.getByRole('button', { name: 'Expand sidebar menu' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Expand sidebar menu' }));
+    expect(screen.getByRole('button', { name: 'Collapse sidebar menu' })).toBeInTheDocument();
   });
 });
