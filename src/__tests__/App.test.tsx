@@ -1,0 +1,157 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import axios from 'axios';
+import { App } from '../App';
+import type { Song } from '../types/music';
+
+vi.mock('axios');
+const mockedAxios = vi.mocked(axios, true);
+
+const MOCK_SONGS: Song[] = [
+  { id: 1, title: 'Golden Days', artist: 'Felix Carter', genre: 'Relax', duration: 204 },
+  { id: 2, title: 'Fading Horizon', artist: 'Ella Hunt', genre: 'Energetic', duration: 165 },
+  { id: 3, title: 'Waves of Time', artist: 'Lena Rivers', genre: 'Sad', duration: 252 },
+  { id: 4, title: 'Electric Dreams', artist: 'Mio Lovell', genre: 'Party', duration: 188 },
+];
+
+describe('RhythmoTune App Integration', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    vi.clearAllMocks();
+    mockedAxios.get.mockResolvedValue({ data: MOCK_SONGS });
+  });
+
+  it('loads songs via Axios and renders formatted durations, search, and genre filters', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const library = screen.getByLabelText('Song Library');
+    expect(await within(library).findByText('Golden Days')).toBeInTheDocument();
+    expect(within(library).getByText('3:24')).toBeInTheDocument();
+
+    // Filter by genre
+    await user.click(within(library).getByRole('tab', { name: 'Party' }));
+    expect(within(library).getByText('Electric Dreams')).toBeInTheDocument();
+    expect(within(library).queryByText('Golden Days')).not.toBeInTheDocument();
+
+    // Search producing "No matching songs found" state and reset
+    const searchInputs = screen.getAllByLabelText('Search songs');
+    await user.type(searchInputs[0]!, 'nonexistent-track-xyz');
+    expect(within(library).getByText('No matching songs found')).toBeInTheDocument();
+
+    await user.click(within(library).getByRole('button', { name: 'Reset Filters' }));
+    expect(within(library).getByText('Golden Days')).toBeInTheDocument();
+  });
+
+  it('creates, renames, prevents duplicate songs, reorders, deletes playlists, and persists to localStorage', async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    const library = screen.getByLabelText('Song Library');
+    await within(library).findByText('Golden Days');
+
+    // Open Create Playlist modal from header
+    await user.click(screen.getAllByRole('button', { name: /new/i })[0]!);
+    const dialog = screen.getByRole('dialog');
+    const nameInput = within(dialog).getByLabelText(/playlist name/i);
+
+    // Try duplicate name validation
+    await user.type(nameInput, 'Vibes & Chill');
+    await user.click(within(dialog).getByRole('button', { name: 'Create Playlist' }));
+    expect(within(dialog).getByRole('alert')).toHaveTextContent(/already exists/i);
+
+    // Create a valid playlist
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Road Trip');
+    await user.click(within(dialog).getByRole('button', { name: 'Create Playlist' }));
+
+    // Active playlist should now be "Road Trip" with empty playlist state
+    const playlistSection = screen.getByLabelText('Playlist Road Trip');
+    expect(within(playlistSection).getByText('0 songs · 0 min')).toBeInTheDocument();
+    expect(within(playlistSection).getByText('Empty Playlist')).toBeInTheDocument();
+
+    // Add song "Waves of Time" via library button -> Add to playlist modal -> Road Trip
+    await user.click(
+      within(library).getByRole('button', { name: 'Add Waves of Time to playlist' })
+    );
+    const addDialog = screen.getByRole('dialog');
+    await user.click(within(addDialog).getByRole('button', { name: /road trip/i }));
+    // Verify duplicate prevention inside modal (now shows Added / disabled)
+    expect(within(addDialog).getByRole('button', { name: /road trip/i })).toBeDisabled();
+    await user.click(within(addDialog).getByRole('button', { name: 'Done' }));
+
+    // Add second song "Golden Days"
+    await user.click(
+      within(library).getByRole('button', { name: 'Add Golden Days to playlist' })
+    );
+    const addDialog2 = screen.getByRole('dialog');
+    await user.click(within(addDialog2).getByRole('button', { name: /road trip/i }));
+    await user.click(within(addDialog2).getByRole('button', { name: 'Done' }));
+
+    // Verify summary updates: 204 + 252 = 456s => 8 min
+    expect(within(playlistSection).getAllByText('2 songs · 8 min').length).toBeGreaterThan(0);
+
+    // Reorder: Move Golden Days up
+    await user.click(within(playlistSection).getByRole('button', { name: 'Move Golden Days up' }));
+    expect(
+      within(playlistSection).getByRole('button', { name: 'Move Golden Days up' })
+    ).toBeDisabled();
+
+    // Rename playlist
+    await user.click(within(playlistSection).getByRole('button', { name: 'Rename' }));
+    const renameDialog = screen.getByRole('dialog');
+    const renameInput = within(renameDialog).getByLabelText(/playlist name/i);
+    await user.clear(renameInput);
+    await user.type(renameInput, 'Weekend Drive');
+    await user.click(within(renameDialog).getByRole('button', { name: 'Save Name' }));
+
+    expect(screen.getByLabelText('Playlist Weekend Drive')).toBeInTheDocument();
+
+    // Verify localStorage survives a simulated refresh (unmount + remount)
+    unmount();
+    render(<App />);
+    await within(screen.getByLabelText('Song Library')).findByText('Golden Days');
+    expect(screen.getByLabelText('Playlist Weekend Drive')).toBeInTheDocument();
+    expect(
+      within(screen.getByLabelText('Playlist Weekend Drive')).getAllByText('2 songs · 8 min').length
+    ).toBeGreaterThan(0);
+
+    // Delete with confirmation modal
+    await user.click(
+      within(screen.getByLabelText('Playlist Weekend Drive')).getByRole('button', { name: 'Delete' })
+    );
+    const confirmDialog = screen.getByRole('dialog');
+    await user.click(within(confirmDialog).getByRole('button', { name: 'Delete Playlist' }));
+
+    await waitFor(() => {
+      expect(screen.queryByLabelText('Playlist Weekend Drive')).not.toBeInTheDocument();
+    });
+  }, 15000);
+
+  it('controls Now Playing bar (Play/Pause, Next, Previous) and handles Axios fetch error retry', async () => {
+    const user = userEvent.setup();
+    mockedAxios.get.mockRejectedValueOnce(new Error('Network error'));
+
+    render(<App />);
+    const library = screen.getByLabelText('Song Library');
+    expect(await within(library).findByText('Could not load songs')).toBeInTheDocument();
+
+    mockedAxios.get.mockResolvedValueOnce({ data: MOCK_SONGS });
+    await user.click(within(library).getByRole('button', { name: 'Retry' }));
+    expect(await within(library).findByText('Golden Days')).toBeInTheDocument();
+
+    const playerBar = screen.getByLabelText('Now Playing');
+    const playButtons = within(playerBar).getAllByRole('button', { name: 'Play' });
+    await user.click(playButtons[0]!);
+    expect(within(playerBar).getAllByRole('button', { name: 'Pause' }).length).toBeGreaterThan(0);
+
+    const nextButtons = within(playerBar).getAllByRole('button', { name: 'Next track' });
+    await user.click(nextButtons[0]!);
+    expect(within(playerBar).getAllByText('Fading Horizon').length).toBeGreaterThan(0);
+
+    const prevButtons = within(playerBar).getAllByRole('button', { name: 'Previous track' });
+    await user.click(prevButtons[0]!);
+    expect(within(playerBar).getAllByText('Golden Days').length).toBeGreaterThan(0);
+  });
+});
