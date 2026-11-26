@@ -107,6 +107,7 @@ export function App() {
   // Playback state
   const [currentSongId, setCurrentSongId] = useState<SongId | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlayerOpen, setIsPlayerOpen] = useState(true);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isShuffle, setIsShuffle] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
@@ -293,6 +294,7 @@ export function App() {
   // Playback navigation helpers
   const playSong = useCallback(
     (song: Song, source: QueueSource = { type: 'library' }) => {
+      setIsPlayerOpen(true);
       if (currentSongId === song.id) {
         setIsPlaying((prev) => !prev);
         return;
@@ -501,7 +503,9 @@ export function App() {
       <aside
         ref={sidebarRef}
         style={{ width: 240 }}
-        className="hidden lg:flex bg-white border-r border-slate-200/90 dark:bg-[#15171c] dark:border-white/[0.06] flex-col justify-between shrink-0 h-full pb-20 z-20 overflow-hidden transition-colors duration-200"
+        className={`hidden lg:flex bg-white border-r border-slate-200/90 dark:bg-[#15171c] dark:border-white/[0.06] flex-col justify-between shrink-0 h-full z-20 overflow-hidden transition-colors duration-200 ${
+          isPlayerOpen ? 'pb-20' : 'pb-2'
+        }`}
       >
         <div className="p-4 flex flex-col gap-5 overflow-y-auto no-scrollbar">
           {/* Brand Header + Menu Toggle Button */}
@@ -748,7 +752,11 @@ export function App() {
       )}
 
       {/* Main Content Shell */}
-      <div className="flex-1 flex flex-col min-w-0 lg:h-full lg:overflow-y-auto no-scrollbar pb-40 md:pb-24 relative z-10">
+      <div
+        className={`flex-1 flex flex-col min-w-0 lg:h-full lg:overflow-y-auto no-scrollbar relative z-10 ${
+          isPlayerOpen ? 'pb-40 md:pb-24' : 'pb-20 md:pb-6'
+        }`}
+      >
         {/* Sticky Top Header */}
         <header className="sticky top-0 z-30 bg-[#f6f7f9]/90 dark:bg-[#0b0d11]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-2.5 border-b border-slate-200/70 dark:border-white/[0.04] transition-colors duration-200">
           <div className="flex items-center justify-between gap-3 max-w-7xl mx-auto">
@@ -1178,6 +1186,7 @@ export function App() {
                 onPlayAll={(plId) => {
                   const first = activePlaylistSongs[0];
                   if (first) {
+                    setIsPlayerOpen(true);
                     setQueueSource({ type: 'playlist', playlistId: plId });
                     setCurrentSongId(first.id);
                     setElapsedSeconds(0);
@@ -1198,28 +1207,34 @@ export function App() {
       </div>
 
       {/* Persistent Now Playing Bar */}
-      <PlayerBar
-        currentSong={currentSong}
-        isPlaying={isPlaying}
-        elapsedSeconds={elapsedSeconds}
-        isShuffle={isShuffle}
-        isRepeat={isRepeat}
-        isLiked={isCurrentLiked}
-        volume={volume}
-        hasNext={playbackQueue.length > 0}
-        hasPrev={playbackQueue.length > 0}
-        isDark={isDark}
-        queueLabel={queueLabel}
-        onTogglePlay={() => setIsPlaying((prev) => !prev)}
-        onNext={playNext}
-        onPrev={playPrev}
-        onToggleShuffle={() => setIsShuffle((prev) => !prev)}
-        onToggleRepeat={() => setIsRepeat((prev) => !prev)}
-        onToggleLike={handleToggleLike}
-        onSeek={(sec) => setElapsedSeconds(sec)}
-        onVolumeChange={setVolume}
-        onOpenPlaylistManager={() => setIsManagerOpen(true)}
-      />
+      {isPlayerOpen && (
+        <PlayerBar
+          currentSong={currentSong}
+          isPlaying={isPlaying}
+          elapsedSeconds={elapsedSeconds}
+          isShuffle={isShuffle}
+          isRepeat={isRepeat}
+          isLiked={isCurrentLiked}
+          volume={volume}
+          hasNext={playbackQueue.length > 0}
+          hasPrev={playbackQueue.length > 0}
+          isDark={isDark}
+          queueLabel={queueLabel}
+          onTogglePlay={() => setIsPlaying((prev) => !prev)}
+          onNext={playNext}
+          onPrev={playPrev}
+          onToggleShuffle={() => setIsShuffle((prev) => !prev)}
+          onToggleRepeat={() => setIsRepeat((prev) => !prev)}
+          onToggleLike={handleToggleLike}
+          onSeek={(sec) => setElapsedSeconds(sec)}
+          onVolumeChange={setVolume}
+          onOpenPlaylistManager={() => setIsManagerOpen(true)}
+          onClose={() => {
+            setIsPlaying(false);
+            setIsPlayerOpen(false);
+          }}
+        />
+      )}
 
       {/* Mobile Bottom Navigation (< md) */}
       <nav

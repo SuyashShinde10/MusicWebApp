@@ -176,5 +176,11 @@ describe('RhythmoTune App Integration', () => {
     expect(screen.getByRole('button', { name: 'Switch to light mode' })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Switch to light mode' }));
     expect(document.documentElement.classList.contains('dark')).toBe(false);
+
+    // Verify PlayerBar X close button dismisses player and playing a song reopens it
+    await user.click(within(playerBar).getAllByRole('button', { name: 'Close player' })[0]!);
+    expect(screen.queryByLabelText('Now Playing')).not.toBeInTheDocument();
+    await user.click(within(library).getByRole('button', { name: 'Play Golden Days' }));
+    expect(screen.getByLabelText('Now Playing')).toBeInTheDocument();
   });
 });

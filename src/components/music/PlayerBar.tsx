@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
 import {
   Heart,
   ListMusic,
@@ -11,10 +12,11 @@ import {
   Volume1,
   Volume2,
   VolumeX,
+  X,
 } from 'lucide-react';
 import type { Song } from '../../types/music';
 import { formatDuration } from '../../utils/formatters';
-import { animateMicroPop } from '../../utils/gsapAnimations';
+import { animateMicroPop, prefersReducedMotion } from '../../utils/gsapAnimations';
 import { ElasticSlider, SloshGauge } from '../reactbits';
 import { AlbumArt } from './AlbumArt';
 
@@ -39,6 +41,7 @@ export interface PlayerBarProps {
   onSeek: (seconds: number) => void;
   onVolumeChange: (volume: number) => void;
   onOpenPlaylistManager: () => void;
+  onClose?: () => void;
 }
 
 export function PlayerBar({
@@ -62,11 +65,22 @@ export function PlayerBar({
   onSeek,
   onVolumeChange,
   onOpenPlaylistManager,
+  onClose,
 }: PlayerBarProps) {
   const [isVolumeOpen, setIsVolumeOpen] = useState(false);
+  const footerRef = useRef<HTMLElement>(null);
   const volumeBoxRef = useRef<HTMLDivElement>(null);
   const desktopLikeRef = useRef<HTMLButtonElement>(null);
   const desktopPlayRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!footerRef.current || prefersReducedMotion()) return;
+    gsap.fromTo(
+      footerRef.current,
+      { y: 18, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.28, ease: 'power3.out', clearProps: 'transform,opacity' }
+    );
+  }, []);
 
   const duration = currentSong?.duration ?? 0;
   const volumePercent = Math.round(volume * 100);
@@ -97,6 +111,7 @@ export function PlayerBar({
 
   return (
     <footer
+      ref={footerRef}
       aria-label="Now Playing"
       className="fixed bottom-[66px] md:bottom-0 left-3 right-3 md:left-0 md:right-0 z-40"
     >
@@ -151,6 +166,17 @@ export function PlayerBar({
             >
               <SkipForward className="w-4 h-4 fill-current" />
             </button>
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close player"
+                title="Close player"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition active:scale-90"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -391,6 +417,18 @@ export function PlayerBar({
               </div>
             )}
           </div>
+
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close player"
+              title="Close player"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition active:scale-90 ml-1"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </footer>
