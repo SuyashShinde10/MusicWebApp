@@ -15,6 +15,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Plus,
+  Search,
   Settings,
   Sparkles,
   Sun,
@@ -29,6 +30,7 @@ import { ActivePlaylistPanel } from './components/music/ActivePlaylistPanel';
 import { AdvancedSearch } from './components/music/AdvancedSearch';
 import { EmptyState } from './components/music/EmptyState';
 import { FeaturedShowcase } from './components/music/FeaturedShowcase';
+import { NowPlayingSheet } from './components/music/NowPlayingSheet';
 import { PlayerBar } from './components/music/PlayerBar';
 import { PlaylistCard } from './components/music/PlaylistCard';
 import {
@@ -79,6 +81,7 @@ type QueueSource = { type: 'library' } | { type: 'playlist'; playlistId: string 
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', Icon: Home },
+  { id: 'search', label: 'Search', Icon: Search },
   { id: 'library', label: 'Song Library', Icon: Music },
   { id: 'playlists', label: 'Playlists', Icon: ListMusic },
 ] as const;
@@ -128,6 +131,7 @@ export function App() {
   const [currentSongId, setCurrentSongId] = useState<SongId | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayerOpen, setIsPlayerOpen] = useState(true);
+  const [isNowPlayingExpanded, setIsNowPlayingExpanded] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isShuffle, setIsShuffle] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
@@ -935,45 +939,47 @@ export function App() {
           </div>
 
           {/* Mobile Advanced Search Bar (< sm) */}
-          <div className="mt-2.5 sm:hidden">
-            <AdvancedSearch
-              query={searchQuery}
-              onQueryChange={setSearchQuery}
-              scope={searchScope}
-              onScopeChange={setSearchScope}
-              sort={searchSort}
-              onSortChange={setSearchSort}
-              likedOnly={showFavoritesOnly}
-              onToggleLikedOnly={() => setShowFavoritesOnly((prev) => !prev)}
-              matchingSongs={searchPreviewSongs}
-              totalSongsCount={songs.length}
-              playlists={playlists}
-              genres={genres}
-              recentSearches={recentSearches}
-              onRecordSearch={recordRecentSearch}
-              onClearRecentSearches={() => setRecentSearches([])}
-              currentSongId={currentSongId}
-              isPlaying={isPlaying}
-              onPlaySong={(song) => playSong(song, { type: 'library' })}
-              onAddToPlaylist={(song) => setSongToAdd(song)}
-              onSelectPlaylist={(id) => {
-                setActivePlaylistId(id);
-                setActiveSection('playlists');
-              }}
-              onSelectGenre={(genre) => {
-                setSelectedGenre(genre);
-                setActiveSection('library');
-              }}
-              onResetFilters={() => {
-                setSearchQuery('');
-                setSearchScope('all');
-                setSearchSort('relevance');
-                setSelectedGenre('All');
-                setShowFavoritesOnly(false);
-              }}
-              showShortcutHint={false}
-            />
-          </div>
+          {activeSection !== 'search' && (
+            <div className="mt-2.5 sm:hidden">
+              <AdvancedSearch
+                query={searchQuery}
+                onQueryChange={setSearchQuery}
+                scope={searchScope}
+                onScopeChange={setSearchScope}
+                sort={searchSort}
+                onSortChange={setSearchSort}
+                likedOnly={showFavoritesOnly}
+                onToggleLikedOnly={() => setShowFavoritesOnly((prev) => !prev)}
+                matchingSongs={searchPreviewSongs}
+                totalSongsCount={songs.length}
+                playlists={playlists}
+                genres={genres}
+                recentSearches={recentSearches}
+                onRecordSearch={recordRecentSearch}
+                onClearRecentSearches={() => setRecentSearches([])}
+                currentSongId={currentSongId}
+                isPlaying={isPlaying}
+                onPlaySong={(song) => playSong(song, { type: 'library' })}
+                onAddToPlaylist={(song) => setSongToAdd(song)}
+                onSelectPlaylist={(id) => {
+                  setActivePlaylistId(id);
+                  setActiveSection('playlists');
+                }}
+                onSelectGenre={(genre) => {
+                  setSelectedGenre(genre);
+                  setActiveSection('library');
+                }}
+                onResetFilters={() => {
+                  setSearchQuery('');
+                  setSearchScope('all');
+                  setSearchSort('relevance');
+                  setSelectedGenre('All');
+                  setShowFavoritesOnly(false);
+                }}
+                showShortcutHint={false}
+              />
+            </div>
+          )}
         </header>
 
         {/* Main Scrollable Workspace */}
@@ -981,6 +987,111 @@ export function App() {
           ref={mainWorkspaceRef}
           className="flex-1 px-4 sm:px-6 lg:px-8 py-1.5 space-y-3 min-w-0 max-w-7xl w-full mx-auto"
         >
+          {/* Dedicated Search Workspace (from Mobile Search Tab or Desktop/Sidebar Search) */}
+          {activeSection === 'search' && (
+            <section aria-label="Search Workspace" className="space-y-4 min-w-0 pt-1">
+              <div className="space-y-2.5">
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    Search Music
+                  </h1>
+                  <p className="text-xs text-slate-500 dark:text-gray-400">
+                    Find tracks, artists, genres, and playlists instantly
+                  </p>
+                </div>
+                <AdvancedSearch
+                  query={searchQuery}
+                  onQueryChange={setSearchQuery}
+                  scope={searchScope}
+                  onScopeChange={setSearchScope}
+                  sort={searchSort}
+                  onSortChange={setSearchSort}
+                  likedOnly={showFavoritesOnly}
+                  onToggleLikedOnly={() => setShowFavoritesOnly((prev) => !prev)}
+                  matchingSongs={searchPreviewSongs}
+                  totalSongsCount={songs.length}
+                  playlists={playlists}
+                  genres={genres}
+                  recentSearches={recentSearches}
+                  onRecordSearch={recordRecentSearch}
+                  onClearRecentSearches={() => setRecentSearches([])}
+                  currentSongId={currentSongId}
+                  isPlaying={isPlaying}
+                  onPlaySong={(song) => playSong(song, { type: 'library' })}
+                  onAddToPlaylist={(song) => setSongToAdd(song)}
+                  onSelectPlaylist={(id) => {
+                    setActivePlaylistId(id);
+                    setActiveSection('playlists');
+                  }}
+                  onSelectGenre={(genre) => {
+                    setSelectedGenre(genre);
+                  }}
+                  onResetFilters={() => {
+                    setSearchQuery('');
+                    setSearchScope('all');
+                    setSearchSort('relevance');
+                    setSelectedGenre('All');
+                    setShowFavoritesOnly(false);
+                  }}
+                  showShortcutHint={false}
+                />
+              </div>
+
+              {!isLoadingSongs && !songsError && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+                      {searchQuery.trim()
+                        ? `Results (${filteredSongs.length})`
+                        : `Browse All Tracks (${filteredSongs.length})`}
+                    </h2>
+                    {selectedGenre !== 'All' && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedGenre('All')}
+                        className="text-xs font-semibold text-teal-600 dark:text-teal-400"
+                      >
+                        {selectedGenre} · Clear genre
+                      </button>
+                    )}
+                  </div>
+
+                  {filteredSongs.length === 0 ? (
+                    <EmptyState
+                      icon={<Sparkles className="w-6 h-6" />}
+                      title="No matching tracks"
+                      description="Try another keyword, artist, or reset active filters."
+                      actionLabel="Reset Search"
+                      onAction={() => {
+                        setSearchQuery('');
+                        setSearchScope('all');
+                        setSearchSort('relevance');
+                        setSelectedGenre('All');
+                        setShowFavoritesOnly(false);
+                      }}
+                    />
+                  ) : (
+                    <div className="space-y-2">
+                      {filteredSongs.map((song, idx) => (
+                        <SongRow
+                          key={song.id}
+                          song={song}
+                          variant="row"
+                          index={idx}
+                          isCurrent={currentSongId === song.id}
+                          isPlaying={currentSongId === song.id && isPlaying}
+                          isInActivePlaylist={activePlaylistSongIdSet.has(song.id)}
+                          onPlay={(s) => playSong(s, { type: 'library' })}
+                          onAddToPlaylist={(s) => setSongToAdd(s)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </section>
+          )}
+
           {/* Time-Aware Greeting Header with SplitText Animation (Home view) */}
           {activeSection === 'home' && (
             <div className="px-0.5 pt-1 pb-0.5 space-y-0.5">
@@ -1359,12 +1470,47 @@ export function App() {
           onSeek={(sec) => setElapsedSeconds(sec)}
           onVolumeChange={setVolume}
           onOpenPlaylistManager={() => setIsManagerOpen(true)}
+          onExpand={() => setIsNowPlayingExpanded(true)}
           onClose={() => {
             setIsPlaying(false);
+            setIsNowPlayingExpanded(false);
             setIsPlayerOpen(false);
           }}
         />
         ))}
+
+      {/* Expandable Full-Screen / Theater Now Playing Sheet (Mobile, Tablet & Desktop) */}
+      <NowPlayingSheet
+        isOpen={isNowPlayingExpanded}
+        currentSong={currentSong}
+        isPlaying={isPlaying}
+        elapsedSeconds={elapsedSeconds}
+        isShuffle={isShuffle}
+        isRepeat={isRepeat}
+        isLiked={isCurrentLiked}
+        volume={volume}
+        hasNext={playbackQueue.length > 0}
+        hasPrev={playbackQueue.length > 0}
+        isDark={isDark}
+        queueLabel={queueLabel}
+        queue={playbackQueue}
+        onClose={() => setIsNowPlayingExpanded(false)}
+        onDismissPlayer={() => {
+          setIsPlaying(false);
+          setIsPlayerOpen(false);
+        }}
+        onTogglePlay={() => setIsPlaying((prev) => !prev)}
+        onNext={playNext}
+        onPrev={playPrev}
+        onToggleShuffle={() => setIsShuffle((prev) => !prev)}
+        onToggleRepeat={() => setIsRepeat((prev) => !prev)}
+        onToggleLike={handleToggleLike}
+        onSeek={(sec) => setElapsedSeconds(sec)}
+        onVolumeChange={setVolume}
+        onAddToPlaylist={(song) => setSongToAdd(song)}
+        onSelectQueueSong={(song) => playSong(song, queueSource)}
+        onOpenPlaylistManager={() => setIsManagerOpen(true)}
+      />
 
       {/* Mobile Bottom Navigation (< md) */}
       <nav

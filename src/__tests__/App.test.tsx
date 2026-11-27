@@ -188,10 +188,25 @@ describe('RhythmoTune App Integration', () => {
     await user.click(screen.getByRole('button', { name: 'Switch to light mode' }));
     expect(document.documentElement.classList.contains('dark')).toBe(false);
 
+    // Verify Expand Now Playing Sheet opens and collapses across views
+    await user.click(within(playerBar).getAllByRole('button', { name: 'Open full Now Playing sheet' })[0]!);
+    const expandedSheet = screen.getByRole('dialog', { name: 'Expanded Now Playing' });
+    expect(expandedSheet).toBeInTheDocument();
+    expect(within(expandedSheet).getByText('Up Next')).toBeInTheDocument();
+    await user.click(within(expandedSheet).getByRole('button', { name: 'Collapse Now Playing' }));
+    expect(screen.queryByRole('dialog', { name: 'Expanded Now Playing' })).not.toBeInTheDocument();
+
+    // Verify dedicated Search navigation tab opens Search Workspace
+    const mobileNav = screen.getByRole('navigation', { name: 'Mobile navigation' });
+    await user.click(within(mobileNav).getByRole('button', { name: 'Search' }));
+    expect(screen.getByRole('region', { name: 'Search Workspace' })).toBeInTheDocument();
+    await user.click(within(mobileNav).getByRole('button', { name: 'Home' }));
+    const homeLibrary = screen.getByRole('region', { name: 'Song Library' });
+
     // Verify PlayerBar X close button dismisses player and playing a song reopens it
     await user.click(within(playerBar).getAllByRole('button', { name: 'Close player' })[0]!);
     expect(screen.queryByLabelText('Now Playing')).not.toBeInTheDocument();
-    await user.click(within(library).getByRole('button', { name: 'Play Golden Days' }));
+    await user.click(within(homeLibrary).getByRole('button', { name: 'Play Golden Days' }));
     expect(screen.getByLabelText('Now Playing')).toBeInTheDocument();
   }, 15000);
 });

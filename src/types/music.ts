@@ -21,7 +21,7 @@ export interface Playlist {
   updatedAt: number;
 }
 
-export type AppSection = 'home' | 'library' | 'playlists';
+export type AppSection = 'home' | 'search' | 'library' | 'playlists';
 
 export interface ToastItem {
   id: string;

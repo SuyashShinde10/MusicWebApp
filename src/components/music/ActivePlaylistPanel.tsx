@@ -56,76 +56,90 @@ export function ActivePlaylistPanel({
   const totalSeconds = computeTotalDuration(songs);
   const summary = formatPlaylistSummary(songs.length, totalSeconds);
   const coverSong = songs[0];
+  const heroTint = coverSong?.frameColor ?? '#198f85';
   const shredderHeight = Math.max(150, songs.length * 66 + 76);
 
   return (
     <section
       aria-label={`Playlist ${playlist.name}`}
-      className="rounded-2xl bg-white border border-slate-200 dark:bg-[#15171c] dark:border-white/[0.08] p-4 sm:p-5 space-y-3.5 min-w-0 shadow-sm dark:shadow-xl"
+      className="rounded-2xl bg-white border border-slate-200 dark:bg-[#15171c] dark:border-white/[0.08] overflow-hidden min-w-0 shadow-sm dark:shadow-xl"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-200/90 dark:border-white/[0.07]">
-        <div className="flex items-center gap-3.5 min-w-0">
-          {coverSong ? (
-            <div className="relative shrink-0">
-              <AlbumArt
-                song={coverSong}
-                size="lg"
-                className="shadow-md ring-1 ring-black/10 dark:ring-white/10"
-              />
-              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#198f85] text-white flex items-center justify-center shadow ring-2 ring-white dark:ring-[#15171c]">
-                <ListMusic className="w-2.5 h-2.5" />
-              </span>
-            </div>
-          ) : (
-            <div className="w-14 h-14 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
-              <ListMusic className="w-6 h-6" />
-            </div>
-          )}
+      {/* Ambient Playlist Detail Hero Banner (Spotify-inspired on mobile, streamlined on desktop) */}
+      <div
+        style={{
+          background: isDark
+            ? `linear-gradient(180deg, ${heroTint}55 0%, rgba(21,23,28,0.92) 100%)`
+            : `linear-gradient(180deg, ${heroTint}24 0%, rgba(255,255,255,1) 100%)`,
+        }}
+        className="p-4 sm:p-5 border-b border-slate-200/90 dark:border-white/[0.07]"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 min-w-0 text-center sm:text-left">
+            {coverSong ? (
+              <div className="relative shrink-0">
+                <div className="w-32 h-32 sm:w-16 sm:h-16 rounded-2xl sm:rounded-xl overflow-hidden shadow-xl ring-1 ring-black/10 dark:ring-white/15">
+                  <AlbumArt song={coverSong} size="fill" className="!rounded-2xl sm:!rounded-xl" />
+                </div>
+                <span className="hidden sm:flex absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#198f85] text-white items-center justify-center shadow ring-2 ring-white dark:ring-[#15171c]">
+                  <ListMusic className="w-2.5 h-2.5" />
+                </span>
+              </div>
+            ) : (
+              <div className="w-24 h-24 sm:w-14 sm:h-14 rounded-2xl sm:rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+                <ListMusic className="w-8 h-8 sm:w-6 sm:h-6" />
+              </div>
+            )}
 
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:bg-teal-500/15 dark:text-teal-300 border border-teal-500/20">
-                Active Playlist
-              </span>
-              <span className="text-xs font-medium text-slate-500 dark:text-gray-400">
-                {summary}
-              </span>
+            <div className="min-w-0">
+              <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-500/15 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300 border border-teal-500/25">
+                  Active Playlist
+                </span>
+                <span className="text-xs font-medium text-slate-600 dark:text-gray-300">
+                  {summary}
+                </span>
+              </div>
+              <h3 className="text-xl sm:text-xl font-extrabold text-slate-900 dark:text-white truncate mt-1 tracking-tight">
+                {playlist.name}
+              </h3>
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white truncate mt-0.5 tracking-tight">
-              {playlist.name}
-            </h3>
+          </div>
+
+          <div className="flex items-center justify-between sm:justify-end gap-2 flex-wrap shrink-0 pt-1 sm:pt-0">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                leftIcon={<Pencil className="w-3.5 h-3.5" />}
+                onClick={() => onRenamePlaylist(playlist)}
+              >
+                Rename
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                leftIcon={<Trash2 className="w-3.5 h-3.5" />}
+                onClick={() => onDeletePlaylist(playlist)}
+              >
+                Delete
+              </Button>
+            </div>
+            {songs.length > 0 && (
+              <Button
+                variant="primary"
+                size="sm"
+                leftIcon={<Play className="w-3.5 h-3.5 fill-current" />}
+                onClick={() => onPlayAll(playlist.id)}
+                className="shadow-md"
+              >
+                Play All
+              </Button>
+            )}
           </div>
         </div>
-
-        <div className="flex items-center gap-2 flex-wrap shrink-0">
-          {songs.length > 0 && (
-            <Button
-              variant="primary"
-              size="sm"
-              leftIcon={<Play className="w-3.5 h-3.5 fill-current" />}
-              onClick={() => onPlayAll(playlist.id)}
-            >
-              Play All
-            </Button>
-          )}
-          <Button
-            variant="secondary"
-            size="sm"
-            leftIcon={<Pencil className="w-3.5 h-3.5" />}
-            onClick={() => onRenamePlaylist(playlist)}
-          >
-            Rename
-          </Button>
-          <Button
-            variant="danger"
-            size="sm"
-            leftIcon={<Trash2 className="w-3.5 h-3.5" />}
-            onClick={() => onDeletePlaylist(playlist)}
-          >
-            Delete
-          </Button>
-        </div>
       </div>
+
+      <div className="p-4 sm:p-5 space-y-3.5">
 
       {songs.length === 0 ? (
         <EmptyState
@@ -205,6 +219,7 @@ export function ActivePlaylistPanel({
           </div>
         </div>
       )}
+      </div>
     </section>
   );
 }

@@ -265,14 +265,8 @@ export function FeaturedShowcase({
         }
       }}
     >
-      {/* Mobile Draggable Hero Card (< md) */}
+      {/* Mobile Immersive Story Card (< md) */}
       <div className="md:hidden space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-500 dark:text-gray-400">
-            Featured · Swipe to browse
-          </span>
-        </div>
-
         <div
           ref={mobileCardRef}
           onPointerDown={handlePointerDown}
@@ -280,7 +274,7 @@ export function FeaturedShowcase({
           onPointerUp={handlePointerEnd}
           onPointerCancel={handlePointerEnd}
           style={{ touchAction: 'pan-y' }}
-          className={`relative w-full h-[205px] rounded-2xl overflow-hidden p-4 flex flex-col justify-between shadow-xl border border-slate-200/80 dark:border-white/10 select-none ${
+          className={`relative w-full h-[242px] rounded-2xl overflow-hidden p-3.5 flex flex-col justify-between shadow-xl border border-slate-200/80 dark:border-white/15 select-none ${
             isDragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
         >
@@ -291,30 +285,66 @@ export function FeaturedShowcase({
             priority
             className="!rounded-2xl !absolute !inset-0"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
-          <div className="relative z-10 flex items-center justify-between">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#198f85]/90 text-white">
-              {activeSong.genre}
-            </span>
-            <button
-              type="button"
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={() => onAddToPlaylist(activeSong)}
-              aria-label={`Add ${activeSong.title} to playlist`}
-              className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white flex items-center justify-center active:scale-90 transition"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/35 pointer-events-none" />
+
+          {/* Story Progress Indicators + Top Badges */}
+          <div className="relative z-10 space-y-2.5">
+            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))` }}>
+              {featured.map((item, idx) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={() => {
+                    setSlideDirection(idx > safeIndex ? 1 : -1);
+                    setActiveIndex(idx);
+                  }}
+                  aria-label={`Story ${item.title}`}
+                  className="h-1 rounded-full overflow-hidden bg-white/30"
+                >
+                  <span
+                    className={`block h-full rounded-full transition-all duration-300 ${
+                      idx <= safeIndex ? 'w-full bg-white' : 'w-0 bg-white'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#198f85] text-white shadow-sm">
+                  {activeSong.genre}
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/45 backdrop-blur-md text-gray-200 border border-white/15">
+                  Featured · Swipe
+                </span>
+              </div>
+              <button
+                type="button"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={() => onAddToPlaylist(activeSong)}
+                aria-label={`Add ${activeSong.title} to playlist`}
+                className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/25 text-white flex items-center justify-center active:scale-90 transition"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           <div className="relative z-10 flex items-end justify-between gap-3">
-            <div className="min-w-0">
-              <h3 className="text-lg font-bold text-white tracking-tight truncate">
-                {activeSong.title}
-              </h3>
-              <p className="text-xs text-gray-200 truncate">
-                {activeSong.artist} · {formatDuration(activeSong.duration)}
-              </p>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-11 h-11 rounded-xl overflow-hidden ring-1 ring-white/25 shrink-0 shadow-md">
+                <AlbumArt song={activeSong} size="md" className="!rounded-xl" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-lg font-bold text-white tracking-tight truncate drop-shadow">
+                  {activeSong.title}
+                </h3>
+                <p className="text-xs text-gray-200 truncate">
+                  {activeSong.artist} · {formatDuration(activeSong.duration)}
+                </p>
+              </div>
             </div>
             <button
               type="button"
@@ -325,7 +355,7 @@ export function FeaturedShowcase({
                   ? `Pause ${activeSong.title}`
                   : `Play ${activeSong.title}`
               }
-              className="w-10 h-10 rounded-full bg-white/20 hover:bg-[#198f85] backdrop-blur-md border border-white/35 text-white flex items-center justify-center transition active:scale-90 shrink-0"
+              className="w-11 h-11 rounded-full bg-white text-slate-950 hover:bg-[#198f85] hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 shadow-lg"
             >
               {isCurrentActive && isPlaying ? (
                 <Pause className="w-4 h-4 fill-current" />

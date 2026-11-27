@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import {
   Heart,
   ListMusic,
+  Maximize2,
   Pause,
   Play,
   Repeat,
@@ -41,6 +42,7 @@ export interface PlayerBarProps {
   onSeek: (seconds: number) => void;
   onVolumeChange: (volume: number) => void;
   onOpenPlaylistManager: () => void;
+  onExpand?: () => void;
   onClose?: () => void;
 }
 
@@ -65,6 +67,7 @@ export function PlayerBar({
   onSeek,
   onVolumeChange,
   onOpenPlaylistManager,
+  onExpand,
   onClose,
 }: PlayerBarProps) {
   const [isVolumeOpen, setIsVolumeOpen] = useState(false);
@@ -128,21 +131,27 @@ export function PlayerBar({
       {/* Mobile Compact Floating Player (< md) */}
       <div className="md:hidden relative bg-white/95 border-slate-200 dark:bg-[#15171c]/95 dark:border-white/10 backdrop-blur-xl border rounded-2xl p-2.5 shadow-xl dark:shadow-floating-player space-y-1">
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <button
+            type="button"
+            onClick={() => currentSong && onExpand?.()}
+            disabled={!currentSong}
+            aria-label="Expand Now Playing"
+            className="flex items-center gap-2.5 min-w-0 flex-1 text-left group disabled:cursor-default"
+          >
             {currentSong ? (
               <AlbumArt song={currentSong} isPlaying={isPlaying} size="sm" />
             ) : (
               <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 dark:bg-white/5 dark:border-white/10 shrink-0" />
             )}
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">
+              <p className="text-xs font-semibold text-slate-900 dark:text-white truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                 {currentSong ? currentSong.title : 'Nothing playing'}
               </p>
               <p className="text-[11px] text-slate-500 dark:text-gray-400 truncate">
                 {currentSong ? currentSong.artist : 'Choose a song from library'}
               </p>
             </div>
-          </div>
+          </button>
 
           <div className="flex items-center gap-1 shrink-0">
             <button
@@ -176,7 +185,20 @@ export function PlayerBar({
             >
               <SkipForward className="w-4 h-4 fill-current" />
             </button>
-            {onClose && (
+            {onExpand && (
+            <button
+              type="button"
+              onClick={onExpand}
+              disabled={!currentSong}
+              aria-label="Open full Now Playing sheet"
+              title="Expand Now Playing"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition active:scale-90 disabled:opacity-30"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+
+          {onClose && (
               <button
                 type="button"
                 onClick={onClose}
@@ -225,14 +247,21 @@ export function PlayerBar({
       <div className="hidden md:flex h-20 bg-white/95 border-slate-200/90 dark:bg-[#101217]/95 dark:border-white/[0.08] backdrop-blur-2xl border-t px-6 items-center justify-between gap-6 shadow-lg dark:shadow-2xl">
         {/* Left: Cover + Track Info + Transport Buttons */}
         <div className="flex items-center gap-4 min-w-0">
-          <div className="flex items-center gap-3 min-w-[175px] max-w-[230px]">
+          <button
+            type="button"
+            onClick={() => currentSong && onExpand?.()}
+            disabled={!currentSong}
+            aria-label="Expand Now Playing"
+            title={currentSong ? 'Open full Now Playing view' : undefined}
+            className="flex items-center gap-3 min-w-[175px] max-w-[230px] text-left group disabled:cursor-default"
+          >
             {currentSong ? (
               <AlbumArt song={currentSong} isPlaying={isPlaying} size="md" />
             ) : (
               <div className="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 dark:bg-white/5 dark:border-white/10 shrink-0" />
             )}
             <div className="min-w-0">
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                 {currentSong ? currentSong.title : 'Select a track'}
               </h4>
               <p className="text-xs text-slate-500 dark:text-gray-400 truncate">
@@ -241,7 +270,7 @@ export function PlayerBar({
                   : 'Ready to play'}
               </p>
             </div>
-          </div>
+          </button>
 
           <div className="flex items-center gap-2 shrink-0">
             <button
@@ -439,6 +468,19 @@ export function PlayerBar({
               </div>
             )}
           </div>
+
+          {onExpand && (
+            <button
+              type="button"
+              onClick={onExpand}
+              disabled={!currentSong}
+              aria-label="Open full Now Playing sheet"
+              title="Expand Now Playing"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10 transition active:scale-90 disabled:opacity-30"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+            </button>
+          )}
 
           {onClose && (
             <button
