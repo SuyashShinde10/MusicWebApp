@@ -287,49 +287,25 @@ export function FeaturedShowcase({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/35 pointer-events-none" />
 
-          {/* Story Progress Indicators + Top Badges */}
-          <div className="relative z-10 space-y-2.5">
-            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))` }}>
-              {featured.map((item, idx) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onClick={() => {
-                    setSlideDirection(idx > safeIndex ? 1 : -1);
-                    setActiveIndex(idx);
-                  }}
-                  aria-label={`Story ${item.title}`}
-                  className="h-1 rounded-full overflow-hidden bg-white/30"
-                >
-                  <span
-                    className={`block h-full rounded-full transition-all duration-300 ${
-                      idx <= safeIndex ? 'w-full bg-white' : 'w-0 bg-white'
-                    }`}
-                  />
-                </button>
-              ))}
+          {/* Top Badges & Add Action */}
+          <div className="relative z-10 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#198f85] text-white shadow-sm">
+                {activeSong.genre}
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/45 backdrop-blur-md text-gray-200 border border-white/15">
+                Featured · Swipe
+              </span>
             </div>
-
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5">
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#198f85] text-white shadow-sm">
-                  {activeSong.genre}
-                </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/45 backdrop-blur-md text-gray-200 border border-white/15">
-                  Featured · Swipe
-                </span>
-              </div>
-              <button
-                type="button"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={() => onAddToPlaylist(activeSong)}
-                aria-label={`Add ${activeSong.title} to playlist`}
-                className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/25 text-white flex items-center justify-center active:scale-90 transition"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => onAddToPlaylist(activeSong)}
+              aria-label={`Add ${activeSong.title} to playlist`}
+              className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/25 text-white flex items-center justify-center active:scale-90 transition"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
 
           <div className="relative z-10 flex items-end justify-between gap-3">
