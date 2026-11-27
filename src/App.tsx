@@ -922,38 +922,40 @@ export function App() {
         >
           {/* Time-Aware Greeting Header with SplitText Animation (Home view) */}
           {activeSection === 'home' && (
-            <div className="px-0.5 pt-0.5">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-gray-400">
+            <div className="px-0.5 pt-1 pb-0.5 space-y-0.5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-gray-400">
                 {getTimeGreeting()}, Molly
               </p>
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight leading-snug text-slate-900 dark:text-white flex flex-wrap items-baseline gap-x-1.5">
+              <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight leading-[1.12] text-slate-900 dark:text-white flex flex-col">
+                <span className="flex flex-wrap items-baseline gap-x-2">
+                  <SplitText
+                    tag="span"
+                    text="Welcome to"
+                    effect="rise"
+                    trigger="load"
+                    hoverEffect="lift"
+                    delay={30}
+                    duration={0.8}
+                    splitType="chars"
+                    textAlign="left"
+                  />
+                  <SplitText
+                    tag="span"
+                    text="RhythmoTune"
+                    effect="rise"
+                    trigger="load"
+                    hoverEffect="wave"
+                    delay={36}
+                    duration={0.9}
+                    splitType="chars"
+                    textAlign="left"
+                    color="#198f85"
+                    accentColor="#f97316"
+                  />
+                </span>
                 <SplitText
                   tag="span"
-                  text="Welcome to"
-                  effect="rise"
-                  trigger="load"
-                  hoverEffect="lift"
-                  delay={30}
-                  duration={0.8}
-                  splitType="chars"
-                  textAlign="left"
-                />
-                <SplitText
-                  tag="span"
-                  text="RhythmoTune"
-                  effect="rise"
-                  trigger="load"
-                  hoverEffect="wave"
-                  delay={36}
-                  duration={0.9}
-                  splitType="chars"
-                  textAlign="left"
-                  color="#198f85"
-                  accentColor="#f97316"
-                />
-                <SplitText
-                  tag="span"
-                  text="· World of Music"
+                  text="World of Music"
                   effect="fade"
                   trigger="load"
                   hoverEffect="lift"
@@ -961,7 +963,7 @@ export function App() {
                   duration={0.85}
                   splitType="words"
                   textAlign="left"
-                  className="text-sm sm:text-lg font-semibold text-slate-500 dark:text-gray-400"
+                  className="text-xl sm:text-2xl lg:text-[26px] font-bold tracking-tight leading-[1.2] text-slate-600 dark:text-gray-300"
                 />
               </h1>
             </div>
