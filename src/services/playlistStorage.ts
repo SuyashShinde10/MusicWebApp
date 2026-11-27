@@ -4,6 +4,7 @@ const PLAYLISTS_STORAGE_KEY = 'rhythmotune.playlists.v1';
 const ACTIVE_PLAYLIST_STORAGE_KEY = 'rhythmotune.activePlaylistId.v1';
 const LIKED_SONGS_STORAGE_KEY = 'rhythmotune.likedSongIds.v1';
 const THEME_STORAGE_KEY = 'rhythmotune.theme.v1';
+const RECENT_SEARCHES_STORAGE_KEY = 'rhythmotune.recentSearches.v1';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -127,6 +128,26 @@ export function loadTheme(): ThemeMode {
 export function saveTheme(theme: ThemeMode): void {
   try {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+export function loadRecentSearches(): string[] {
+  try {
+    const raw = window.localStorage.getItem(RECENT_SEARCHES_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((q): q is string => typeof q === 'string' && q.trim().length > 0).slice(0, 6);
+  } catch {
+    return [];
+  }
+}
+
+export function saveRecentSearches(queries: string[]): void {
+  try {
+    window.localStorage.setItem(RECENT_SEARCHES_STORAGE_KEY, JSON.stringify(queries.slice(0, 6)));
   } catch {
     // Ignore storage errors
   }

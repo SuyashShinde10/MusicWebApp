@@ -15,7 +15,6 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Plus,
-  Search,
   Settings,
   Sparkles,
   Sun,
@@ -27,6 +26,7 @@ import { DeleteConfirmModal } from './components/modals/DeleteConfirmModal';
 import { PlaylistFormModal } from './components/modals/PlaylistFormModal';
 import { PlaylistManagerModal } from './components/modals/PlaylistManagerModal';
 import { ActivePlaylistPanel } from './components/music/ActivePlaylistPanel';
+import { AdvancedSearch } from './components/music/AdvancedSearch';
 import { EmptyState } from './components/music/EmptyState';
 import { FeaturedShowcase } from './components/music/FeaturedShowcase';
 import { PlayerBar } from './components/music/PlayerBar';
@@ -42,16 +42,17 @@ import {
 import { SongRow } from './components/music/SongRow';
 import { AnimatedList, JellyRadio, SplitText } from './components/reactbits';
 import { Button } from './components/ui/Button';
-import { Input } from './components/ui/Input';
 import { Toast } from './components/ui/Toast';
 import {
   loadActivePlaylistId,
   loadLikedSongIds,
   loadPlaylists,
+  loadRecentSearches,
   loadTheme,
   saveActivePlaylistId,
   saveLikedSongIds,
   savePlaylists,
+  saveRecentSearches,
   saveTheme,
   type ThemeMode,
 } from './services/playlistStorage';
@@ -64,12 +65,14 @@ import {
   createPlaylist,
   deletePlaylist,
   extractGenres,
-  filterSongs,
+  filterSongsAdvanced,
   removeSongFromPlaylist,
   renamePlaylist,
   reorderPlaylistSongs,
   resolvePlaylistSongs,
   setPlaylistSongOrder,
+  type SearchScope,
+  type SearchSort,
 } from './utils/playlistLogic';
 
 type QueueSource = { type: 'library' } | { type: 'playlist'; playlistId: string };
@@ -100,6 +103,9 @@ export function App() {
   // Filters, navigation & sidebar state
   const [activeSection, setActiveSection] = useState<AppSection>('home');
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchScope, setSearchScope] = useState<SearchScope>('all');
+  const [searchSort, setSearchSort] = useState<SearchSort>('relevance');
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => loadRecentSearches());
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [libraryLayout, setLibraryLayout] = useState<'grid' | 'list'>('grid');
@@ -199,6 +205,16 @@ export function App() {
     saveLikedSongIds(likedSongIds);
   }, [likedSongIds]);
 
+  useEffect(() => {
+    saveRecentSearches(recentSearches);
+  }, [recentSearches]);
+
+  const recordRecentSearch = useCallback((term: string) => {
+    const clean = term.trim();
+    if (!clean) return;
+    setRecentSearches((prev) => [clean, ...prev.filter((q) => q.toLowerCase() !== clean.toLowerCase())].slice(0, 6));
+  }, []);
+
   // GSAP: Smooth sidebar collapse/expand width transition
   useEffect(() => {
     if (!sidebarRef.current) return;
@@ -247,11 +263,25 @@ export function App() {
   const genres = useMemo(() => extractGenres(songs), [songs]);
 
   const filteredSongs = useMemo(() => {
-    const base = filterSongs(songs, searchQuery, selectedGenre);
-    if (!showFavoritesOnly) return base;
-    const likedSet = new Set<SongId>(likedSongIds);
-    return base.filter((song) => likedSet.has(song.id));
-  }, [songs, searchQuery, selectedGenre, showFavoritesOnly, likedSongIds]);
+    const likedSet = showFavoritesOnly ? new Set<SongId>(likedSongIds) : undefined;
+    return filterSongsAdvanced(songs, searchQuery, {
+      scope: searchScope,
+      sort: searchSort,
+      likedOnly: showFavoritesOnly,
+      likedIds: likedSet,
+      selectedGenre,
+    });
+  }, [songs, searchQuery, searchScope, searchSort, selectedGenre, showFavoritesOnly, likedSongIds]);
+
+  const searchPreviewSongs = useMemo(() => {
+    const likedSet = showFavoritesOnly ? new Set<SongId>(likedSongIds) : undefined;
+    return filterSongsAdvanced(songs, searchQuery, {
+      scope: searchScope,
+      sort: searchSort,
+      likedOnly: showFavoritesOnly,
+      likedIds: likedSet,
+    });
+  }, [songs, searchQuery, searchScope, searchSort, showFavoritesOnly, likedSongIds]);
 
   // GSAP: Stagger song cards when library finishes loading or genre changes
   useEffect(() => {
@@ -789,29 +819,44 @@ export function App() {
               </span>
             </div>
 
-            {/* Search Input Pill */}
+            {/* Advanced Search Input Pill */}
             <div className="hidden sm:block flex-1 max-w-md min-w-0">
-              <Input
+              <AdvancedSearch
                 ref={searchInputRef}
-                pill
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search for a song..."
-                aria-label="Search songs"
-                rightElement={
-                  searchQuery ? (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery('')}
-                      aria-label="Clear search"
-                      className="text-slate-400 hover:text-slate-700 dark:text-gray-400 dark:hover:text-white p-1"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  ) : (
-                    <Search className="w-4 h-4 text-slate-400 dark:text-gray-400 mr-1" />
-                  )
-                }
+                query={searchQuery}
+                onQueryChange={setSearchQuery}
+                scope={searchScope}
+                onScopeChange={setSearchScope}
+                sort={searchSort}
+                onSortChange={setSearchSort}
+                likedOnly={showFavoritesOnly}
+                onToggleLikedOnly={() => setShowFavoritesOnly((prev) => !prev)}
+                matchingSongs={searchPreviewSongs}
+                totalSongsCount={songs.length}
+                playlists={playlists}
+                genres={genres}
+                recentSearches={recentSearches}
+                onRecordSearch={recordRecentSearch}
+                onClearRecentSearches={() => setRecentSearches([])}
+                currentSongId={currentSongId}
+                isPlaying={isPlaying}
+                onPlaySong={(song) => playSong(song, { type: 'library' })}
+                onAddToPlaylist={(song) => setSongToAdd(song)}
+                onSelectPlaylist={(id) => {
+                  setActivePlaylistId(id);
+                  setActiveSection('playlists');
+                }}
+                onSelectGenre={(genre) => {
+                  setSelectedGenre(genre);
+                  setActiveSection('library');
+                }}
+                onResetFilters={() => {
+                  setSearchQuery('');
+                  setSearchScope('all');
+                  setSearchSort('relevance');
+                  setSelectedGenre('All');
+                  setShowFavoritesOnly(false);
+                }}
               />
             </div>
 
@@ -889,28 +934,44 @@ export function App() {
             </div>
           </div>
 
-          {/* Mobile Search Bar (< sm) */}
+          {/* Mobile Advanced Search Bar (< sm) */}
           <div className="mt-2.5 sm:hidden">
-            <Input
-              pill
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for a song..."
-              aria-label="Search songs"
-              rightElement={
-                searchQuery ? (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    aria-label="Clear search"
-                    className="text-slate-400 hover:text-slate-700 dark:text-gray-400 dark:hover:text-white p-1"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                ) : (
-                  <Search className="w-4 h-4 text-slate-400 dark:text-gray-400 mr-1" />
-                )
-              }
+            <AdvancedSearch
+              query={searchQuery}
+              onQueryChange={setSearchQuery}
+              scope={searchScope}
+              onScopeChange={setSearchScope}
+              sort={searchSort}
+              onSortChange={setSearchSort}
+              likedOnly={showFavoritesOnly}
+              onToggleLikedOnly={() => setShowFavoritesOnly((prev) => !prev)}
+              matchingSongs={searchPreviewSongs}
+              totalSongsCount={songs.length}
+              playlists={playlists}
+              genres={genres}
+              recentSearches={recentSearches}
+              onRecordSearch={recordRecentSearch}
+              onClearRecentSearches={() => setRecentSearches([])}
+              currentSongId={currentSongId}
+              isPlaying={isPlaying}
+              onPlaySong={(song) => playSong(song, { type: 'library' })}
+              onAddToPlaylist={(song) => setSongToAdd(song)}
+              onSelectPlaylist={(id) => {
+                setActivePlaylistId(id);
+                setActiveSection('playlists');
+              }}
+              onSelectGenre={(genre) => {
+                setSelectedGenre(genre);
+                setActiveSection('library');
+              }}
+              onResetFilters={() => {
+                setSearchQuery('');
+                setSearchScope('all');
+                setSearchSort('relevance');
+                setSelectedGenre('All');
+                setShowFavoritesOnly(false);
+              }}
+              showShortcutHint={false}
             />
           </div>
         </header>

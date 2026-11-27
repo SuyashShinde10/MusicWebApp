@@ -220,26 +220,105 @@ export function computeTotalDuration(songs: Song[]): number {
   return songs.reduce((sum, song) => sum + (Number.isFinite(song.duration) ? song.duration : 0), 0);
 }
 
+export type SearchScope = 'all' | 'title' | 'artist' | 'genre';
+export type SearchSort = 'relevance' | 'title-asc' | 'duration-asc' | 'duration-desc';
+
+export interface AdvancedSearchOptions {
+  scope?: SearchScope;
+  sort?: SearchSort;
+  likedOnly?: boolean;
+  likedIds?: Set<SongId>;
+  selectedGenre?: string;
+}
+
+function scoreSongMatch(song: Song, tokens: string[], scope: SearchScope): number {
+  if (tokens.length === 0) return 1;
+  const title = song.title.toLowerCase();
+  const artist = song.artist.toLowerCase();
+  const genre = song.genre.toLowerCase();
+
+  const haystack =
+    scope === 'title'
+      ? [title]
+      : scope === 'artist'
+      ? [artist]
+      : scope === 'genre'
+      ? [genre]
+      : [title, artist, genre];
+
+  let score = 0;
+  for (const token of tokens) {
+    let matched = false;
+    if ((scope === 'all' || scope === 'title') && title.includes(token)) {
+      score += title.startsWith(token) ? 12 : 8;
+      matched = true;
+    }
+    if ((scope === 'all' || scope === 'artist') && artist.includes(token)) {
+      score += artist.startsWith(token) ? 7 : 5;
+      matched = true;
+    }
+    if ((scope === 'all' || scope === 'genre') && genre.includes(token)) {
+      score += genre === token ? 6 : 4;
+      matched = true;
+    }
+    if (!matched && haystack.every((f) => !f.includes(token))) {
+      return 0;
+    }
+  }
+  return score;
+}
+
+/**
+ * Multi-token ranked search across title, artist, genre, and album with scope, favorites, and sort support.
+ */
+export function filterSongsAdvanced(
+  songs: Song[],
+  searchQuery: string,
+  options?: AdvancedSearchOptions
+): Song[] {
+  const scope: SearchScope = options?.scope ?? 'all';
+  const sort: SearchSort = options?.sort ?? 'relevance';
+  const selectedGenre = options?.selectedGenre ?? 'All';
+  const likedOnly = options?.likedOnly ?? false;
+  const likedIds = options?.likedIds;
+  const tokens = searchQuery
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  const matched: { song: Song; score: number }[] = [];
+  for (const song of songs) {
+    if (selectedGenre !== 'All' && song.genre.toLowerCase() !== selectedGenre.toLowerCase()) {
+      continue;
+    }
+    if (likedOnly && likedIds && !likedIds.has(song.id)) {
+      continue;
+    }
+    const score = scoreSongMatch(song, tokens, scope);
+    if (score > 0) {
+      matched.push({ song, score });
+    }
+  }
+
+  if (sort === 'title-asc') {
+    matched.sort((a, b) => a.song.title.localeCompare(b.song.title));
+  } else if (sort === 'duration-asc') {
+    matched.sort((a, b) => a.song.duration - b.song.duration);
+  } else if (sort === 'duration-desc') {
+    matched.sort((a, b) => b.song.duration - a.song.duration);
+  } else if (tokens.length > 0) {
+    matched.sort((a, b) => b.score - a.score || a.song.title.localeCompare(b.song.title));
+  }
+
+  return matched.map((m) => m.song);
+}
+
 /**
  * Filters songs by search query (title, artist, or genre) and selected genre.
  */
 export function filterSongs(songs: Song[], searchQuery: string, selectedGenre: string): Song[] {
-  const normalizedQuery = searchQuery.trim().toLowerCase();
-  const filterByGenre = selectedGenre !== 'All';
-
-  return songs.filter((song) => {
-    if (filterByGenre && song.genre.toLowerCase() !== selectedGenre.toLowerCase()) {
-      return false;
-    }
-    if (!normalizedQuery) {
-      return true;
-    }
-    return (
-      song.title.toLowerCase().includes(normalizedQuery) ||
-      song.artist.toLowerCase().includes(normalizedQuery) ||
-      song.genre.toLowerCase().includes(normalizedQuery)
-    );
-  });
+  return filterSongsAdvanced(songs, searchQuery, { selectedGenre });
 }
 
 /**
