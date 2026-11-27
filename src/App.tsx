@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import {
-  AudioLines,
   ChevronLeft,
   ChevronRight,
   Heart,
@@ -731,9 +730,11 @@ export function App() {
             } px-1 pt-1`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white shrink-0 shadow-sm">
-                <AudioLines className="w-4 h-4" />
-              </div>
+              <img
+                src="/logo.png"
+                alt="RhythmoTune"
+                className="w-8 h-8 rounded-xl object-contain bg-[#171925] ring-1 ring-orange-500/35 shrink-0 shadow-sm"
+              />
               {!isSidebarCollapsed && (
                 <span className="text-[17px] font-bold tracking-tight text-orange-600 dark:text-orange-400 truncate">
                   Rhythmo<span className="text-slate-900 dark:text-white">Tune</span>
@@ -874,9 +875,11 @@ export function App() {
             <div className="space-y-6 overflow-y-auto no-scrollbar">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white">
-                    <AudioLines className="w-4 h-4" />
-                  </div>
+                  <img
+                    src="/logo.png"
+                    alt="RhythmoTune"
+                    className="w-8 h-8 rounded-xl object-contain bg-[#171925] ring-1 ring-orange-500/35 shrink-0 shadow-sm"
+                  />
                   <span className="text-lg font-bold tracking-tight text-orange-600 dark:text-orange-400">
                     Rhythmo<span className="text-slate-900 dark:text-white">Tune</span>
                   </span>
@@ -1027,9 +1030,17 @@ export function App() {
               >
                 <Menu className="w-4 h-4" />
               </button>
-              <span className="text-base font-bold tracking-tight text-orange-600 dark:text-orange-400">
-                Rhythmo<span className="text-slate-900 dark:text-white">Tune</span>
-              </span>
+              <div className="flex items-center gap-2 min-w-0">
+                <img
+                  src="/logo.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="w-7 h-7 rounded-lg object-contain bg-[#171925] ring-1 ring-orange-500/35 shrink-0 shadow-sm"
+                />
+                <span className="text-base font-bold tracking-tight text-orange-600 dark:text-orange-400">
+                  Rhythmo<span className="text-slate-900 dark:text-white">Tune</span>
+                </span>
+              </div>
             </div>
 
             {/* Advanced Search Input Pill */}
