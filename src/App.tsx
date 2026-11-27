@@ -413,9 +413,30 @@ export function App() {
     }
   }, []);
 
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
+
+  // Safely trigger HTML5 <audio> playback with enforced volume/unmute
+  const startAudioPlayback = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentSong?.audioUrl) return;
+    audio.muted = false;
+    audio.volume = Math.min(1, Math.max(0, volumeRef.current));
+    const playPromise = audio.play?.();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch((err: unknown) => {
+        const errName = err instanceof DOMException ? err.name : '';
+        if (errName === 'NotAllowedError') {
+          setIsPlaying(false);
+        }
+      });
+    }
+  }, [currentSong?.audioUrl]);
+
   // Sync HTML5 <audio> volume
   useEffect(() => {
     if (audioRef.current) {
+      audioRef.current.muted = false;
       audioRef.current.volume = Math.min(1, Math.max(0, volume));
     }
   }, [volume, currentSong?.id]);
@@ -428,13 +449,8 @@ export function App() {
       audio.pause();
       return;
     }
-    const playPromise = audio.play?.();
-    if (playPromise && typeof playPromise.catch === 'function') {
-      playPromise.catch(() => {
-        // Ignore browser autoplay or mock environment blocks gracefully
-      });
-    }
-  }, [isPlaying, currentSong?.id, currentSong?.audioUrl]);
+    startAudioPlayback();
+  }, [isPlaying, currentSong?.id, currentSong?.audioUrl, startAudioPlayback]);
 
   // Fallback playback progress timer when audio metadata duration is unavailable (e.g. unit tests)
   useEffect(() => {
@@ -1636,10 +1652,21 @@ export function App() {
       />
 
       <audio
+        key={currentSong?.audioUrl ?? 'no-audio'}
         ref={audioRef}
         src={currentSong?.audioUrl}
-        preload="metadata"
+        preload="auto"
         loop={isRepeat}
+        onLoadedData={() => {
+          if (isPlaying && audioRef.current?.paused) {
+            startAudioPlayback();
+          }
+        }}
+        onCanPlay={() => {
+          if (isPlaying && audioRef.current?.paused) {
+            startAudioPlayback();
+          }
+        }}
         onTimeUpdate={() => {
           const audio = audioRef.current;
           if (!audio || !Number.isFinite(audio.currentTime)) return;
