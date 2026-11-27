@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/vitest';
-import { afterEach, vi } from 'vitest';
+import { afterAll, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 if (typeof window !== 'undefined') {
   if (!window.matchMedia) {
@@ -50,4 +51,9 @@ if (typeof window !== 'undefined') {
 
 afterEach(() => {
   cleanup();
+  ScrollTrigger.getAll().forEach((st) => st.kill());
+});
+
+afterAll(() => {
+  ScrollTrigger.killAll(false);
 });

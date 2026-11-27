@@ -271,24 +271,6 @@ export function FeaturedShowcase({
           <span className="text-xs font-semibold text-slate-500 dark:text-gray-400">
             Featured · Swipe to browse
           </span>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => selectOffset(-1)}
-              aria-label="Previous featured song"
-              className="w-7 h-7 rounded-full bg-white border border-slate-200 text-slate-600 dark:bg-white/[0.06] dark:border-white/10 dark:text-gray-300 flex items-center justify-center active:scale-90 transition"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => selectOffset(1)}
-              aria-label="Next featured song"
-              className="w-7 h-7 rounded-full bg-white border border-slate-200 text-slate-600 dark:bg-white/[0.06] dark:border-white/10 dark:text-gray-300 flex items-center justify-center active:scale-90 transition"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
         </div>
 
         <div

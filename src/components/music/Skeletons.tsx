@@ -16,10 +16,6 @@ export function HeroShowcaseSkeleton() {
       <div className="md:hidden space-y-2">
         <div className="flex items-center justify-between">
           <Shimmer className="h-3.5 w-36 rounded-md" />
-          <div className="flex items-center gap-1.5">
-            <Shimmer className="w-7 h-7 rounded-full" />
-            <Shimmer className="w-7 h-7 rounded-full" />
-          </div>
         </div>
         <div className="relative w-full h-[205px] rounded-2xl overflow-hidden bg-white dark:bg-[#15171c] border border-slate-200 dark:border-white/10 p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between">
