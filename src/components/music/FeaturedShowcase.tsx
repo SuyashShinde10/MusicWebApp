@@ -357,7 +357,7 @@ export function FeaturedShowcase({
       {/* Desktop / Tablet Draggable 5-Card Overlapping Fan Carousel (>= md) */}
       <div
         ref={stageRef}
-        className="hidden md:flex items-center justify-center gap-3 relative py-1 select-none max-w-4xl mx-auto"
+        className="hidden md:flex items-center justify-between gap-2 relative py-0.5 select-none w-full mx-auto"
       >
         <button
           type="button"
@@ -375,7 +375,7 @@ export function FeaturedShowcase({
           onPointerCancel={handlePointerEnd}
           style={{ perspective: '1000px', touchAction: 'pan-y' }}
           title="Drag horizontally or click cards to browse"
-          className={`flex items-center justify-center overflow-hidden py-1.5 px-2 ${
+          className={`flex-1 min-w-0 flex items-center justify-center overflow-hidden py-1 ${
             isDragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
         >
@@ -386,7 +386,7 @@ export function FeaturedShowcase({
                 if (!dragStateRef.current.moved) selectOffset(-2);
               }}
               aria-label={`Focus ${farLeft.title}`}
-              className="showcase-flank showcase-far hidden lg:block relative w-40 xl:w-48 h-44 xl:h-48 -mr-14 z-10 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 brightness-[0.65] hover:brightness-95 transition-all duration-300 hover:-translate-x-1 shrink-0 shadow-lg"
+              className="showcase-flank showcase-far hidden lg:block relative w-[144px] xl:w-[196px] 2xl:w-[228px] h-[112px] xl:h-[142px] 2xl:h-[156px] -mr-[60px] xl:-mr-[74px] z-10 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 brightness-[0.65] hover:brightness-95 transition-all duration-300 hover:-translate-x-1 shrink-0 shadow-lg"
             >
               <AlbumArt song={farLeft} size="fill" className="!rounded-2xl" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
@@ -400,15 +400,15 @@ export function FeaturedShowcase({
                 if (!dragStateRef.current.moved) selectOffset(-1);
               }}
               aria-label={`Focus ${nearLeft.title}`}
-              className="showcase-flank showcase-near relative w-48 lg:w-52 xl:w-56 h-52 lg:h-56 xl:h-60 -mr-14 z-20 rounded-2xl overflow-hidden border border-black/10 dark:border-white/15 brightness-[0.82] hover:brightness-100 transition-all duration-300 hover:-translate-y-1 shrink-0 shadow-xl"
+              className="showcase-flank showcase-near relative w-[196px] lg:w-[208px] xl:w-[264px] 2xl:w-[300px] h-[136px] lg:h-[148px] xl:h-[176px] 2xl:h-[192px] -mr-[64px] xl:-mr-[84px] z-20 rounded-2xl overflow-hidden border border-black/10 dark:border-white/15 brightness-[0.82] hover:brightness-100 transition-all duration-300 hover:-translate-y-1 shrink-0 shadow-xl"
             >
               <AlbumArt song={nearLeft} size="fill" className="!rounded-2xl" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
             </button>
           )}
 
-          {/* Active Center Card */}
-          <div className="showcase-center relative w-60 lg:w-64 xl:w-[276px] h-60 lg:h-64 xl:h-[276px] z-30 rounded-2xl overflow-hidden border border-white/30 dark:border-white/20 shadow-[0_20px_50px_rgba(15,23,42,0.28)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.85)] shrink-0 group">
+          {/* Active Center Landscape Rectangle Card */}
+          <div className="showcase-center relative w-[290px] lg:w-[316px] xl:w-[400px] 2xl:w-[460px] h-[168px] lg:h-[184px] xl:h-[214px] 2xl:h-[236px] z-30 rounded-2xl overflow-hidden border border-white/30 dark:border-white/20 shadow-[0_20px_50px_rgba(15,23,42,0.28)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.85)] shrink-0 group">
             <AlbumArt
               song={activeSong}
               isPlaying={isCurrentActive && isPlaying}
@@ -467,7 +467,7 @@ export function FeaturedShowcase({
                 if (!dragStateRef.current.moved) selectOffset(1);
               }}
               aria-label={`Focus ${nearRight.title}`}
-              className="showcase-flank showcase-near relative w-48 lg:w-52 xl:w-56 h-52 lg:h-56 xl:h-60 -ml-14 z-20 rounded-2xl overflow-hidden border border-black/10 dark:border-white/15 brightness-[0.82] hover:brightness-100 transition-all duration-300 hover:-translate-y-1 shrink-0 shadow-xl"
+              className="showcase-flank showcase-near relative w-[196px] lg:w-[208px] xl:w-[264px] 2xl:w-[300px] h-[136px] lg:h-[148px] xl:h-[176px] 2xl:h-[192px] -ml-[64px] xl:-ml-[84px] z-20 rounded-2xl overflow-hidden border border-black/10 dark:border-white/15 brightness-[0.82] hover:brightness-100 transition-all duration-300 hover:-translate-y-1 shrink-0 shadow-xl"
             >
               <AlbumArt song={nearRight} size="fill" className="!rounded-2xl" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
@@ -481,7 +481,7 @@ export function FeaturedShowcase({
                 if (!dragStateRef.current.moved) selectOffset(2);
               }}
               aria-label={`Focus ${farRight.title}`}
-              className="showcase-flank showcase-far hidden lg:block relative w-40 xl:w-48 h-44 xl:h-48 -ml-14 z-10 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 brightness-[0.65] hover:brightness-95 transition-all duration-300 hover:translate-x-1 shrink-0 shadow-lg"
+              className="showcase-flank showcase-far hidden lg:block relative w-[144px] xl:w-[196px] 2xl:w-[228px] h-[112px] xl:h-[142px] 2xl:h-[156px] -ml-[60px] xl:-ml-[74px] z-10 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 brightness-[0.65] hover:brightness-95 transition-all duration-300 hover:translate-x-1 shrink-0 shadow-lg"
             >
               <AlbumArt song={farRight} size="fill" className="!rounded-2xl" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />

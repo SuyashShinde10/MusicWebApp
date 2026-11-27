@@ -904,7 +904,7 @@ export function App() {
         {/* Main Scrollable Workspace */}
         <main
           ref={mainWorkspaceRef}
-          className="flex-1 px-4 sm:px-6 lg:px-8 py-2 space-y-4 min-w-0 max-w-7xl w-full mx-auto"
+          className="flex-1 px-4 sm:px-6 lg:px-8 py-1.5 space-y-3 min-w-0 max-w-7xl w-full mx-auto"
         >
           {/* Featured Draggable 5-Card Overlapping Fan Carousel (Home view) */}
           {activeSection === 'home' && !isLoadingSongs && !songsError && songs.length > 0 && (

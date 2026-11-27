@@ -46,7 +46,7 @@ export function AlbumArt({ song, isPlaying = false, size = 'md', className = '' 
           alt={`${song.title} cover art`}
           loading="lazy"
           onError={() => setImgFailed(true)}
-          className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover object-[center_26%] transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[inherit] pointer-events-none" />
       </div>
