@@ -24,6 +24,17 @@ export interface Playlist {
 
 export type AppSection = 'home' | 'search' | 'library' | 'playlists';
 
+export type MembershipPlan = 'Premium' | 'Hi-Fi Studio' | 'Free';
+export type AudioQuality = 'Standard' | 'High' | 'Lossless';
+
+export interface UserProfile {
+  name: string;
+  handle: string;
+  plan: MembershipPlan;
+  avatarUrl: string;
+  audioQuality: AudioQuality;
+}
+
 export interface ToastItem {
   id: string;
   message: string;

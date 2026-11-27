@@ -26,6 +26,7 @@ import { AddToPlaylistModal } from './components/modals/AddToPlaylistModal';
 import { DeleteConfirmModal } from './components/modals/DeleteConfirmModal';
 import { PlaylistFormModal } from './components/modals/PlaylistFormModal';
 import { PlaylistManagerModal } from './components/modals/PlaylistManagerModal';
+import { ProfileSettingsModal } from './components/modals/ProfileSettingsModal';
 import { ActivePlaylistPanel } from './components/music/ActivePlaylistPanel';
 import { AdvancedSearch } from './components/music/AdvancedSearch';
 import { EmptyState } from './components/music/EmptyState';
@@ -33,6 +34,7 @@ import { FeaturedShowcase } from './components/music/FeaturedShowcase';
 import { NowPlayingSheet } from './components/music/NowPlayingSheet';
 import { PlayerBar } from './components/music/PlayerBar';
 import { PlaylistCard } from './components/music/PlaylistCard';
+import { ProfileMenu } from './components/music/ProfileMenu';
 import {
   ActivePlaylistSkeleton,
   CategoriesSkeleton,
@@ -51,15 +53,25 @@ import {
   loadPlaylists,
   loadRecentSearches,
   loadTheme,
+  loadUserProfile,
   saveActivePlaylistId,
   saveLikedSongIds,
   savePlaylists,
   saveRecentSearches,
   saveTheme,
+  saveUserProfile,
   type ThemeMode,
 } from './services/playlistStorage';
 import { fetchSongs } from './services/songService';
-import type { AppSection, Playlist, Song, SongId, ToastItem } from './types/music';
+import type {
+  AppSection,
+  AudioQuality,
+  Playlist,
+  Song,
+  SongId,
+  ToastItem,
+  UserProfile,
+} from './types/music';
 import { animateMicroPop, animateStaggerIn, prefersReducedMotion } from './utils/gsapAnimations';
 import {
   addSongToPlaylist,
@@ -147,6 +159,8 @@ export function App() {
   const [playlistToDelete, setPlaylistToDelete] = useState<Playlist | null>(null);
   const [songToAdd, setSongToAdd] = useState<Song | null>(null);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile>(() => loadUserProfile());
   const [toast, setToast] = useState<ToastItem | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -177,6 +191,11 @@ export function App() {
     document.documentElement.classList.toggle('dark', isDark);
     saveTheme(theme);
   }, [theme, isDark]);
+
+  // Persist listener profile changes
+  useEffect(() => {
+    saveUserProfile(userProfile);
+  }, [userProfile]);
 
   // Load songs via Axios
   const loadSongLibrary = useCallback(async () => {
@@ -319,6 +338,76 @@ export function App() {
     () => (currentSongId !== null ? songsById.get(currentSongId) ?? null : null),
     [currentSongId, songsById]
   );
+
+  // Derived listener profile analytics across playlists and library
+  const profileStats = useMemo(() => {
+    let savedSongsCount = 0;
+    let savedDurationSeconds = 0;
+    const genreCounts = new Map<string, number>();
+
+    for (const pl of playlists) {
+      const resolved = resolvePlaylistSongs(pl, songsById);
+      savedSongsCount += resolved.length;
+      savedDurationSeconds += computeTotalDuration(resolved);
+      for (const song of resolved) {
+        genreCounts.set(song.genre, (genreCounts.get(song.genre) ?? 0) + 1);
+      }
+    }
+
+    if (genreCounts.size === 0) {
+      for (const song of songs) {
+        genreCounts.set(song.genre, (genreCounts.get(song.genre) ?? 0) + 1);
+      }
+    }
+
+    let topGenre: string | null = null;
+    let bestCount = 0;
+    for (const [genre, count] of genreCounts.entries()) {
+      if (count > bestCount) {
+        bestCount = count;
+        topGenre = genre;
+      }
+    }
+
+    return { savedSongsCount, savedDurationSeconds, topGenre };
+  }, [playlists, songs, songsById]);
+
+  const profileFirstName = userProfile.name.trim().split(/\s+/)[0] || 'Molly';
+
+  const handleSaveProfile = useCallback(
+    (updated: UserProfile) => {
+      setUserProfile(updated);
+      showToast(`Profile updated for ${updated.name}`, 'success');
+    },
+    [showToast]
+  );
+
+  const handleChangeQuality = useCallback(
+    (quality: AudioQuality) => {
+      setUserProfile((prev) => ({ ...prev, audioQuality: quality }));
+      showToast(`Stream quality set to ${quality}`, 'info');
+    },
+    [showToast]
+  );
+
+  const handleExportBackup = useCallback(() => {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      profile: userProfile,
+      playlists,
+      likedSongIds,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'rhythmotune-backup.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('Exported playlists & profile JSON backup', 'success');
+  }, [userProfile, playlists, likedSongIds, showToast]);
 
   // Active playback queue
   const playbackQueue = useMemo(() => {
@@ -793,6 +882,47 @@ export function App() {
                 </button>
               </div>
 
+              {/* Mobile Listener Identity Card */}
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08] space-y-2.5">
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src={userProfile.avatarUrl}
+                    alt={userProfile.name}
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-teal-500/60 shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                      {userProfile.name}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-gray-400 truncate">
+                      {userProfile.plan} · {userProfile.audioQuality}
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setIsProfileModalOpen(true);
+                    }}
+                    className="py-1.5 px-2 rounded-lg text-[11px] font-semibold bg-white dark:bg-white/10 text-slate-700 dark:text-white border border-slate-200 dark:border-white/10"
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleExportBackup();
+                    }}
+                    className="py-1.5 px-2 rounded-lg text-[11px] font-semibold bg-teal-500/15 text-teal-700 dark:text-teal-300"
+                  >
+                    Export JSON
+                  </button>
+                </div>
+              </div>
+
               <nav className="flex flex-col gap-1">
                 {NAV_ITEMS.map(({ id, label, Icon }) => {
                   const active = activeSection === id;
@@ -959,22 +1089,29 @@ export function App() {
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
 
-              {/* Molly Hunter Profile Pill */}
-              <div className="hidden md:flex items-center gap-2.5 pl-1.5 pr-3 py-1 rounded-full bg-white border border-slate-200 dark:bg-[#15171c] dark:border-white/[0.08] shadow-sm dark:shadow-none">
-                <img
-                  src="/covers/molly-hunter.jpg"
-                  alt="Molly Hunter"
-                  className="w-7 h-7 rounded-full object-cover ring-1 ring-teal-500/60"
-                />
-                <div className="leading-none">
-                  <p className="text-xs font-semibold text-slate-900 dark:text-white">
-                    Molly Hunter
-                  </p>
-                  <span className="inline-block mt-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded bg-teal-500/15 text-teal-700 dark:bg-teal-600/25 dark:text-teal-300">
-                    Premium
-                  </span>
-                </div>
-              </div>
+              {/* Interactive Listener Account Hub */}
+              <ProfileMenu
+                profile={userProfile}
+                playlistsCount={playlists.length}
+                likedCount={likedSongIds.length}
+                savedSongsCount={profileStats.savedSongsCount}
+                savedDurationSeconds={profileStats.savedDurationSeconds}
+                topGenre={profileStats.topGenre}
+                currentSong={currentSong}
+                isPlaying={isPlaying}
+                isDark={isDark}
+                onChangeQuality={handleChangeQuality}
+                onOpenEditProfile={() => setIsProfileModalOpen(true)}
+                onViewLikedSongs={() => {
+                  setShowFavoritesOnly(true);
+                  setActiveSection('library');
+                }}
+                onOpenPlaylistManager={() => setIsManagerOpen(true)}
+                onTogglePlay={() => setIsPlaying((prev) => !prev)}
+                onExpandNowPlaying={() => setIsNowPlayingExpanded(true)}
+                onToggleTheme={handleToggleTheme}
+                onExportBackup={handleExportBackup}
+              />
 
               {/* Favorites Filter Button */}
               <button
@@ -1166,7 +1303,7 @@ export function App() {
           {activeSection === 'home' && (
             <div className="px-0.5 pt-1 pb-0.5 space-y-0.5">
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-gray-400">
-                {getTimeGreeting()}, Molly
+                {getTimeGreeting()}, {profileFirstName}
               </p>
               <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight leading-[1.12] text-slate-900 dark:text-white flex flex-wrap items-baseline gap-x-2">
                 <SplitText
@@ -1649,6 +1786,13 @@ export function App() {
         onPlaySong={(song, plId) => playSong(song, { type: 'playlist', playlistId: plId })}
         onReorderSongs={handleReorderSongs}
         onRemoveSong={handleRemoveSongFromPlaylist}
+      />
+
+      <ProfileSettingsModal
+        isOpen={isProfileModalOpen}
+        profile={userProfile}
+        onClose={() => setIsProfileModalOpen(false)}
+        onSave={handleSaveProfile}
       />
 
       <audio
