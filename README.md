@@ -1,39 +1,42 @@
 # RhythmoTune — Music Playlist Manager
 
-A responsive **Music Playlist Manager** web application built with **React**, **TypeScript**, **Tailwind CSS**, **Axios**, and **`localStorage`**, inspired by the **RhythmoTune** dark coral-orange studio UI.
+A responsive **Music Playlist Manager** web application built with **React 19**, **TypeScript**, **Tailwind CSS**, **Axios**, and **`localStorage`**. Users can browse and search a 12-track audio catalog, curate persistent custom playlists, reorder or shred tracks, customize their listener profile, and play real MP3 tracks cleanly across mobile, tablet, and desktop viewports.
 
 ---
 
-## Features
+## Key Features
 
 - **Song Library (`public/songs.json` via Axios):**
-  - Displays 14 curated tracks with title, artist, genre, and duration formatted as `m:ss`.
-  - Real-time search across song title, artist, and genre (`⌘K` / `Ctrl+K` keyboard shortcut).
-  - Genre filter chips (`All`, `Relax`, `Energetic`, `Sad`, `Party`, `Romance`, `Jazz`, `Lo-Fi`, `Acoustic`) and Grid/List view toggle.
+  - Displays 12 curated tracks with title, artist, genre, cover artwork, and duration formatted as `m:ss`.
+  - **Multi-Token Ranked Search (`AdvancedSearch`):** Supports scope tabs (`All`, `Title`, `Artist`, `Genre`), sorting (`Best Match`, `A–Z`, `Shortest`, `Longest`), Liked-only filtering, recent search history, matched keyword highlighting, and a `⌘K` / `Ctrl+K` shortcut.
+  - Dynamic genre filter strip (`All`, `Montagem`, `Brazilian Funk`, `Jumpstyle`, `Slowed`, `Japanese Funk`, `Phonk`) plus Grid/List layout switching.
 - **Playlists (CRUD + `localStorage` Persistence):**
-  - Create, rename, and delete playlists (with explicit confirmation modal).
-  - Enforces required and case-insensitive unique playlist names.
-  - Persists playlists, active playlist selection, and liked songs in `localStorage` across page refreshes.
+  - Create, rename, and delete playlists (guarded by an explicit `DeleteConfirmModal`).
+  - Validates required playlist names (up to 60 characters) and enforces case-insensitive uniqueness.
+  - Persists playlists, active playlist selection, liked tracks, recent searches, theme preference, and listener profile in `localStorage`.
 - **Track Curation & Reordering:**
-  - Add songs from the library into any playlist while preventing duplicates (`Added` indicator + disabled state).
-  - Remove songs from playlists and reorder tracks via **Move Up / Move Down buttons** or **drag-and-drop**.
-  - Displays playlist summary details (e.g., `5 songs · 18 min`).
-- **Now Playing Bar (`PlayerBar`):**
-  - Play/Pause, Next, Previous, Shuffle, Repeat, interactive seek scrubber, volume control, and simulated playback progress timer (no real audio required).
+  - Add songs to any playlist from the library while preventing duplicate entries (`Check` indicator on added tracks).
+  - Remove songs or reorder tracks using **Move Up / Move Down buttons** or **drag-and-drop / drag-to-shred**.
+  - Displays playlist count and total rounded duration summaries (e.g., `5 songs · 10 min`).
+- **Audio Playback & Now Playing Controls (`PlayerBar` & `NowPlayingSheet`):**
+  - Plays local pure-MP3 tracks (`public/audio/songs/*.mp3`) via HTML5 `<audio>` with Play/Pause, Next, Previous, Shuffle, Repeat, seek scrubbing (`ElasticSlider`), and liquid volume control (`SloshGauge`).
+  - Expandable full-screen / theater `NowPlayingSheet` accessible across mobile, tablet, and desktop views with live queue switching.
+- **Listener Account Hub & Profile (`ProfileMenu` & `ProfileSettingsModal`):**
+  - Interactive header profile hub displaying live library metrics, audio stream quality switcher (`Standard`, `High`, `Lossless`), profile & membership tier customization, and one-click JSON backup export (`rhythmotune-backup.json`).
 - **UI States & Responsiveness:**
-  - Dedicated Loading skeleton, Empty Playlist, No Results, and Network Error/Retry states.
-  - Fully responsive across mobile (`375px`), tablet (`768px`), and desktop (`1440px`) with zero horizontal scroll.
+  - Shimmer loading skeletons, empty playlist prompts, no-results recovery actions, and Axios error/retry handling.
+  - Tested across `375px` (mobile), `768px` (tablet), and `1440px` (desktop) with zero horizontal scroll and coarse-pointer mobile scroll optimizations.
 
 ---
 
 ## Tech Stack
 
-- **React 19 + TypeScript** (strict compiler config)
-- **Tailwind CSS** (custom dark surface & coral-orange brand tokens)
-- **React Bits UI Components** (`ElasticSlider` for playback progress, `SloshGauge` for liquid volume control, `Shredder` for drag-to-reorder & shred-to-remove playlist tracks, `AnimatedList` for song lists, and `TiltedCard` for 3D tilt song cards)
-- **Axios** (fetches `/songs.json`)
-- **Lucide React & Hugeicons** (vector icons)
-- **Vitest + React Testing Library** (unit & integration tests)
+- **React 19 + TypeScript** (`strict`, `noImplicitAny`, `strictNullChecks`, `noUncheckedIndexedAccess`)
+- **Tailwind CSS 3.4** + modular custom CSS for responsive dark/light themes
+- **Axios** (fetches and validates `/songs.json`)
+- **GSAP & Motion** (micro-interactions, `SplitText`, `JellyRadio`, `ElasticSlider`, `SloshGauge`, `Shredder`, `TiltedCard`, `AnimatedList`)
+- **Lucide React & Hugeicons** (vector UI icons)
+- **Vite 7 + Vitest + React Testing Library** (production chunk splitting and automated tests)
 
 ---
 
@@ -46,7 +49,7 @@ npm install
 # 2. Start the development server
 npm run dev
 
-# 3. Run type-check, linter, tests, and production build
+# 3. Run type-check, linter, unit/integration tests, and production build
 npm run typecheck
 npm run lint
 npm test
@@ -57,28 +60,28 @@ npm run build
 
 ## Architecture Overview
 
-- `public/songs.json` — Local JSON catalog of 14 tracks (`id`, `title`, `artist`, `genre`, `duration` in seconds).
-- `src/services/songService.ts` — Axios data fetcher with runtime payload validation.
-- `src/services/playlistStorage.ts` — `localStorage` persistence with safe JSON parsing and first-visit starter playlist seeding.
-- `src/utils/playlistLogic.ts` — Pure domain functions for playlist validation, CRUD, duplicate prevention, reordering, and library filtering.
+- `public/songs.json` — Local JSON catalog of 12 tracks (`id`, `title`, `artist`, `genre`, `duration` in seconds, `coverImage`, `audioUrl`, `frameColor`).
+- `src/services/songService.ts` — Axios fetcher with 10s timeout and runtime `isValidSong()` payload validation.
+- `src/services/playlistStorage.ts` — Versioned `localStorage` persistence with runtime schema guards and first-visit starter seeding.
+- `src/utils/playlistLogic.ts` — Pure domain functions for playlist validation, CRUD, duplicate checks, index reordering, and multi-token search ranking.
 - `src/components/ui/` — Reusable `Button`, `Input`, `Modal`, and `Toast` primitives.
-- `src/components/music/` — Reusable `SongRow`, `PlaylistCard`, `PlayerBar`, `FeaturedShowcase`, `ActivePlaylistPanel`, `EmptyState`, and `Skeletons`.
-- `src/components/modals/` — `PlaylistFormModal`, `DeleteConfirmModal`, `AddToPlaylistModal`, and `PlaylistManagerModal`.
+- `src/components/music/` — `SongRow`, `PlaylistCard`, `PlayerBar`, `NowPlayingSheet`, `AdvancedSearch`, `FeaturedShowcase`, `ActivePlaylistPanel`, `ProfileMenu`, `EmptyState`, and `Skeletons`.
+- `src/components/modals/` — `PlaylistFormModal`, `DeleteConfirmModal`, `AddToPlaylistModal`, `PlaylistManagerModal`, and `ProfileSettingsModal`.
 
 ---
 
 ## Assumptions Made
 
-1. **Starter Playlists on First Visit:** If `localStorage` has never been initialized, 3 starter playlists (`Vibes & Chill`, `Morning Boost`, `Rhythm & Energy`) are seeded so the UI immediately demonstrates playlist management. If the user deletes all playlists, `localStorage` stores `[]` and does not re-seed on refresh.
-2. **Duration Summary Rounding:** Total playlist duration in `"X songs · Y min"` rounds total seconds to the nearest minute (with a minimum of `1 min` for non-empty playlists under 60 seconds).
-3. **Unique Playlist Names:** Playlist name uniqueness is evaluated case-insensitively after trimming whitespace (e.g. `"chill"` and `"Chill"` are treated as duplicates).
-4. **Simulated Playback:** Since no real audio files are required, playback uses a 1-second timer to advance the progress bar and auto-advance to the next song in the active queue (either the active playlist or the library).
+1. **Starter Playlists on First Visit:** When `localStorage` has not been initialized yet, 3 starter playlists (`Vibes & Chill`, `Morning Boost`, `Rhythm & Energy`) are seeded so playlist features are immediately testable. Deleting all playlists stores `[]` and does not re-seed on refresh.
+2. **Duration Summary Rounding:** Playlist summary labels (`"X songs · Y min"`) convert total seconds to rounded minutes (with a minimum of `1 min` for any non-empty playlist under 60 seconds).
+3. **Unique Playlist Names:** Uniqueness checks are trimmed and case-insensitive (e.g., `"chill"` and `"Chill"` conflict).
+4. **Browser Storage Scope:** Playlists, favorites, and listener profile settings live client-side in `localStorage` without a backend server; the JSON export option allows users to download portable backups.
 
 ---
 
 ## What I Would Improve Next
 
-- **Real Audio Preview & Web Audio Visualizer:** Connect preview audio URLs and an HTML5 `<audio>` / Web Audio API frequency spectrum visualizer.
-- **Undo/Redo & Keyboard Drag Reordering:** Add toast-based "Undo delete" and full keyboard drag-and-drop reordering (`@dnd-kit`).
-- **Backend Sync & Auth:** Back playlists with a REST/GraphQL API and user accounts instead of browser-only `localStorage`.
-- **Import / Export Playlists:** Support exporting/importing playlists as JSON or M3U files.
+- **Backend API & Cloud Sync:** Replace `localStorage` and `/songs.json` with a REST/PostgreSQL backend and authenticated multi-device sync while preserving existing `songService` and storage module interfaces.
+- **Undo/Redo History & Playlist Import:** Pair playlist JSON export with JSON/M3U file import validation and toast-driven undo on accidental song removal.
+- **Web Audio Spectrum & Keyboard Drag-and-Drop:** Add real-time frequency visualization in `NowPlayingSheet` via Web Audio API and full keyboard-first drag reordering (`@dnd-kit`).
+- **Offline PWA Support:** Cache artwork and audio assets using a Workbox Service Worker for offline playback.
