@@ -926,44 +926,30 @@ export function App() {
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-gray-400">
                 {getTimeGreeting()}, Molly
               </p>
-              <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight leading-[1.12] text-slate-900 dark:text-white flex flex-col">
-                <span className="flex flex-wrap items-baseline gap-x-2">
-                  <SplitText
-                    tag="span"
-                    text="Welcome to"
-                    effect="rise"
-                    trigger="load"
-                    hoverEffect="lift"
-                    delay={30}
-                    duration={0.8}
-                    splitType="chars"
-                    textAlign="left"
-                  />
-                  <SplitText
-                    tag="span"
-                    text="RhythmoTune"
-                    effect="rise"
-                    trigger="load"
-                    hoverEffect="wave"
-                    delay={36}
-                    duration={0.9}
-                    splitType="chars"
-                    textAlign="left"
-                    color="#198f85"
-                    accentColor="#f97316"
-                  />
-                </span>
+              <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight leading-[1.12] text-slate-900 dark:text-white flex flex-wrap items-baseline gap-x-2">
                 <SplitText
                   tag="span"
-                  text="World of Music"
-                  effect="fade"
+                  text="Welcome to"
+                  effect="rise"
                   trigger="load"
                   hoverEffect="lift"
-                  delay={28}
-                  duration={0.85}
-                  splitType="words"
+                  delay={30}
+                  duration={0.8}
+                  splitType="chars"
                   textAlign="left"
-                  className="text-xl sm:text-2xl lg:text-[26px] font-bold tracking-tight leading-[1.2] text-slate-600 dark:text-gray-300"
+                />
+                <SplitText
+                  tag="span"
+                  text="RhythmoTune"
+                  effect="rise"
+                  trigger="load"
+                  hoverEffect="wave"
+                  delay={36}
+                  duration={0.9}
+                  splitType="chars"
+                  textAlign="left"
+                  color="#198f85"
+                  accentColor="#f97316"
                 />
               </h1>
             </div>
