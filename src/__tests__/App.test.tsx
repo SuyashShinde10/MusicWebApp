@@ -26,6 +26,10 @@ describe('RhythmoTune App Integration', () => {
     const user = userEvent.setup();
     render(<App />);
 
+    // Verify greeting banner with SplitText renders on Home
+    expect(screen.getByText('Welcome to')).toBeInTheDocument();
+    expect(screen.getAllByText('RhythmoTune').length).toBeGreaterThan(0);
+
     // Verify all responsive UI skeletons render immediately while songs fetch is in flight
     expect(screen.getByLabelText('Loading featured showcase')).toBeInTheDocument();
     expect(screen.getByLabelText('Loading categories')).toBeInTheDocument();

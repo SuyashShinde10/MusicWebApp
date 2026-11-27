@@ -4,6 +4,7 @@ import ElasticSliderRaw from './ElasticSlider.jsx';
 import JellyRadioRaw from './JellyRadio.jsx';
 import ShredderRaw from './Shredder.jsx';
 import SloshGaugeRaw from './SloshGauge.jsx';
+import SplitTextRaw from './SplitText.jsx';
 import TiltedCardRaw, { TiltedCardLayer as TiltedCardLayerRaw } from './TiltedCard.jsx';
 import type {
   AnimatedListProps,
@@ -11,12 +12,14 @@ import type {
   JellyRadioProps,
   ShredderProps,
   SloshGaugeProps,
+  SplitTextProps,
   TiltedCardProps,
 } from './types';
 
 export const ElasticSlider = ElasticSliderRaw as ComponentType<ElasticSliderProps>;
 export const JellyRadio = JellyRadioRaw as ComponentType<JellyRadioProps>;
 export const SloshGauge = SloshGaugeRaw as ComponentType<SloshGaugeProps>;
+export const SplitText = SplitTextRaw as ComponentType<SplitTextProps>;
 export const TiltedCard = TiltedCardRaw as ComponentType<TiltedCardProps>;
 export const TiltedCardLayer = TiltedCardLayerRaw as ComponentType<{
   depth?: number;

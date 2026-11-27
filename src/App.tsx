@@ -40,7 +40,7 @@ import {
   PlayerBarSkeleton,
 } from './components/music/Skeletons';
 import { SongRow } from './components/music/SongRow';
-import { AnimatedList, JellyRadio } from './components/reactbits';
+import { AnimatedList, JellyRadio, SplitText } from './components/reactbits';
 import { Button } from './components/ui/Button';
 import { Input } from './components/ui/Input';
 import { Toast } from './components/ui/Toast';
@@ -79,6 +79,13 @@ const NAV_ITEMS = [
   { id: 'library', label: 'Song Library', Icon: Music },
   { id: 'playlists', label: 'Playlists', Icon: ListMusic },
 ] as const;
+
+function getTimeGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good Morning';
+  if (hour < 17) return 'Good Afternoon';
+  return 'Good Evening';
+}
 
 export function App() {
   // Theme state (Light mode by default)
@@ -913,6 +920,53 @@ export function App() {
           ref={mainWorkspaceRef}
           className="flex-1 px-4 sm:px-6 lg:px-8 py-1.5 space-y-3 min-w-0 max-w-7xl w-full mx-auto"
         >
+          {/* Time-Aware Greeting Header with SplitText Animation (Home view) */}
+          {activeSection === 'home' && (
+            <div className="px-0.5 pt-0.5">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-gray-400">
+                {getTimeGreeting()}, Molly
+              </p>
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight leading-snug text-slate-900 dark:text-white flex flex-wrap items-baseline gap-x-1.5">
+                <SplitText
+                  tag="span"
+                  text="Welcome to"
+                  effect="rise"
+                  trigger="load"
+                  hoverEffect="lift"
+                  delay={30}
+                  duration={0.8}
+                  splitType="chars"
+                  textAlign="left"
+                />
+                <SplitText
+                  tag="span"
+                  text="RhythmoTune"
+                  effect="rise"
+                  trigger="load"
+                  hoverEffect="wave"
+                  delay={36}
+                  duration={0.9}
+                  splitType="chars"
+                  textAlign="left"
+                  color="#198f85"
+                  accentColor="#f97316"
+                />
+                <SplitText
+                  tag="span"
+                  text="· World of Music"
+                  effect="fade"
+                  trigger="load"
+                  hoverEffect="lift"
+                  delay={28}
+                  duration={0.85}
+                  splitType="words"
+                  textAlign="left"
+                  className="text-sm sm:text-lg font-semibold text-slate-500 dark:text-gray-400"
+                />
+              </h1>
+            </div>
+          )}
+
           {/* Featured Draggable 5-Card Overlapping Fan Carousel (Home view) */}
           {activeSection === 'home' &&
             (isLoadingSongs ? (
