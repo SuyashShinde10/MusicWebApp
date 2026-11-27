@@ -80,7 +80,7 @@ export function PlaylistManagerModal({
               value={activePlaylist?.id ?? ''}
               onChange={(e) => onSelectPlaylist(e.target.value)}
               disabled={playlists.length === 0}
-              className="flex-1 min-w-0 bg-slate-50 border border-slate-200 text-slate-900 dark:bg-[#101319] dark:border-white/10 dark:text-white rounded-xl text-xs sm:text-sm font-semibold px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+              className="flex-1 min-w-0 bg-slate-50 border border-slate-200 text-slate-900 dark:bg-[#101319] dark:border-white/10 dark:text-white rounded-xl text-xs sm:text-sm font-semibold px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
             >
               {playlists.length === 0 ? (
                 <option value="">No playlists available</option>
@@ -140,7 +140,7 @@ export function PlaylistManagerModal({
               <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate">
                 {activePlaylist.name}
               </h3>
-              <span className="text-xs font-medium text-teal-600 dark:text-teal-400 shrink-0">
+              <span className="text-xs font-medium text-orange-600 dark:text-orange-400 shrink-0">
                 {summary}
               </span>
             </div>
@@ -159,7 +159,7 @@ export function PlaylistManagerModal({
                 width="100%"
                 maxHeight={340}
                 theme={theme}
-                accentColor="#198f85"
+                accentColor="#f97316"
                 animation="pop"
                 frame={false}
                 gap={8}

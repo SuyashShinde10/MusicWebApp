@@ -747,7 +747,7 @@ export function App() {
               aria-label={isSidebarCollapsed ? 'Expand sidebar menu' : 'Collapse sidebar menu'}
               aria-expanded={!isSidebarCollapsed}
               title={isSidebarCollapsed ? 'Expand menu' : 'Collapse menu'}
-              className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+              className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
             >
               {isSidebarCollapsed ? (
                 <PanelLeftOpen className="w-4 h-4" />
@@ -772,7 +772,7 @@ export function App() {
                     isSidebarCollapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3.5 py-2.5'
                   } rounded-xl text-[13.5px] font-medium transition-colors text-left ${
                     active
-                      ? 'bg-teal-500/10 text-teal-800 dark:bg-white/[0.09] dark:text-white font-semibold'
+                      ? 'bg-orange-500/10 text-orange-800 dark:bg-white/[0.09] dark:text-white font-semibold'
                       : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/[0.04]'
                   }`}
                 >
@@ -807,7 +807,7 @@ export function App() {
                 onClick={openCreateModal}
                 aria-label="Create new playlist"
                 title="Create new playlist"
-                className="w-10 h-10 mx-auto rounded-lg bg-slate-100 hover:bg-[#198f85] text-slate-600 hover:text-white dark:bg-white/[0.06] dark:text-gray-300 flex items-center justify-center transition active:scale-90"
+                className="w-10 h-10 mx-auto rounded-lg bg-slate-100 hover:bg-[#f97316] text-slate-600 hover:text-white dark:bg-white/[0.06] dark:text-gray-300 flex items-center justify-center transition active:scale-90"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -897,7 +897,7 @@ export function App() {
                   <img
                     src={userProfile.avatarUrl}
                     alt={userProfile.name}
-                    className="w-10 h-10 rounded-full object-cover ring-2 ring-teal-500/60 shrink-0"
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-orange-500/60 shrink-0"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
@@ -925,7 +925,7 @@ export function App() {
                       setIsMobileMenuOpen(false);
                       handleExportBackup();
                     }}
-                    className="py-1.5 px-2 rounded-lg text-[11px] font-semibold bg-teal-500/15 text-teal-700 dark:text-teal-300"
+                    className="py-1.5 px-2 rounded-lg text-[11px] font-semibold bg-orange-500/15 text-orange-700 dark:text-orange-300"
                   >
                     Export JSON
                   </button>
@@ -945,7 +945,7 @@ export function App() {
                       }}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                         active
-                          ? 'bg-teal-500/10 text-teal-800 dark:bg-white/[0.09] dark:text-white'
+                          ? 'bg-orange-500/10 text-orange-800 dark:bg-white/[0.09] dark:text-white'
                           : 'text-slate-600 hover:text-slate-950 dark:text-gray-400 dark:hover:text-white'
                       }`}
                     >
@@ -967,7 +967,7 @@ export function App() {
                       setIsMobileMenuOpen(false);
                       openCreateModal();
                     }}
-                    className="text-xs font-semibold text-teal-600 dark:text-teal-400"
+                    className="text-xs font-semibold text-orange-600 dark:text-orange-400"
                   >
                     + New
                   </button>
@@ -996,7 +996,7 @@ export function App() {
               variant="secondary"
               size="md"
               className="w-full"
-              leftIcon={<ListMusic className="w-4 h-4 text-teal-600 dark:text-teal-400" />}
+              leftIcon={<ListMusic className="w-4 h-4 text-orange-600 dark:text-orange-400" />}
               onClick={() => {
                 setIsMobileMenuOpen(false);
                 setIsManagerOpen(true);
@@ -1078,7 +1078,7 @@ export function App() {
               <Button
                 variant="outline"
                 size="sm"
-                leftIcon={<Plus className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />}
+                leftIcon={<Plus className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />}
                 onClick={openCreateModal}
               >
                 <span className="hidden sm:inline">New Playlist</span>
@@ -1265,7 +1265,7 @@ export function App() {
                       <button
                         type="button"
                         onClick={() => setSelectedGenre('All')}
-                        className="text-xs font-semibold text-teal-600 dark:text-teal-400"
+                        className="text-xs font-semibold text-orange-600 dark:text-orange-400"
                       >
                         {selectedGenre} · Clear genre
                       </button>
@@ -1336,8 +1336,8 @@ export function App() {
                   duration={0.9}
                   splitType="chars"
                   textAlign="left"
-                  color="#198f85"
-                  accentColor="#f97316"
+                  color={isDark ? '#fb923c' : '#ea580c'}
+                  accentColor="#f59e0b"
                 />
               </h1>
             </div>
@@ -1373,7 +1373,7 @@ export function App() {
                   <button
                     type="button"
                     onClick={() => setActiveSection('playlists')}
-                    className="text-xs font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+                    className="text-xs font-semibold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
                   >
                     Manage all ({playlists.length})
                   </button>
@@ -1449,7 +1449,7 @@ export function App() {
                         value={selectedGenre}
                         onChange={(genre) => setSelectedGenre(genre)}
                         chipColor={isDark ? '#15171c' : '#ffffff'}
-                        activeColor="#198f85"
+                        activeColor="#f97316"
                         textColor={isDark ? '#d1d5db' : '#334155'}
                         activeTextColor="#ffffff"
                         borderColor={isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(15, 23, 42, 0.12)'}
@@ -1498,7 +1498,7 @@ export function App() {
                     aria-pressed={libraryLayout === 'grid'}
                     className={`p-1.5 rounded-lg transition ${
                       libraryLayout === 'grid'
-                        ? 'bg-[#198f85] text-white'
+                        ? 'bg-[#f97316] text-white'
                         : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
                     }`}
                   >
@@ -1511,7 +1511,7 @@ export function App() {
                     aria-pressed={libraryLayout === 'list'}
                     className={`p-1.5 rounded-lg transition ${
                       libraryLayout === 'list'
-                        ? 'bg-[#198f85] text-white'
+                        ? 'bg-[#f97316] text-white'
                         : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
                     }`}
                   >
@@ -1564,7 +1564,7 @@ export function App() {
                   width="100%"
                   maxHeight={520}
                   theme={theme}
-                  accentColor="#198f85"
+                  accentColor="#f97316"
                   animation="pop"
                   frame={false}
                   gap={8}
@@ -1742,7 +1742,7 @@ export function App() {
               onClick={() => setActiveSection(id)}
               className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition active:scale-95 ${
                 active
-                  ? 'text-teal-600 dark:text-teal-400'
+                  ? 'text-orange-600 dark:text-orange-400'
                   : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
               }`}
             >

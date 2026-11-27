@@ -80,7 +80,7 @@ function HighlightText({ text, query }: { text: string; query: string }) {
         idx % 2 === 1 ? (
           <mark
             key={idx}
-            className="bg-teal-500/20 text-teal-800 dark:bg-teal-400/25 dark:text-teal-200 rounded px-0.5 font-semibold"
+            className="bg-orange-500/20 text-orange-800 dark:bg-orange-400/25 dark:text-orange-200 rounded px-0.5 font-semibold"
           >
             {part}
           </mark>
@@ -207,7 +207,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
         <div
           className={`relative flex items-center rounded-full bg-white dark:bg-[#15171c] border transition-all duration-150 shadow-sm ${
             isOpen
-              ? 'border-teal-500/80 ring-2 ring-teal-500/25 dark:border-teal-500/70 dark:ring-teal-500/30'
+              ? 'border-orange-500/80 ring-2 ring-orange-500/25 dark:border-orange-500/70 dark:ring-orange-500/30'
               : 'border-slate-200 hover:border-slate-300 dark:border-white/10 dark:hover:border-white/20'
           }`}
         >
@@ -235,7 +235,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
 
           <div className="flex items-center gap-1 pr-2 shrink-0">
             {trimmedQuery && (
-              <span className="hidden sm:inline-flex px-1.5 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-teal-500/15 text-teal-700 dark:bg-teal-500/15 dark:text-teal-300 tabular-nums">
+              <span className="hidden sm:inline-flex px-1.5 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-orange-500/15 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300 tabular-nums">
                 {matchingSongs.length}
               </span>
             )}
@@ -273,7 +273,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
               title="Advanced search filters"
               className={`w-7 h-7 rounded-full flex items-center justify-center transition active:scale-90 ${
                 showFilters || hasActiveAdvancedFilters
-                  ? 'bg-[#198f85] text-white shadow-sm'
+                  ? 'bg-[#f97316] text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/10'
               }`}
             >
@@ -307,7 +307,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
                           onClick={() => onScopeChange(opt.id)}
                           className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition active:scale-95 ${
                             active
-                              ? 'bg-[#198f85] text-white'
+                              ? 'bg-[#f97316] text-white'
                               : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300 dark:bg-white/[0.05] dark:text-gray-300 dark:border-white/10 dark:hover:bg-white/10'
                           }`}
                         >
@@ -361,7 +361,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
                       <button
                         type="button"
                         onClick={onResetFilters}
-                        className="text-[11px] font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400"
+                        className="text-[11px] font-semibold text-orange-600 hover:text-orange-700 dark:text-orange-400"
                       >
                         Reset all
                       </button>
@@ -409,7 +409,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
                   {quickGenres.length > 0 && (
                     <div className="space-y-1.5">
                       <span className="inline-flex items-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">
-                        <Sparkles className="w-3 h-3 text-teal-500" />
+                        <Sparkles className="w-3 h-3 text-orange-500" />
                         Quick genres
                       </span>
                       <div className="flex flex-wrap gap-1.5">
@@ -421,7 +421,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
                               onSelectGenre(genre);
                               setIsOpen(false);
                             }}
-                            className="px-2.5 py-1 rounded-full text-xs font-medium bg-teal-500/10 hover:bg-[#198f85] text-teal-700 hover:text-white dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-[#198f85] dark:hover:text-white transition active:scale-95"
+                            className="px-2.5 py-1 rounded-full text-xs font-medium bg-orange-500/10 hover:bg-[#f97316] text-orange-700 hover:text-white dark:bg-orange-500/15 dark:text-orange-300 dark:hover:bg-[#f97316] dark:hover:text-white transition active:scale-95"
                           >
                             {genre}
                           </button>
@@ -454,7 +454,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
                           className="w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/[0.06] text-left transition"
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <span className="w-8 h-8 rounded-lg bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+                            <span className="w-8 h-8 rounded-lg bg-orange-500/15 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
                               <ListMusic className="w-4 h-4" />
                             </span>
                             <div className="min-w-0">
@@ -466,7 +466,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
                               </p>
                             </div>
                           </div>
-                          <span className="text-[10px] font-semibold text-teal-600 dark:text-teal-400 shrink-0">
+                          <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 shrink-0">
                             Open
                           </span>
                         </button>
@@ -490,7 +490,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
                             key={song.id}
                             className={`group flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-xl transition ${
                               activeHighlight || isCurrent
-                                ? 'bg-teal-500/10 dark:bg-teal-500/15'
+                                ? 'bg-orange-500/10 dark:bg-orange-500/15'
                                 : 'hover:bg-slate-100 dark:hover:bg-white/[0.06]'
                             }`}
                           >
@@ -541,7 +541,7 @@ export const AdvancedSearch = forwardRef<HTMLInputElement, AdvancedSearchProps>(
                                 }}
                                 aria-label={`Add ${song.title} from search`}
                                 title="Add to playlist"
-                                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-[#198f85] text-slate-600 hover:text-white dark:bg-white/[0.06] dark:text-gray-300 flex items-center justify-center transition active:scale-90"
+                                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-[#f97316] text-slate-600 hover:text-white dark:bg-white/[0.06] dark:text-gray-300 flex items-center justify-center transition active:scale-90"
                               >
                                 <Plus className="w-3.5 h-3.5" />
                               </button>

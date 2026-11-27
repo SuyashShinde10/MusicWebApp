@@ -83,7 +83,7 @@ export function Modal({
         <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-200 dark:border-white/[0.08]">
           <div className="flex items-center gap-3 min-w-0">
             {icon && (
-              <div className="w-10 h-10 rounded-xl bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/15 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
                 {icon}
               </div>
             )}
@@ -102,7 +102,7 @@ export function Modal({
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:bg-white/5 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
           >
             <X className="w-4 h-4" />
           </button>

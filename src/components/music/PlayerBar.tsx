@@ -120,7 +120,7 @@ export function PlayerBar({
 
   const sliderRangeColor = isDark ? '#ffffff' : '#0f172a';
   const sliderTrackColor = isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(15, 23, 42, 0.16)';
-  const sliderThumbColor = isDark ? '#ffffff' : '#198f85';
+  const sliderThumbColor = isDark ? '#ffffff' : '#f97316';
 
   return (
     <footer
@@ -144,7 +144,7 @@ export function PlayerBar({
               <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 dark:bg-white/5 dark:border-white/10 shrink-0" />
             )}
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-slate-900 dark:text-white truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+              <p className="text-xs font-semibold text-slate-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                 {currentSong ? currentSong.title : 'Nothing playing'}
               </p>
               <p className="text-[11px] text-slate-500 dark:text-gray-400 truncate">
@@ -168,7 +168,7 @@ export function PlayerBar({
               onClick={onTogglePlay}
               disabled={!currentSong}
               aria-label={isPlaying ? 'Pause' : 'Play'}
-              className="w-9 h-9 rounded-full bg-[#198f85] hover:bg-[#157a71] text-white flex items-center justify-center active:scale-90 disabled:opacity-40 transition shadow-sm"
+              className="w-9 h-9 rounded-full bg-[#f97316] hover:bg-[#ea580c] text-white flex items-center justify-center active:scale-90 disabled:opacity-40 transition shadow-sm"
             >
               {isPlaying ? (
                 <Pause className="w-4 h-4 fill-current" />
@@ -231,7 +231,7 @@ export function PlayerBar({
               maxStretch={14}
               bounce={0.4}
               trackColor={sliderTrackColor}
-              rangeColor="#198f85"
+              rangeColor="#f97316"
               disabled={!currentSong}
               ariaLabel="Mobile playback progress"
               className="!w-full"
@@ -261,7 +261,7 @@ export function PlayerBar({
               <div className="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 dark:bg-white/5 dark:border-white/10 shrink-0" />
             )}
             <div className="min-w-0">
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-white truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                 {currentSong ? currentSong.title : 'Select a track'}
               </h4>
               <p className="text-xs text-slate-500 dark:text-gray-400 truncate">
@@ -292,7 +292,7 @@ export function PlayerBar({
               }}
               disabled={!currentSong}
               aria-label={isPlaying ? 'Pause' : 'Play'}
-              className="w-10 h-10 rounded-full border border-slate-300 bg-slate-900 hover:bg-[#198f85] hover:border-[#198f85] text-white dark:border-white/35 dark:bg-white/10 dark:hover:bg-teal-600 dark:hover:border-teal-400 flex items-center justify-center transition-all hover:scale-105 active:scale-90 disabled:opacity-40"
+              className="w-10 h-10 rounded-full border border-slate-300 bg-slate-900 hover:bg-[#f97316] hover:border-[#f97316] text-white dark:border-white/35 dark:bg-white/10 dark:hover:bg-orange-600 dark:hover:border-orange-400 flex items-center justify-center transition-all hover:scale-105 active:scale-90 disabled:opacity-40"
             >
               {isPlaying ? (
                 <Pause className="w-4 h-4 fill-current" />
@@ -370,7 +370,7 @@ export function PlayerBar({
             aria-pressed={isShuffle}
             className={`transition p-1.5 rounded-full active:scale-90 ${
               isShuffle
-                ? 'text-teal-600 dark:text-teal-400'
+                ? 'text-orange-600 dark:text-orange-400'
                 : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
             }`}
             title="Shuffle"
@@ -385,7 +385,7 @@ export function PlayerBar({
             aria-pressed={isRepeat}
             className={`transition p-1.5 rounded-full active:scale-90 ${
               isRepeat
-                ? 'text-teal-600 dark:text-teal-400'
+                ? 'text-orange-600 dark:text-orange-400'
                 : 'text-slate-500 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white'
             }`}
             title="Repeat"
@@ -412,7 +412,7 @@ export function PlayerBar({
               title="Adjust volume"
               className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-xs font-semibold transition active:scale-95 ${
                 isVolumeOpen
-                  ? 'bg-teal-500/15 border-teal-500/40 text-teal-700 dark:text-teal-400'
+                  ? 'bg-orange-500/15 border-orange-500/40 text-orange-700 dark:text-orange-400'
                   : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] dark:border-white/[0.08] dark:text-gray-300 dark:hover:text-white'
               }`}
             >
@@ -435,7 +435,7 @@ export function PlayerBar({
                   onChange={(val) => onVolumeChange(Number((val / 100).toFixed(2)))}
                   interactive
                   showValue
-                  liquidColor="#198f85"
+                  liquidColor="#f97316"
                   glassColor={isDark ? '#0b0d11' : '#e2e8f0'}
                   width={72}
                   height={148}
@@ -455,7 +455,7 @@ export function PlayerBar({
                 >
                   {volumePercent === 0 ? (
                     <>
-                      <Volume2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                      <Volume2 className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
                       <span>Unmute (75%)</span>
                     </>
                   ) : (

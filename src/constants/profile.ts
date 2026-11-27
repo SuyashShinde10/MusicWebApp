@@ -14,9 +14,9 @@ export const PLAN_META: Record<
   { badgeClass: string; subtitle: string; ringClass: string }
 > = {
   Premium: {
-    badgeClass: 'bg-teal-500/15 text-teal-700 dark:bg-teal-600/25 dark:text-teal-300',
+    badgeClass: 'bg-orange-500/15 text-orange-700 dark:bg-orange-600/25 dark:text-orange-300',
     subtitle: 'Ad-free streams · Unlimited playlists',
-    ringClass: 'ring-teal-500/70',
+    ringClass: 'ring-orange-500/70',
   },
   'Hi-Fi Studio': {
     badgeClass:

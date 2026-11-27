@@ -18,7 +18,7 @@ const BADGE_STYLES = [
   { gradient: 'from-sky-500/90 to-indigo-700', Icon: ListMusic },
   { gradient: 'from-amber-400 to-orange-600', Icon: Zap },
   { gradient: 'from-rose-500 to-purple-700', Icon: Flame },
-  { gradient: 'from-emerald-500 to-teal-700', Icon: Headphones },
+  { gradient: 'from-orange-500 to-amber-600', Icon: Headphones },
 ] as const;
 
 function getBadgeStyle(id: string) {
@@ -57,9 +57,9 @@ export function PlaylistCard({
         title={`${playlist.name} (${summary})`}
         aria-label={`Open playlist ${playlist.name}`}
         aria-pressed={isActive}
-        className={`w-10 h-10 mx-auto rounded-lg overflow-hidden bg-gradient-to-br ${gradient} flex items-center justify-center text-white transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${
+        className={`w-10 h-10 mx-auto rounded-lg overflow-hidden bg-gradient-to-br ${gradient} flex items-center justify-center text-white transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
           isActive
-            ? 'ring-2 ring-teal-500 ring-offset-2 ring-offset-white dark:ring-offset-[#15171c]'
+            ? 'ring-2 ring-orange-500 ring-offset-2 ring-offset-white dark:ring-offset-[#15171c]'
             : 'opacity-85 hover:opacity-100'
         }`}
       >
@@ -81,9 +81,9 @@ export function PlaylistCard({
           }
         }}
         aria-pressed={isActive}
-        className={`relative w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-150 cursor-pointer min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${
+        className={`relative w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-150 cursor-pointer min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
           isActive
-            ? 'bg-teal-500/10 text-teal-800 dark:bg-white/[0.09] dark:text-white'
+            ? 'bg-orange-500/10 text-orange-800 dark:bg-white/[0.09] dark:text-white'
             : 'hover:bg-slate-100 text-slate-700 dark:hover:bg-white/[0.05] dark:text-gray-300'
         }`}
       >
@@ -97,7 +97,7 @@ export function PlaylistCard({
             <h4
               className={`text-[13px] truncate leading-snug ${
                 isActive
-                  ? 'font-semibold text-teal-800 dark:text-white'
+                  ? 'font-semibold text-orange-800 dark:text-white'
                   : 'font-medium text-slate-800 group-hover:text-slate-950 dark:text-gray-200 dark:group-hover:text-white'
               }`}
             >
@@ -122,9 +122,9 @@ export function PlaylistCard({
         }
       }}
       aria-pressed={isActive}
-      className={`w-full flex items-center justify-between gap-2.5 p-3 rounded-2xl border transition-all duration-200 cursor-pointer min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${
+      className={`w-full flex items-center justify-between gap-2.5 p-3 rounded-2xl border transition-all duration-200 cursor-pointer min-w-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
         isActive
-          ? 'bg-teal-500/10 border-teal-500/45 dark:bg-white/[0.08]'
+          ? 'bg-orange-500/10 border-orange-500/45 dark:bg-white/[0.08]'
           : 'bg-white hover:bg-slate-50 border-slate-200 dark:bg-[#15171c] dark:hover:bg-[#1c1f26] dark:border-white/[0.07] dark:hover:border-white/15'
       }`}
     >
@@ -138,7 +138,7 @@ export function PlaylistCard({
           <h4
             className={`text-sm font-semibold truncate leading-tight ${
               isActive
-                ? 'text-teal-700 dark:text-teal-400'
+                ? 'text-orange-700 dark:text-orange-400'
                 : 'text-slate-900 group-hover:text-slate-950 dark:text-gray-100 dark:group-hover:text-white'
             }`}
           >

@@ -31,13 +31,13 @@ export function Toast({ toast, onDismiss }: ToastProps) {
   if (!toast) return null;
 
   const iconMap = {
-    success: <Check className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />,
+    success: <Check className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />,
     info: <Info className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />,
     error: <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />,
   };
 
   const ringMap = {
-    success: 'border-teal-500/35',
+    success: 'border-orange-500/35',
     info: 'border-sky-500/35',
     error: 'border-rose-500/35',
   };

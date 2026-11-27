@@ -164,9 +164,9 @@ export function ProfileSettingsModal({
                   onClick={() => setAvatarUrl(preset.url)}
                   aria-label={`Choose ${preset.label} avatar`}
                   aria-pressed={selected}
-                  className={`relative rounded-xl p-1 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 ${
+                  className={`relative rounded-xl p-1 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 ${
                     selected
-                      ? 'bg-teal-500/15 ring-2 ring-teal-500'
+                      ? 'bg-orange-500/15 ring-2 ring-orange-500'
                       : 'bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.04] dark:hover:bg-white/10'
                   }`}
                 >
@@ -176,7 +176,7 @@ export function ProfileSettingsModal({
                     className="w-full aspect-square rounded-lg object-cover"
                   />
                   {selected && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-teal-500 text-white flex items-center justify-center shadow">
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-orange-500 text-white flex items-center justify-center shadow">
                       <Check className="w-2.5 h-2.5" />
                     </span>
                   )}
@@ -203,7 +203,7 @@ export function ProfileSettingsModal({
                   aria-pressed={selected}
                   className={`text-left p-2.5 rounded-xl border transition ${
                     selected
-                      ? 'border-teal-500 bg-teal-500/10 dark:bg-teal-500/15'
+                      ? 'border-orange-500 bg-orange-500/10 dark:bg-orange-500/15'
                       : 'border-slate-200 hover:border-slate-300 dark:border-white/10 dark:hover:border-white/20'
                   }`}
                 >
@@ -236,7 +236,7 @@ export function ProfileSettingsModal({
                   aria-pressed={selected}
                   className={`py-2 px-2.5 rounded-xl border text-center transition ${
                     selected
-                      ? 'border-teal-500 bg-teal-500/10 text-teal-700 dark:text-teal-300'
+                      ? 'border-orange-500 bg-orange-500/10 text-orange-700 dark:text-orange-300'
                       : 'border-slate-200 text-slate-600 hover:border-slate-300 dark:border-white/10 dark:text-gray-300'
                   }`}
                 >

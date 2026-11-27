@@ -239,7 +239,7 @@ export function ActivePlaylistSkeleton() {
             </div>
           ))}
           <div className="pt-2">
-            <div className="h-[3px] w-full rounded-full bg-teal-500/40" />
+            <div className="h-[3px] w-full rounded-full bg-orange-500/40" />
             <div className="h-12 flex items-center justify-center">
               <Shimmer className="h-3 w-48 rounded" />
             </div>

@@ -290,7 +290,7 @@ export const FeaturedShowcase = memo(function FeaturedShowcase({
           {/* Top Badges & Add Action */}
           <div className="relative z-10 flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#198f85] text-white shadow-sm">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#f97316] text-white shadow-sm">
                 {activeSong.genre}
               </span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/65 text-gray-200 border border-white/15">
@@ -331,7 +331,7 @@ export const FeaturedShowcase = memo(function FeaturedShowcase({
                   ? `Pause ${activeSong.title}`
                   : `Play ${activeSong.title}`
               }
-              className="w-11 h-11 rounded-full bg-white text-slate-950 hover:bg-[#198f85] hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 shadow-lg"
+              className="w-11 h-11 rounded-full bg-white text-slate-950 hover:bg-[#f97316] hover:text-white flex items-center justify-center transition active:scale-90 shrink-0 shadow-lg"
             >
               {isCurrentActive && isPlaying ? (
                 <Pause className="w-4 h-4 fill-current" />
@@ -413,7 +413,7 @@ export const FeaturedShowcase = memo(function FeaturedShowcase({
               onClick={() => onAddToPlaylist(activeSong)}
               aria-label={`Add ${activeSong.title} to playlist`}
               title="Add to playlist"
-              className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/45 hover:bg-[#198f85] backdrop-blur-md border border-white/25 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-all active:scale-90"
+              className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/45 hover:bg-[#f97316] backdrop-blur-md border border-white/25 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-all active:scale-90"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -439,7 +439,7 @@ export const FeaturedShowcase = memo(function FeaturedShowcase({
                     ? `Pause ${activeSong.title}`
                     : `Play ${activeSong.title}`
                 }
-                className="w-10 h-10 rounded-full bg-white/20 hover:bg-[#198f85] backdrop-blur-md border border-white/40 text-white flex items-center justify-center transition-all hover:scale-105 active:scale-90 shrink-0 shadow-lg"
+                className="w-10 h-10 rounded-full bg-white/20 hover:bg-[#f97316] backdrop-blur-md border border-white/40 text-white flex items-center justify-center transition-all hover:scale-105 active:scale-90 shrink-0 shadow-lg"
               >
                 {isCurrentActive && isPlaying ? (
                   <Pause className="w-4 h-4 fill-current" />
@@ -504,7 +504,7 @@ export const FeaturedShowcase = memo(function FeaturedShowcase({
               aria-label={`Select ${item.title}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 active
-                  ? 'w-5 bg-[#198f85]'
+                  ? 'w-5 bg-[#f97316]'
                   : 'w-1.5 bg-slate-300 hover:bg-slate-400 dark:bg-white/20 dark:hover:bg-white/40'
               }`}
             />

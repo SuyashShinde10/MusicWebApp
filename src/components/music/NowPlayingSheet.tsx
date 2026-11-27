@@ -110,7 +110,7 @@ export function NowPlayingSheet({
   const duration = currentSong.duration ?? 0;
   const remaining = Math.max(0, duration - elapsedSeconds);
   const volumePercent = Math.round(volume * 100);
-  const ambientColor = currentSong.frameColor ?? '#198f85';
+  const ambientColor = currentSong.frameColor ?? '#f97316';
 
   const currentIdx = queue.findIndex((s) => s.id === currentSong.id);
   const upNext: Song[] =
@@ -208,7 +208,7 @@ export function NowPlayingSheet({
                   <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight truncate">
                     {currentSong.title}
                   </h2>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#198f85]/15 text-teal-700 dark:bg-teal-400/20 dark:text-teal-200 shrink-0">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#f97316]/15 text-orange-700 dark:bg-orange-400/20 dark:text-orange-200 shrink-0">
                     {currentSong.genre}
                   </span>
                 </div>
@@ -250,7 +250,7 @@ export function NowPlayingSheet({
                 maxStretch={20}
                 bounce={0.45}
                 thumb
-                thumbColor={isDark ? '#ffffff' : '#198f85'}
+                thumbColor={isDark ? '#ffffff' : '#f97316'}
                 trackColor={isDark ? 'rgba(255,255,255,0.2)' : 'rgba(15,23,42,0.16)'}
                 rangeColor={isDark ? '#ffffff' : '#0f172a'}
                 ariaLabel="Expanded playback progress"
@@ -271,7 +271,7 @@ export function NowPlayingSheet({
                 aria-pressed={isShuffle}
                 className={`p-2 rounded-full transition active:scale-90 ${
                   isShuffle
-                    ? 'text-[#198f85] dark:text-teal-300 bg-[#198f85]/15'
+                    ? 'text-[#f97316] dark:text-orange-300 bg-[#f97316]/15'
                     : 'opacity-70 hover:opacity-100'
                 }`}
               >
@@ -296,7 +296,7 @@ export function NowPlayingSheet({
                   onTogglePlay();
                 }}
                 aria-label={isPlaying ? 'Sheet pause' : 'Sheet play'}
-                className="w-14 h-14 rounded-full bg-slate-900 text-white hover:bg-[#198f85] dark:bg-white dark:text-slate-950 dark:hover:bg-teal-400 flex items-center justify-center shadow-xl transition hover:scale-105 active:scale-95"
+                className="w-14 h-14 rounded-full bg-slate-900 text-white hover:bg-[#f97316] dark:bg-white dark:text-slate-950 dark:hover:bg-orange-400 flex items-center justify-center shadow-xl transition hover:scale-105 active:scale-95"
               >
                 {isPlaying ? (
                   <Pause className="w-6 h-6 fill-current" />
@@ -322,7 +322,7 @@ export function NowPlayingSheet({
                 aria-pressed={isRepeat}
                 className={`p-2 rounded-full transition active:scale-90 ${
                   isRepeat
-                    ? 'text-[#198f85] dark:text-teal-300 bg-[#198f85]/15'
+                    ? 'text-[#f97316] dark:text-orange-300 bg-[#f97316]/15'
                     : 'opacity-70 hover:opacity-100'
                 }`}
               >
@@ -338,9 +338,9 @@ export function NowPlayingSheet({
               <button
                 type="button"
                 onClick={() => setShowQueueVolume((prev) => !prev)}
-                className="inline-flex items-center gap-2 text-xs font-semibold hover:text-teal-600 dark:hover:text-teal-300 transition"
+                className="inline-flex items-center gap-2 text-xs font-semibold hover:text-orange-600 dark:hover:text-orange-300 transition"
               >
-                <VolumeIcon className="w-4 h-4 text-[#198f85] dark:text-teal-400" />
+                <VolumeIcon className="w-4 h-4 text-[#f97316] dark:text-orange-400" />
                 <span className="font-mono tabular-nums">{volumePercent}% Volume</span>
               </button>
               <button
@@ -363,7 +363,7 @@ export function NowPlayingSheet({
                   onChange={(val) => onVolumeChange(Number((val / 100).toFixed(2)))}
                   interactive
                   showValue
-                  liquidColor="#198f85"
+                  liquidColor="#f97316"
                   glassColor={isDark ? '#0b0d11' : '#e2e8f0'}
                   width={68}
                   height={132}
@@ -378,7 +378,7 @@ export function NowPlayingSheet({
                 <button
                   type="button"
                   onClick={() => onVolumeChange(volumePercent === 0 ? 0.75 : 0)}
-                  className="text-xs font-semibold text-teal-600 dark:text-teal-400"
+                  className="text-xs font-semibold text-orange-600 dark:text-orange-400"
                 >
                   {volumePercent === 0 ? 'Unmute (75%)' : 'Mute'}
                 </button>
@@ -389,7 +389,7 @@ export function NowPlayingSheet({
             <div className="rounded-2xl bg-black/5 dark:bg-white/[0.08] border border-black/5 dark:border-white/10 p-3.5 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider opacity-85">
-                  <Sparkles className="w-3.5 h-3.5 text-[#198f85] dark:text-teal-300" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#f97316] dark:text-orange-300" />
                   Up Next
                 </span>
                 <span className="text-[11px] opacity-65">{upNext.length} queued</span>
@@ -408,7 +408,7 @@ export function NowPlayingSheet({
                       onClick={() => onSelectQueueSong(song)}
                       className={`w-full flex items-center justify-between gap-2.5 p-2 rounded-xl text-left transition ${
                         song.id === activeId
-                          ? 'bg-[#198f85]/20'
+                          ? 'bg-[#f97316]/20'
                           : 'hover:bg-black/5 dark:hover:bg-white/10'
                       }`}
                     >

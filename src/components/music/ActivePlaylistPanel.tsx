@@ -56,7 +56,7 @@ export function ActivePlaylistPanel({
   const totalSeconds = computeTotalDuration(songs);
   const summary = formatPlaylistSummary(songs.length, totalSeconds);
   const coverSong = songs[0];
-  const heroTint = coverSong?.frameColor ?? '#198f85';
+  const heroTint = coverSong?.frameColor ?? '#f97316';
   const shredderHeight = Math.max(150, songs.length * 66 + 76);
 
   return (
@@ -80,19 +80,19 @@ export function ActivePlaylistPanel({
                 <div className="w-32 h-32 sm:w-16 sm:h-16 rounded-2xl sm:rounded-xl overflow-hidden shadow-xl ring-1 ring-black/10 dark:ring-white/15">
                   <AlbumArt song={coverSong} size="fill" className="!rounded-2xl sm:!rounded-xl" />
                 </div>
-                <span className="hidden sm:flex absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#198f85] text-white items-center justify-center shadow ring-2 ring-white dark:ring-[#15171c]">
+                <span className="hidden sm:flex absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#f97316] text-white items-center justify-center shadow ring-2 ring-white dark:ring-[#15171c]">
                   <ListMusic className="w-2.5 h-2.5" />
                 </span>
               </div>
             ) : (
-              <div className="w-24 h-24 sm:w-14 sm:h-14 rounded-2xl sm:rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+              <div className="w-24 h-24 sm:w-14 sm:h-14 rounded-2xl sm:rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
                 <ListMusic className="w-8 h-8 sm:w-6 sm:h-6" />
               </div>
             )}
 
             <div className="min-w-0">
               <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-500/15 text-teal-700 dark:bg-teal-500/20 dark:text-teal-300 border border-teal-500/25">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-500/15 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300 border border-orange-500/25">
                   Active Playlist
                 </span>
                 <span className="text-xs font-medium text-slate-600 dark:text-gray-300">
@@ -153,15 +153,15 @@ export function ActivePlaylistPanel({
         <div className="space-y-2.5 min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-2 px-1">
             <div className="inline-flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-gray-400">
-              <GripVertical className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+              <GripVertical className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400 shrink-0" />
               <span>
-                Drag rows to reorder · Pull past the teal slit to remove, or use arrows
+                Drag rows to reorder · Pull past the orange slit to remove, or use arrows
               </span>
             </div>
             <button
               type="button"
               onClick={onBrowseLibrary}
-              className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 transition"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 transition"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add more tracks</span>
@@ -182,7 +182,7 @@ export function ActivePlaylistPanel({
               bite={18}
               stripWidth={10}
               curl={1}
-              slitColor="#198f85"
+              slitColor="#f97316"
               color={isDark ? '#f3f4f6' : '#0f172a'}
               className="!w-full"
               onReorder={(reordered) =>
@@ -211,9 +211,9 @@ export function ActivePlaylistPanel({
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-[66px] bg-gradient-to-b from-teal-500/[0.05] to-transparent flex items-center justify-center gap-1.5 text-[11px] font-medium text-slate-400 dark:text-gray-500"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-[66px] bg-gradient-to-b from-orange-500/[0.05] to-transparent flex items-center justify-center gap-1.5 text-[11px] font-medium text-slate-400 dark:text-gray-500"
             >
-              <Scissors className="w-3.5 h-3.5 text-teal-600/70 dark:text-teal-400/70" />
+              <Scissors className="w-3.5 h-3.5 text-orange-600/70 dark:text-orange-400/70" />
               <span>Shred zone — pull a track below the line to remove</span>
             </div>
           </div>

@@ -12,7 +12,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#198f85] hover:bg-[#157a71] text-white border border-teal-500/30 shadow-sm',
+    'bg-[#f97316] hover:bg-[#ea580c] text-white border border-orange-500/30 shadow-sm',
   secondary:
     'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 dark:bg-[#181b22] dark:hover:bg-[#20242e] dark:text-gray-200 dark:border-white/10',
   ghost:
@@ -20,7 +20,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   danger:
     'bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 hover:text-rose-700 border border-rose-500/25 dark:bg-rose-500/15 dark:hover:bg-rose-500/25 dark:text-rose-300 dark:hover:text-rose-200 dark:border-rose-500/30',
   outline:
-    'bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 hover:border-teal-500/50 dark:bg-[#15171c] dark:hover:bg-[#1c1f26] dark:text-gray-200 dark:border-white/10 dark:hover:border-teal-500/40',
+    'bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 hover:border-orange-500/50 dark:bg-[#15171c] dark:hover:bg-[#1c1f26] dark:text-gray-200 dark:border-white/10 dark:hover:border-orange-500/40',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -45,7 +45,7 @@ export function Button({
     <button
       type={type}
       disabled={disabled}
-      className={`inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/70 active:scale-95 disabled:opacity-40 disabled:pointer-events-none select-none ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
+      className={`inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70 active:scale-95 disabled:opacity-40 disabled:pointer-events-none select-none ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
       {...rest}
     >
       {leftIcon}

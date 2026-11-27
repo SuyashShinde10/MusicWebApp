@@ -38,7 +38,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             } ${leftIcon ? 'pl-10' : 'pl-3.5'} ${rightElement ? 'pr-12' : 'pr-3.5'} py-2 ${
               error
                 ? 'border-rose-500/70 focus:ring-rose-500/40'
-                : 'border-slate-200 focus:border-teal-500/70 focus:ring-teal-500/30 dark:border-white/10 dark:focus:border-teal-500/60 dark:focus:ring-teal-500/35'
+                : 'border-slate-200 focus:border-orange-500/70 focus:ring-orange-500/30 dark:border-white/10 dark:focus:border-orange-500/60 dark:focus:ring-orange-500/35'
             } ${className}`}
             {...rest}
           />

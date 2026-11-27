@@ -40,7 +40,7 @@ A responsive **Music Playlist Manager** web application built with **React 19**,
 
 ---
 
-## How to Run Locally
+## How to Run
 
 ```bash
 # 1. Install dependencies
@@ -79,7 +79,7 @@ npm run build
 
 ---
 
-## What I Would Improve Next
+## What I Would Improve
 
 - **Backend API & Cloud Sync:** Replace `localStorage` and `/songs.json` with a REST/PostgreSQL backend and authenticated multi-device sync while preserving existing `songService` and storage module interfaces.
 - **Undo/Redo History & Playlist Import:** Pair playlist JSON export with JSON/M3U file import validation and toast-driven undo on accidental song removal.

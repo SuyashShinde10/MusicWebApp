@@ -2,7 +2,7 @@ import type { Song } from '../types/music';
 
 const FALLBACK_GRADIENTS = [
   'from-amber-600 via-orange-800 to-stone-950',
-  'from-emerald-600 via-teal-800 to-slate-950',
+  'from-orange-600 via-amber-800 to-slate-950',
   'from-indigo-600 via-violet-900 to-slate-950',
   'from-rose-600 via-red-800 to-neutral-950',
   'from-cyan-600 via-sky-900 to-slate-950',

@@ -82,8 +82,8 @@ export function AddToPlaylistModal({
                   }}
                   className={`w-full flex items-center justify-between gap-3 p-3 rounded-2xl border text-left transition ${
                     alreadyAdded
-                      ? 'bg-teal-500/10 border-teal-500/30 opacity-85 cursor-not-allowed'
-                      : 'bg-slate-50 hover:bg-teal-500/10 border-slate-200 hover:border-teal-500/40 dark:bg-[#101319] dark:hover:bg-teal-500/15 dark:border-white/10 dark:hover:border-teal-500/40'
+                      ? 'bg-orange-500/10 border-orange-500/30 opacity-85 cursor-not-allowed'
+                      : 'bg-slate-50 hover:bg-orange-500/10 border-slate-200 hover:border-orange-500/40 dark:bg-[#101319] dark:hover:bg-orange-500/15 dark:border-white/10 dark:hover:border-orange-500/40'
                   }`}
                 >
                   <div className="min-w-0">
@@ -96,7 +96,7 @@ export function AddToPlaylistModal({
                     </p>
                   </div>
                   {alreadyAdded ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-teal-500/20 text-teal-700 dark:text-teal-300 shrink-0">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-orange-500/20 text-orange-700 dark:text-orange-300 shrink-0">
                       <Check className="w-3 h-3" />
                       Added
                     </span>

@@ -44,7 +44,7 @@ function EqualizerBars() {
 
 const FRAME_COLORS = [
   '#8c2f16',
-  '#0c4a40',
+  '#9a3412',
   '#1e2a55',
   '#9a5b13',
   '#22464f',
@@ -104,7 +104,7 @@ export const SongRow = memo(function SongRow({
           style={{ backgroundColor: frameBg }}
           className={`group w-full h-full rounded-[16px] p-1.5 flex flex-col justify-between min-w-0 transition-all duration-200 ${
             isCurrent
-              ? 'ring-2 ring-teal-500 ring-offset-2 ring-offset-[#f6f7f9] dark:ring-offset-[#0b0d11]'
+              ? 'ring-2 ring-orange-500 ring-offset-2 ring-offset-[#f6f7f9] dark:ring-offset-[#0b0d11]'
               : 'ring-1 ring-black/10 dark:ring-white/10'
           }`}
         >
@@ -124,7 +124,7 @@ export const SongRow = memo(function SongRow({
               aria-label={isCurrent && isPlaying ? `Pause ${song.title}` : `Play ${song.title}`}
               className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 bg-black/35 transition-opacity duration-200"
             >
-              <span className="w-10 h-10 rounded-full bg-black/55 hover:bg-[#198f85] md:bg-white/25 md:backdrop-blur-md border border-white/40 text-white flex items-center justify-center transition-transform duration-200 translate-y-1.5 group-hover:translate-y-0">
+              <span className="w-10 h-10 rounded-full bg-black/55 hover:bg-[#f97316] md:bg-white/25 md:backdrop-blur-md border border-white/40 text-white flex items-center justify-center transition-transform duration-200 translate-y-1.5 group-hover:translate-y-0">
                 {isCurrent && isPlaying ? (
                   <Pause className="w-4 h-4 fill-current" />
                 ) : (
@@ -134,7 +134,7 @@ export const SongRow = memo(function SongRow({
             </button>
 
             {isCurrent && isPlaying && (
-              <span className="absolute bottom-1.5 right-1.5 z-10 px-2 py-1 rounded-full bg-black/80 md:bg-black/70 md:backdrop-blur-md border border-teal-400/40 flex items-center gap-1.5 pointer-events-none">
+              <span className="absolute bottom-1.5 right-1.5 z-10 px-2 py-1 rounded-full bg-black/80 md:bg-black/70 md:backdrop-blur-md border border-orange-400/40 flex items-center gap-1.5 pointer-events-none">
                 <EqualizerBars />
               </span>
             )}
@@ -156,8 +156,8 @@ export const SongRow = memo(function SongRow({
                 title={isInActivePlaylist ? 'Already in active playlist' : 'Add to playlist'}
                 className={`absolute top-1.5 left-1.5 z-20 w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-150 active:scale-90 md:backdrop-blur-md ${
                   isInActivePlaylist
-                    ? 'bg-[#198f85] text-white border border-teal-300/40'
-                    : 'bg-black/70 md:bg-black/55 text-white hover:bg-[#198f85] border border-white/20 opacity-90 group-hover:opacity-100'
+                    ? 'bg-[#f97316] text-white border border-orange-300/40'
+                    : 'bg-black/70 md:bg-black/55 text-white hover:bg-[#f97316] border border-white/20 opacity-90 group-hover:opacity-100'
                 }`}
               >
                 {isInActivePlaylist ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
@@ -180,7 +180,7 @@ export const SongRow = memo(function SongRow({
     <div
       className={`group flex items-center justify-between gap-2 sm:gap-3 px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl border transition-all duration-150 min-w-0 w-full shadow-sm dark:shadow-none ${
         isCurrent
-          ? 'bg-teal-500/10 border-teal-500/40 shadow-sm'
+          ? 'bg-orange-500/10 border-orange-500/40 shadow-sm'
           : 'bg-white hover:bg-slate-50 border-slate-200/90 hover:border-slate-300 dark:bg-[#151821] dark:hover:bg-[#1a1e29] dark:border-white/[0.07] dark:hover:border-white/[0.14]'
       }`}
     >
@@ -210,7 +210,7 @@ export const SongRow = memo(function SongRow({
             onPlay(song);
           }}
           aria-label={isCurrent && isPlaying ? `Pause ${song.title}` : `Play ${song.title}`}
-          className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 group/play"
+          className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 group/play"
         >
           <AlbumArt song={song} isPlaying={isCurrent && isPlaying} size="sm" />
           {isCurrent && isPlaying ? (
@@ -234,7 +234,7 @@ export const SongRow = memo(function SongRow({
               }}
               className={`text-[13.5px] font-semibold truncate cursor-pointer transition-colors ${
                 isCurrent
-                  ? 'text-teal-700 dark:text-teal-400'
+                  ? 'text-orange-700 dark:text-orange-400'
                   : 'text-slate-900 group-hover:text-slate-950 dark:text-gray-100 dark:group-hover:text-white'
               }`}
             >
@@ -276,8 +276,8 @@ export const SongRow = memo(function SongRow({
             }
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 ${
               isInActivePlaylist
-                ? 'bg-teal-500/15 text-teal-700 dark:text-teal-400 hover:bg-teal-500/25'
-                : 'bg-slate-100 text-slate-600 hover:bg-[#198f85] hover:text-white dark:bg-white/[0.06] dark:text-gray-300'
+                ? 'bg-orange-500/15 text-orange-700 dark:text-orange-400 hover:bg-orange-500/25'
+                : 'bg-slate-100 text-slate-600 hover:bg-[#f97316] hover:text-white dark:bg-white/[0.06] dark:text-gray-300'
             }`}
           >
             {isInActivePlaylist ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -294,7 +294,7 @@ export const SongRow = memo(function SongRow({
             disabled={!canMoveUp}
             aria-label={`Move ${song.title} up`}
             title="Move up"
-            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-teal-700 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-300 dark:hover:text-teal-400 flex items-center justify-center transition active:scale-90 disabled:opacity-25 disabled:pointer-events-none"
+            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-orange-700 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-300 dark:hover:text-orange-400 flex items-center justify-center transition active:scale-90 disabled:opacity-25 disabled:pointer-events-none"
           >
             <ArrowUp className="w-3.5 h-3.5" />
           </button>
@@ -310,7 +310,7 @@ export const SongRow = memo(function SongRow({
             disabled={!canMoveDown}
             aria-label={`Move ${song.title} down`}
             title="Move down"
-            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-teal-700 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-300 dark:hover:text-teal-400 flex items-center justify-center transition active:scale-90 disabled:opacity-25 disabled:pointer-events-none"
+            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-orange-700 dark:bg-white/[0.05] dark:hover:bg-white/10 dark:text-gray-300 dark:hover:text-orange-400 flex items-center justify-center transition active:scale-90 disabled:opacity-25 disabled:pointer-events-none"
           >
             <ArrowDown className="w-3.5 h-3.5" />
           </button>
