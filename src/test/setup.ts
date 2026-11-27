@@ -47,6 +47,19 @@ if (typeof window !== 'undefined') {
       }
     };
   }
+
+  if (typeof window.HTMLMediaElement !== 'undefined') {
+    Object.defineProperty(window.HTMLMediaElement.prototype, 'play', {
+      configurable: true,
+      writable: true,
+      value: vi.fn().mockResolvedValue(undefined),
+    });
+    Object.defineProperty(window.HTMLMediaElement.prototype, 'pause', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(),
+    });
+  }
 }
 
 afterEach(() => {

@@ -11,6 +11,7 @@ export interface Song {
   artworkGradient?: string;
   coverImage?: string;
   frameColor?: string;
+  audioUrl?: string;
 }
 
 export interface Playlist {

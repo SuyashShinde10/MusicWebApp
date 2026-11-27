@@ -8,7 +8,8 @@
     "plays": "1.8M",
     "artworkGradient": "from-amber-600 via-orange-800 to-stone-950",
     "coverImage": "/covers/golden-days.jpg",
-    "frameColor": "#8c2f16"
+    "frameColor": "#8c2f16",
+    "audioUrl": "/audio/golden-days.mp3"
   },
   {
     "id": 2,
@@ -19,7 +20,8 @@
     "plays": "940K",
     "artworkGradient": "from-emerald-600 via-teal-800 to-slate-950",
     "coverImage": "/covers/fading-horizon.jpg",
-    "frameColor": "#0c4a40"
+    "frameColor": "#0c4a40",
+    "audioUrl": "/audio/fading-horizon.mp3"
   },
   {
     "id": 3,
@@ -30,7 +32,8 @@
     "plays": "3.2M",
     "artworkGradient": "from-indigo-600 via-violet-900 to-slate-950",
     "coverImage": "/covers/waves-of-time.jpg",
-    "frameColor": "#1e2a55"
+    "frameColor": "#1e2a55",
+    "audioUrl": "/audio/waves-of-time.mp3"
   },
   {
     "id": 4,
@@ -41,7 +44,8 @@
     "plays": "2.1M",
     "artworkGradient": "from-orange-500 via-amber-700 to-stone-950",
     "coverImage": "/covers/electric-dreams.jpg",
-    "frameColor": "#9a5b13"
+    "frameColor": "#9a5b13",
+    "audioUrl": "/audio/electric-dreams.mp3"
   },
   {
     "id": 5,
@@ -52,7 +56,8 @@
     "plays": "870K",
     "artworkGradient": "from-slate-600 via-zinc-800 to-neutral-950",
     "coverImage": "/covers/shadows-and-light.jpg",
-    "frameColor": "#22464f"
+    "frameColor": "#22464f",
+    "audioUrl": "/audio/shadows-and-light.mp3"
   },
   {
     "id": 6,
@@ -63,7 +68,8 @@
     "plays": "4.5M",
     "artworkGradient": "from-rose-600 via-red-800 to-neutral-950",
     "coverImage": "/covers/echoes-of-midnight.jpg",
-    "frameColor": "#821d20"
+    "frameColor": "#821d20",
+    "audioUrl": "/audio/echoes-of-midnight.mp3"
   },
   {
     "id": 7,
@@ -74,7 +80,8 @@
     "plays": "620K",
     "artworkGradient": "from-purple-600 via-fuchsia-900 to-slate-950",
     "coverImage": "/covers/velvet-starlight.jpg",
-    "frameColor": "#4c1d59"
+    "frameColor": "#4c1d59",
+    "audioUrl": "/audio/velvet-starlight.mp3"
   },
   {
     "id": 8,
@@ -85,7 +92,8 @@
     "plays": "1.1M",
     "artworkGradient": "from-cyan-600 via-sky-900 to-slate-950",
     "coverImage": "/covers/midnight-echo.jpg",
-    "frameColor": "#134763"
+    "frameColor": "#134763",
+    "audioUrl": "/audio/midnight-echo.mp3"
   },
   {
     "id": 9,
@@ -96,7 +104,8 @@
     "plays": "1.6M",
     "artworkGradient": "from-pink-600 via-rose-900 to-slate-950",
     "coverImage": "/covers/neon-skyline.jpg",
-    "frameColor": "#7a1b3d"
+    "frameColor": "#7a1b3d",
+    "audioUrl": "/audio/neon-skyline.mp3"
   },
   {
     "id": 10,
@@ -107,7 +116,8 @@
     "plays": "780K",
     "artworkGradient": "from-amber-500 via-yellow-800 to-stone-950",
     "coverImage": "/covers/paper-lanterns.jpg",
-    "frameColor": "#7c4a12"
+    "frameColor": "#7c4a12",
+    "audioUrl": "/audio/paper-lanterns.mp3"
   },
   {
     "id": 11,
@@ -118,7 +128,8 @@
     "plays": "2.4M",
     "artworkGradient": "from-blue-600 via-indigo-900 to-slate-950",
     "coverImage": "/covers/rain-on-glass.jpg",
-    "frameColor": "#1b336b"
+    "frameColor": "#1b336b",
+    "audioUrl": "/audio/rain-on-glass.mp3"
   },
   {
     "id": 12,
@@ -129,6 +140,7 @@
     "plays": "530K",
     "artworkGradient": "from-orange-700 via-red-900 to-stone-950",
     "coverImage": "/covers/autumn-reverie.jpg",
-    "frameColor": "#7b2d18"
+    "frameColor": "#7b2d18",
+    "audioUrl": "/audio/autumn-reverie.mp3"
   }
 ]

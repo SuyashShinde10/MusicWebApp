@@ -9,7 +9,14 @@ vi.mock('axios');
 const mockedAxios = vi.mocked(axios, true);
 
 const MOCK_SONGS: Song[] = [
-  { id: 1, title: 'Golden Days', artist: 'Felix Carter', genre: 'Relax', duration: 204 },
+  {
+    id: 1,
+    title: 'Golden Days',
+    artist: 'Felix Carter',
+    genre: 'Relax',
+    duration: 204,
+    audioUrl: '/audio/golden-days.mp3',
+  },
   { id: 2, title: 'Fading Horizon', artist: 'Ella Hunt', genre: 'Energetic', duration: 165 },
   { id: 3, title: 'Waves of Time', artist: 'Lena Rivers', genre: 'Sad', duration: 252 },
   { id: 4, title: 'Electric Dreams', artist: 'Mio Lovell', genre: 'Party', duration: 188 },
@@ -203,10 +210,11 @@ describe('RhythmoTune App Integration', () => {
     await user.click(within(mobileNav).getByRole('button', { name: 'Home' }));
     const homeLibrary = screen.getByRole('region', { name: 'Song Library' });
 
-    // Verify PlayerBar X close button dismisses player and playing a song reopens it
+    // Verify PlayerBar X close button dismisses player and playing a song reopens it & invokes HTML5 audio play()
     await user.click(within(playerBar).getAllByRole('button', { name: 'Close player' })[0]!);
     expect(screen.queryByLabelText('Now Playing')).not.toBeInTheDocument();
     await user.click(within(homeLibrary).getByRole('button', { name: 'Play Golden Days' }));
     expect(screen.getByLabelText('Now Playing')).toBeInTheDocument();
+    expect(window.HTMLMediaElement.prototype.play).toHaveBeenCalled();
   }, 15000);
 });

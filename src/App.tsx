@@ -150,6 +150,7 @@ export function App() {
   const [toast, setToast] = useState<ToastItem | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const librarySectionRef = useRef<HTMLElement>(null);
   const categoryScrollRef = useRef<HTMLDivElement>(null);
   const mainWorkspaceRef = useRef<HTMLElement>(null);
@@ -378,6 +379,13 @@ export function App() {
     if (playbackQueue.length === 0) return;
     if (elapsedSeconds > 3) {
       setElapsedSeconds(0);
+      if (audioRef.current) {
+        try {
+          audioRef.current.currentTime = 0;
+        } catch {
+          // Ignore seek errors before audio metadata loads
+        }
+      }
       return;
     }
     const currentIndex = playbackQueue.findIndex((s) => s.id === currentSongId);
@@ -393,13 +401,55 @@ export function App() {
     }
   }, [playbackQueue, currentSongId, elapsedSeconds]);
 
-  // Simulated playback timer
+  const handleSeek = useCallback((sec: number) => {
+    setElapsedSeconds(sec);
+    const audio = audioRef.current;
+    if (!audio) return;
+    try {
+      const clipDuration = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+      audio.currentTime = clipDuration > 0 ? sec % clipDuration : 0;
+    } catch {
+      // Ignore seek errors before metadata is ready
+    }
+  }, []);
+
+  // Sync HTML5 <audio> volume
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = Math.min(1, Math.max(0, volume));
+    }
+  }, [volume, currentSong?.id]);
+
+  // Sync HTML5 <audio> playback with isPlaying & current track
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!currentSong?.audioUrl || !isPlaying) {
+      audio.pause();
+      return;
+    }
+    const playPromise = audio.play?.();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {
+        // Ignore browser autoplay or mock environment blocks gracefully
+      });
+    }
+  }, [isPlaying, currentSong?.id, currentSong?.audioUrl]);
+
+  // Playback progress timer (keeps track duration & auto-next accurate)
   useEffect(() => {
     if (!isPlaying || !currentSong) return;
     const interval = window.setInterval(() => {
       setElapsedSeconds((prev) => {
         if (prev + 1 >= currentSong.duration) {
           if (isRepeat) {
+            if (audioRef.current) {
+              try {
+                audioRef.current.currentTime = 0;
+              } catch {
+                // Ignore
+              }
+            }
             return 0;
           }
           playNext();
@@ -1467,7 +1517,7 @@ export function App() {
           onToggleShuffle={() => setIsShuffle((prev) => !prev)}
           onToggleRepeat={() => setIsRepeat((prev) => !prev)}
           onToggleLike={handleToggleLike}
-          onSeek={(sec) => setElapsedSeconds(sec)}
+          onSeek={handleSeek}
           onVolumeChange={setVolume}
           onOpenPlaylistManager={() => setIsManagerOpen(true)}
           onExpand={() => setIsNowPlayingExpanded(true)}
@@ -1505,7 +1555,7 @@ export function App() {
         onToggleShuffle={() => setIsShuffle((prev) => !prev)}
         onToggleRepeat={() => setIsRepeat((prev) => !prev)}
         onToggleLike={handleToggleLike}
-        onSeek={(sec) => setElapsedSeconds(sec)}
+        onSeek={handleSeek}
         onVolumeChange={setVolume}
         onAddToPlaylist={(song) => setSongToAdd(song)}
         onSelectQueueSong={(song) => playSong(song, queueSource)}
@@ -1579,6 +1629,14 @@ export function App() {
         onPlaySong={(song, plId) => playSong(song, { type: 'playlist', playlistId: plId })}
         onReorderSongs={handleReorderSongs}
         onRemoveSong={handleRemoveSongFromPlaylist}
+      />
+
+      <audio
+        ref={audioRef}
+        src={currentSong?.audioUrl}
+        preload="metadata"
+        loop
+        aria-hidden="true"
       />
 
       <Toast toast={toast} onDismiss={() => setToast(null)} />
