@@ -1,9 +1,10 @@
-import { Disc3, ListMusic, Pencil, Play, Plus, Trash2 } from 'lucide-react';
+import { Disc3, GripVertical, ListMusic, Pencil, Play, Plus, Scissors, Trash2 } from 'lucide-react';
 import type { Playlist, Song, SongId } from '../../types/music';
 import { formatPlaylistSummary } from '../../utils/formatters';
 import { computeTotalDuration } from '../../utils/playlistLogic';
 import { Shredder } from '../reactbits';
 import { Button } from '../ui/Button';
+import { AlbumArt } from './AlbumArt';
 import { EmptyState } from './EmptyState';
 import { SongRow } from './SongRow';
 
@@ -54,29 +55,46 @@ export function ActivePlaylistPanel({
 
   const totalSeconds = computeTotalDuration(songs);
   const summary = formatPlaylistSummary(songs.length, totalSeconds);
-  const shredderHeight = Math.max(220, songs.length * 74 + 118);
+  const coverSong = songs[0];
+  const shredderHeight = Math.max(150, songs.length * 66 + 76);
 
   return (
     <section
       aria-label={`Playlist ${playlist.name}`}
-      className="rounded-2xl bg-white border border-slate-200 dark:bg-[#15171c] dark:border-white/[0.07] p-3.5 sm:p-4 space-y-3 min-w-0 shadow-sm dark:shadow-none"
+      className="rounded-2xl bg-white border border-slate-200 dark:bg-[#15171c] dark:border-white/[0.08] p-4 sm:p-5 space-y-3.5 min-w-0 shadow-sm dark:shadow-xl"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-slate-200 dark:border-white/[0.07]">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-teal-600 dark:text-teal-400">
-              Active Playlist
-            </span>
-            <span className="text-slate-300 dark:text-gray-600" aria-hidden="true">
-              ·
-            </span>
-            <span className="text-[11px] font-medium text-slate-500 dark:text-gray-400">
-              {summary}
-            </span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-200/90 dark:border-white/[0.07]">
+        <div className="flex items-center gap-3.5 min-w-0">
+          {coverSong ? (
+            <div className="relative shrink-0">
+              <AlbumArt
+                song={coverSong}
+                size="lg"
+                className="shadow-md ring-1 ring-black/10 dark:ring-white/10"
+              />
+              <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#198f85] text-white flex items-center justify-center shadow ring-2 ring-white dark:ring-[#15171c]">
+                <ListMusic className="w-2.5 h-2.5" />
+              </span>
+            </div>
+          ) : (
+            <div className="w-14 h-14 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+              <ListMusic className="w-6 h-6" />
+            </div>
+          )}
+
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:bg-teal-500/15 dark:text-teal-300 border border-teal-500/20">
+                Active Playlist
+              </span>
+              <span className="text-xs font-medium text-slate-500 dark:text-gray-400">
+                {summary}
+              </span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white truncate mt-0.5 tracking-tight">
+              {playlist.name}
+            </h3>
           </div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">
-            {playlist.name}
-          </h3>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap shrink-0">
@@ -118,32 +136,41 @@ export function ActivePlaylistPanel({
           onAction={onBrowseLibrary}
         />
       ) : (
-        <div className="space-y-2 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-1 text-[11px] text-slate-500 dark:text-gray-400">
-            <span>
-              Drag rows to reorder · Pull below the teal slit to shred &amp; remove, or use arrows
-            </span>
-            <span className="text-teal-600 dark:text-teal-400 font-semibold shrink-0">
-              {summary}
-            </span>
+        <div className="space-y-2.5 min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+            <div className="inline-flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-gray-400">
+              <GripVertical className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+              <span>
+                Drag rows to reorder · Pull past the teal slit to remove, or use arrows
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={onBrowseLibrary}
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 transition"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add more tracks</span>
+            </button>
           </div>
 
-          <div className="w-full overflow-hidden rounded-xl bg-slate-100/80 border border-slate-200 dark:bg-[#0e1015] dark:border-white/[0.05] pt-2.5">
+          <div className="relative w-full overflow-hidden rounded-xl bg-slate-50/90 border border-slate-200/90 dark:bg-[#0d1016] dark:border-white/[0.06] pt-2">
             <Shredder
               key={playlist.id}
               items={songs}
-              width={960}
+              width={1400}
               height={shredderHeight}
               inset={10}
               gap={8}
-              slitHeight={4}
-              fallHeight={94}
+              slitHeight={3}
+              fallHeight={66}
               feedSpeed={190}
               bite={18}
               stripWidth={10}
               curl={1}
               slitColor="#198f85"
               color={isDark ? '#f3f4f6' : '#0f172a'}
+              className="!w-full"
               onReorder={(reordered) =>
                 onSetSongOrder(
                   playlist.id,
@@ -168,20 +195,16 @@ export function ActivePlaylistPanel({
                 />
               )}
             />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-[66px] bg-gradient-to-b from-teal-500/[0.05] to-transparent flex items-center justify-center gap-1.5 text-[11px] font-medium text-slate-400 dark:text-gray-500"
+            >
+              <Scissors className="w-3.5 h-3.5 text-teal-600/70 dark:text-teal-400/70" />
+              <span>Shred zone — pull a track below the line to remove</span>
+            </div>
           </div>
         </div>
       )}
-
-      <div className="pt-0.5 flex justify-end sm:hidden">
-        <Button
-          variant="outline"
-          size="sm"
-          leftIcon={<Plus className="w-3.5 h-3.5" />}
-          onClick={onBrowseLibrary}
-        >
-          Browse Song Library
-        </Button>
-      </div>
     </section>
   );
 }

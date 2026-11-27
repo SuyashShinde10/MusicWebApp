@@ -178,10 +178,10 @@ export function SongRow({
 
   return (
     <div
-      className={`group flex items-center justify-between gap-2 sm:gap-3 px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl border transition-colors duration-150 min-w-0 w-full ${
+      className={`group flex items-center justify-between gap-2 sm:gap-3 px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-xl border transition-all duration-150 min-w-0 w-full shadow-sm dark:shadow-none ${
         isCurrent
-          ? 'bg-teal-500/10 border-teal-500/35'
-          : 'bg-white hover:bg-slate-50 border-slate-200/80 dark:bg-[#15171c] dark:hover:bg-[#1b1e25] dark:border-white/[0.06]'
+          ? 'bg-teal-500/10 border-teal-500/40 shadow-sm'
+          : 'bg-white hover:bg-slate-50 border-slate-200/90 hover:border-slate-300 dark:bg-[#151821] dark:hover:bg-[#1a1e29] dark:border-white/[0.07] dark:hover:border-white/[0.14]'
       }`}
     >
       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
