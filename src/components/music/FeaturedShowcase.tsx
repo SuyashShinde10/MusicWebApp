@@ -306,6 +306,7 @@ export function FeaturedShowcase({
             song={activeSong}
             isPlaying={isCurrentActive && isPlaying}
             size="fill"
+            priority
             className="!rounded-2xl !absolute !inset-0"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
@@ -413,6 +414,7 @@ export function FeaturedShowcase({
               song={activeSong}
               isPlaying={isCurrentActive && isPlaying}
               size="fill"
+              priority
               className="!rounded-2xl pointer-events-none"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/15 pointer-events-none" />

@@ -6,6 +6,7 @@ interface AlbumArtProps {
   song: Song;
   isPlaying?: boolean;
   size?: 'sm' | 'md' | 'lg' | 'fill';
+  priority?: boolean;
   className?: string;
 }
 
@@ -24,8 +25,15 @@ function getMotifIndex(id: Song['id']): number {
  * Displays editorial photography when `song.coverImage` is available,
  * and falls back cleanly to a bespoke geometric/vinyl cover motif.
  */
-export function AlbumArt({ song, isPlaying = false, size = 'md', className = '' }: AlbumArtProps) {
+export function AlbumArt({
+  song,
+  isPlaying = false,
+  size = 'md',
+  priority = false,
+  className = '',
+}: AlbumArtProps) {
   const [imgFailed, setImgFailed] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const gradient = getSongGradient(song);
   const motif = getMotifIndex(song.id);
 
@@ -40,13 +48,21 @@ export function AlbumArt({ song, isPlaying = false, size = 'md', className = '' 
 
   if (song.coverImage && !imgFailed) {
     return (
-      <div className={`relative overflow-hidden bg-[#181a20] select-none shrink-0 ${sizeClass} ${className}`}>
+      <div className={`relative overflow-hidden bg-slate-200 dark:bg-[#181a20] select-none shrink-0 ${sizeClass} ${className}`}>
+        {!imgLoaded && (
+          <div aria-hidden="true" className="absolute inset-0 skeleton-shimmer rounded-[inherit]" />
+        )}
         <img
           src={song.coverImage}
           alt={`${song.title} cover art`}
-          loading="lazy"
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
+          onLoad={() => setImgLoaded(true)}
           onError={() => setImgFailed(true)}
-          className="w-full h-full object-cover object-[center_26%] transition-transform duration-500 group-hover:scale-105"
+          className={`w-full h-full object-cover object-[center_26%] transition-all duration-300 group-hover:scale-105 ${
+            imgLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
         />
         <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[inherit] pointer-events-none" />
       </div>

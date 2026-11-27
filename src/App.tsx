@@ -31,7 +31,14 @@ import { EmptyState } from './components/music/EmptyState';
 import { FeaturedShowcase } from './components/music/FeaturedShowcase';
 import { PlayerBar } from './components/music/PlayerBar';
 import { PlaylistCard } from './components/music/PlaylistCard';
-import { LibrarySkeleton } from './components/music/Skeletons';
+import {
+  ActivePlaylistSkeleton,
+  CategoriesSkeleton,
+  HeroShowcaseSkeleton,
+  LibrarySkeleton,
+  MobilePlaylistsSkeleton,
+  PlayerBarSkeleton,
+} from './components/music/Skeletons';
 import { SongRow } from './components/music/SongRow';
 import { AnimatedList, JellyRadio } from './components/reactbits';
 import { Button } from './components/ui/Button';
@@ -907,117 +914,130 @@ export function App() {
           className="flex-1 px-4 sm:px-6 lg:px-8 py-1.5 space-y-3 min-w-0 max-w-7xl w-full mx-auto"
         >
           {/* Featured Draggable 5-Card Overlapping Fan Carousel (Home view) */}
-          {activeSection === 'home' && !isLoadingSongs && !songsError && songs.length > 0 && (
-            <FeaturedShowcase
-              songs={songs}
-              currentSongId={currentSongId}
-              isPlaying={isPlaying}
-              onPlay={(song) => playSong(song, { type: 'library' })}
-              onAddToPlaylist={(song) => setSongToAdd(song)}
-            />
-          )}
+          {activeSection === 'home' &&
+            (isLoadingSongs ? (
+              <HeroShowcaseSkeleton />
+            ) : (
+              !songsError &&
+              songs.length > 0 && (
+                <FeaturedShowcase
+                  songs={songs}
+                  currentSongId={currentSongId}
+                  isPlaying={isPlaying}
+                  onPlay={(song) => playSong(song, { type: 'library' })}
+                  onAddToPlaylist={(song) => setSongToAdd(song)}
+                />
+              )
+            ))}
 
           {/* Mobile / Tablet Quick Playlists Strip (Home view on < lg) */}
-          {activeSection === 'home' && (
-            <section className="lg:hidden space-y-2.5 min-w-0">
-              <div className="flex items-center justify-between gap-2">
-                <h2 className="text-base font-bold text-slate-900 dark:text-white">
-                  Your Playlists
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => setActiveSection('playlists')}
-                  className="text-xs font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
-                >
-                  Manage all ({playlists.length})
-                </button>
-              </div>
-              {playlists.length === 0 ? (
-                <EmptyState
-                  icon={<ListMusic className="w-5 h-5" />}
-                  title="No playlists yet"
-                  description="Create your first playlist to organize your favorite tracks."
-                  actionLabel="Create Playlist"
-                  onAction={openCreateModal}
-                />
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {playlists.slice(0, 4).map((pl) => (
-                    <PlaylistCard
-                      key={pl.id}
-                      playlist={pl}
-                      totalDurationSeconds={getPlaylistDuration(pl)}
-                      coverImage={getPlaylistCover(pl)}
-                      isActive={activePlaylist?.id === pl.id}
-                      compact
-                      onSelect={(id) => {
-                        setActivePlaylistId(id);
-                        setActiveSection('playlists');
-                      }}
-                    />
-                  ))}
+          {activeSection === 'home' &&
+            (isLoadingSongs ? (
+              <MobilePlaylistsSkeleton />
+            ) : (
+              <section className="lg:hidden space-y-2.5 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                    Your Playlists
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setActiveSection('playlists')}
+                    className="text-xs font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+                  >
+                    Manage all ({playlists.length})
+                  </button>
                 </div>
-              )}
-            </section>
-          )}
+                {playlists.length === 0 ? (
+                  <EmptyState
+                    icon={<ListMusic className="w-5 h-5" />}
+                    title="No playlists yet"
+                    description="Create your first playlist to organize your favorite tracks."
+                    actionLabel="Create Playlist"
+                    onAction={openCreateModal}
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {playlists.slice(0, 4).map((pl) => (
+                      <PlaylistCard
+                        key={pl.id}
+                        playlist={pl}
+                        totalDurationSeconds={getPlaylistDuration(pl)}
+                        coverImage={getPlaylistCover(pl)}
+                        isActive={activePlaylist?.id === pl.id}
+                        compact
+                        onSelect={(id) => {
+                          setActivePlaylistId(id);
+                          setActiveSection('playlists');
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
+            ))}
 
           {/* Song Library Section ("Select Categories" + "Popular songs") */}
           {(activeSection === 'home' || activeSection === 'library') && (
             <section ref={librarySectionRef} aria-label="Song Library" className="space-y-3.5 min-w-0">
               {/* Select Categories Row */}
-              {!isLoadingSongs && !songsError && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
-                      Select Categories
-                    </h2>
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => scrollCategories(-180)}
-                        aria-label="Scroll categories left"
-                        className="w-7 h-7 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollCategories(180)}
-                        aria-label="Scroll categories right"
-                        className="w-7 h-7 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
+              {isLoadingSongs ? (
+                <CategoriesSkeleton />
+              ) : (
+                !songsError && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
+                        Select Categories
+                      </h2>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => scrollCategories(-180)}
+                          aria-label="Scroll categories left"
+                          className="w-7 h-7 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => scrollCategories(180)}
+                          aria-label="Scroll categories right"
+                          className="w-7 h-7 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div
+                      ref={categoryScrollRef}
+                      className="overflow-x-auto no-scrollbar -mx-2 px-1"
+                    >
+                      <JellyRadio
+                        items={genres}
+                        value={selectedGenre}
+                        onChange={(genre) => setSelectedGenre(genre)}
+                        chipColor={isDark ? '#15171c' : '#ffffff'}
+                        activeColor="#198f85"
+                        textColor={isDark ? '#d1d5db' : '#334155'}
+                        activeTextColor="#ffffff"
+                        borderColor={isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(15, 23, 42, 0.12)'}
+                        size="sm"
+                        gap={8}
+                        radius={999}
+                        swell={0.18}
+                        barge={6}
+                        shrink={0.04}
+                        jelly={1.05}
+                        bounce={0.28}
+                        stagger={22}
+                        stiffness={580}
+                        ariaLabel="Filter by genre"
+                      />
                     </div>
                   </div>
-
-                  <div
-                    ref={categoryScrollRef}
-                    className="overflow-x-auto no-scrollbar -mx-2 px-1"
-                  >
-                    <JellyRadio
-                      items={genres}
-                      value={selectedGenre}
-                      onChange={(genre) => setSelectedGenre(genre)}
-                      chipColor={isDark ? '#15171c' : '#ffffff'}
-                      activeColor="#198f85"
-                      textColor={isDark ? '#d1d5db' : '#334155'}
-                      activeTextColor="#ffffff"
-                      borderColor={isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(15, 23, 42, 0.12)'}
-                      size="sm"
-                      gap={8}
-                      radius={999}
-                      swell={0.18}
-                      barge={6}
-                      shrink={0.04}
-                      jelly={1.05}
-                      bounce={0.28}
-                      stagger={22}
-                      stiffness={580}
-                      ariaLabel="Filter by genre"
-                    />
-                  </div>
-                </div>
+                )
               )}
 
               {/* Popular Songs Header + View Toggle */}
@@ -1072,7 +1092,7 @@ export function App() {
 
               {/* Loading / Error / No Results / Songs */}
               {isLoadingSongs ? (
-                <LibrarySkeleton />
+                <LibrarySkeleton layout={libraryLayout} />
               ) : songsError ? (
                 <EmptyState
                   icon={<WifiOff className="w-6 h-6 text-rose-500 dark:text-rose-400" />}
@@ -1176,39 +1196,46 @@ export function App() {
                 </div>
               )}
 
-              <ActivePlaylistPanel
-                playlist={activePlaylist}
-                songs={activePlaylistSongs}
-                currentSongId={currentSongId}
-                isPlaying={isPlaying}
-                isDark={isDark}
-                onPlaySong={(song, plId) => playSong(song, { type: 'playlist', playlistId: plId })}
-                onPlayAll={(plId) => {
-                  const first = activePlaylistSongs[0];
-                  if (first) {
-                    setIsPlayerOpen(true);
-                    setQueueSource({ type: 'playlist', playlistId: plId });
-                    setCurrentSongId(first.id);
-                    setElapsedSeconds(0);
-                    setIsPlaying(true);
-                  }
-                }}
-                onMoveSong={handleReorderSongs}
-                onSetSongOrder={handleSetSongOrder}
-                onRemoveSong={handleRemoveSongFromPlaylist}
-                onRenamePlaylist={openRenameModal}
-                onDeletePlaylist={(p) => setPlaylistToDelete(p)}
-                onCreatePlaylist={openCreateModal}
-                onBrowseLibrary={scrollToLibrary}
-              />
+              {isLoadingSongs ? (
+                <ActivePlaylistSkeleton />
+              ) : (
+                <ActivePlaylistPanel
+                  playlist={activePlaylist}
+                  songs={activePlaylistSongs}
+                  currentSongId={currentSongId}
+                  isPlaying={isPlaying}
+                  isDark={isDark}
+                  onPlaySong={(song, plId) => playSong(song, { type: 'playlist', playlistId: plId })}
+                  onPlayAll={(plId) => {
+                    const first = activePlaylistSongs[0];
+                    if (first) {
+                      setIsPlayerOpen(true);
+                      setQueueSource({ type: 'playlist', playlistId: plId });
+                      setCurrentSongId(first.id);
+                      setElapsedSeconds(0);
+                      setIsPlaying(true);
+                    }
+                  }}
+                  onMoveSong={handleReorderSongs}
+                  onSetSongOrder={handleSetSongOrder}
+                  onRemoveSong={handleRemoveSongFromPlaylist}
+                  onRenamePlaylist={openRenameModal}
+                  onDeletePlaylist={(p) => setPlaylistToDelete(p)}
+                  onCreatePlaylist={openCreateModal}
+                  onBrowseLibrary={scrollToLibrary}
+                />
+              )}
             </section>
           )}
         </main>
       </div>
 
       {/* Persistent Now Playing Bar */}
-      {isPlayerOpen && (
-        <PlayerBar
+      {isPlayerOpen &&
+        (isLoadingSongs && !currentSong ? (
+          <PlayerBarSkeleton />
+        ) : (
+          <PlayerBar
           currentSong={currentSong}
           isPlaying={isPlaying}
           elapsedSeconds={elapsedSeconds}
@@ -1234,7 +1261,7 @@ export function App() {
             setIsPlayerOpen(false);
           }}
         />
-      )}
+        ))}
 
       {/* Mobile Bottom Navigation (< md) */}
       <nav

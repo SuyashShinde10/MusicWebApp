@@ -8,12 +8,45 @@
     background-color: #f6f7f9;
     color: #0f172a;
     overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
   }
 
   html.dark,
   html.dark body {
     background-color: #0b0d11;
     color: #e5e7eb;
+  }
+}
+
+/* Smooth GPU-composited skeleton shimmer */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.45s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+html.dark .skeleton-shimmer {
+  background: linear-gradient(90deg, #1b1f29 25%, #262c3a 50%, #1b1f29 75%);
+  background-size: 200% 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    scroll-behavior: auto;
+  }
+  .skeleton-shimmer {
+    animation: none;
   }
 }
 

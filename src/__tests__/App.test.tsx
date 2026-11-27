@@ -26,6 +26,13 @@ describe('RhythmoTune App Integration', () => {
     const user = userEvent.setup();
     render(<App />);
 
+    // Verify all responsive UI skeletons render immediately while songs fetch is in flight
+    expect(screen.getByLabelText('Loading featured showcase')).toBeInTheDocument();
+    expect(screen.getByLabelText('Loading categories')).toBeInTheDocument();
+    expect(screen.getByLabelText('Loading songs')).toBeInTheDocument();
+    expect(screen.getByLabelText('Loading active playlist')).toBeInTheDocument();
+    expect(screen.getByLabelText('Loading player')).toBeInTheDocument();
+
     const library = screen.getByRole('region', { name: 'Song Library' });
     expect(await within(library).findByText('Golden Days')).toBeInTheDocument();
     expect(within(library).getByText('3:24')).toBeInTheDocument();
