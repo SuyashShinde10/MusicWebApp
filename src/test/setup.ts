@@ -68,10 +68,9 @@ afterEach(() => {
   ScrollTrigger.getAll().forEach((st) => st.kill());
 });
 
-afterAll(() => {
+afterAll(async () => {
   ScrollTrigger.killAll(false);
   gsap.globalTimeline.clear();
-  if (typeof globalThis.requestAnimationFrame === 'undefined') {
-    globalThis.requestAnimationFrame = (cb) => setTimeout(cb, 16) as unknown as number;
-  }
+  // Drain any pending 34ms ScrollTrigger sync timers before JSDOM tears down requestAnimationFrame
+  await new Promise((resolve) => setTimeout(resolve, 60));
 });

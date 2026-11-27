@@ -1046,7 +1046,7 @@ export function App() {
             {/* Desktop symmetry spacer so Search aligns cleanly above the center canvas without colliding on narrower screens */}
             <div
               aria-hidden="true"
-              style={{ flex: '0 99 405px' }}
+              style={{ flex: '0 99 280px' }}
               className="hidden lg:block min-w-0"
             />
 
@@ -1091,18 +1091,8 @@ export function App() {
               />
             </div>
 
-            {/* Right Controls: New Playlist, Theme Toggle, Profile, Favorites, Settings */}
+            {/* Right Controls: Theme Toggle, Profile, Favorites, Settings */}
             <div className="flex items-center gap-2 shrink-0">
-              <Button
-                variant="outline"
-                size="sm"
-                leftIcon={<Plus className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />}
-                onClick={openCreateModal}
-              >
-                <span className="hidden sm:inline">New Playlist</span>
-                <span className="sm:hidden">New</span>
-              </Button>
-
               {/* Dark / Light Theme Toggle */}
               <button
                 ref={themeBtnRef}
