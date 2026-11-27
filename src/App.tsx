@@ -436,16 +436,20 @@ export function App() {
     }
   }, [isPlaying, currentSong?.id, currentSong?.audioUrl]);
 
-  // Playback progress timer (keeps track duration & auto-next accurate)
+  // Fallback playback progress timer when audio metadata duration is unavailable (e.g. unit tests)
   useEffect(() => {
     if (!isPlaying || !currentSong) return;
     const interval = window.setInterval(() => {
+      const audio = audioRef.current;
+      if (audio && Number.isFinite(audio.duration) && audio.duration > 0 && !audio.paused) {
+        return;
+      }
       setElapsedSeconds((prev) => {
         if (prev + 1 >= currentSong.duration) {
           if (isRepeat) {
-            if (audioRef.current) {
+            if (audio) {
               try {
-                audioRef.current.currentTime = 0;
+                audio.currentTime = 0;
               } catch {
                 // Ignore
               }
@@ -1635,7 +1639,17 @@ export function App() {
         ref={audioRef}
         src={currentSong?.audioUrl}
         preload="metadata"
-        loop
+        loop={isRepeat}
+        onTimeUpdate={() => {
+          const audio = audioRef.current;
+          if (!audio || !Number.isFinite(audio.currentTime)) return;
+          setElapsedSeconds(Math.floor(audio.currentTime));
+        }}
+        onEnded={() => {
+          if (!isRepeat) {
+            playNext();
+          }
+        }}
         aria-hidden="true"
       />
 
