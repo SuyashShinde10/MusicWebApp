@@ -1043,8 +1043,15 @@ export function App() {
               </div>
             </div>
 
+            {/* Desktop symmetry spacer so Search aligns cleanly above the center canvas without colliding on narrower screens */}
+            <div
+              aria-hidden="true"
+              style={{ flex: '0 99 405px' }}
+              className="hidden lg:block min-w-0"
+            />
+
             {/* Advanced Search Input Pill */}
-            <div className="hidden sm:block flex-1 max-w-md lg:max-w-lg min-w-0 sm:mx-auto">
+            <div className="hidden sm:block flex-1 max-w-md lg:max-w-[440px] min-w-0 sm:mx-auto">
               <AdvancedSearch
                 ref={searchInputRef}
                 query={searchQuery}
