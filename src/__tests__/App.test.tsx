@@ -30,8 +30,8 @@ describe('RhythmoTune App Integration', () => {
     expect(await within(library).findByText('Golden Days')).toBeInTheDocument();
     expect(within(library).getByText('3:24')).toBeInTheDocument();
 
-    // Filter by genre
-    await user.click(within(library).getByRole('tab', { name: 'Party' }));
+    // Filter by genre (JellyRadio group)
+    await user.click(within(library).getByRole('radio', { name: 'Party' }));
     expect(within(library).getByText('Electric Dreams')).toBeInTheDocument();
     expect(within(library).queryByText('Golden Days')).not.toBeInTheDocument();
 

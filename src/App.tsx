@@ -33,7 +33,7 @@ import { PlayerBar } from './components/music/PlayerBar';
 import { PlaylistCard } from './components/music/PlaylistCard';
 import { LibrarySkeleton } from './components/music/Skeletons';
 import { SongRow } from './components/music/SongRow';
-import { AnimatedList } from './components/reactbits';
+import { AnimatedList, JellyRadio } from './components/reactbits';
 import { Button } from './components/ui/Button';
 import { Input } from './components/ui/Input';
 import { Toast } from './components/ui/Toast';
@@ -993,29 +993,29 @@ export function App() {
 
                   <div
                     ref={categoryScrollRef}
-                    role="tablist"
-                    aria-label="Filter by genre"
-                    className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"
+                    className="overflow-x-auto no-scrollbar -mx-2 px-1"
                   >
-                    {genres.map((genre) => {
-                      const active = selectedGenre === genre;
-                      return (
-                        <button
-                          key={genre}
-                          type="button"
-                          role="tab"
-                          aria-selected={active}
-                          onClick={() => setSelectedGenre(genre)}
-                          className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-150 shrink-0 active:scale-95 ${
-                            active
-                              ? 'bg-[#198f85] text-white font-semibold shadow-sm'
-                              : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 dark:bg-[#15171c] dark:hover:bg-white/10 dark:text-gray-300 dark:border-white/15'
-                          }`}
-                        >
-                          {genre}
-                        </button>
-                      );
-                    })}
+                    <JellyRadio
+                      items={genres}
+                      value={selectedGenre}
+                      onChange={(genre) => setSelectedGenre(genre)}
+                      chipColor={isDark ? '#15171c' : '#ffffff'}
+                      activeColor="#198f85"
+                      textColor={isDark ? '#d1d5db' : '#334155'}
+                      activeTextColor="#ffffff"
+                      borderColor={isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(15, 23, 42, 0.12)'}
+                      size="sm"
+                      gap={8}
+                      radius={999}
+                      swell={0.18}
+                      barge={6}
+                      shrink={0.04}
+                      jelly={1.05}
+                      bounce={0.28}
+                      stagger={22}
+                      stiffness={580}
+                      ariaLabel="Filter by genre"
+                    />
                   </div>
                 </div>
               )}

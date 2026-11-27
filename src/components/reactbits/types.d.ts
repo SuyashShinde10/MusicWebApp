@@ -150,3 +150,35 @@ export interface TiltedCardProps {
   className?: string;
   style?: CSSProperties;
 }
+
+export interface JellyRadioItem {
+  value: string;
+  label: ReactNode;
+  icon?: ReactNode;
+  disabled?: boolean;
+}
+
+export interface JellyRadioProps {
+  items?: (string | JellyRadioItem)[];
+  value?: string;
+  defaultValue?: string;
+  onChange?: (value: string, index: number) => void;
+  chipColor?: string;
+  activeColor?: string;
+  textColor?: string;
+  activeTextColor?: string;
+  borderColor?: string;
+  size?: 'sm' | 'md' | 'lg';
+  gap?: number;
+  radius?: number;
+  swell?: number;
+  barge?: number;
+  shrink?: number;
+  jelly?: number;
+  bounce?: number;
+  stagger?: number;
+  stiffness?: number;
+  disabled?: boolean;
+  ariaLabel?: string;
+  className?: string;
+}
