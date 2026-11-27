@@ -849,6 +849,11 @@ export default function Shredder({
 
   const onDown = (e, item) => {
     if (e.button !== 0) return;
+    // Allow native vertical touch scrolling over playlist rows; touch users can reorder via grip handle or arrow buttons
+    const target = e.target instanceof Element ? e.target : null;
+    if (e.pointerType === 'touch' && !target?.closest('[data-drag-handle]')) {
+      return;
+    }
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {}

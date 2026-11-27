@@ -60,7 +60,7 @@ export function AlbumArt({
           fetchPriority={priority ? 'high' : 'auto'}
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgFailed(true)}
-          className={`w-full h-full object-cover object-[center_26%] transition-all duration-300 group-hover:scale-105 ${
+          className={`w-full h-full object-cover object-[center_26%] transition-opacity duration-200 md:transition-transform md:duration-300 md:group-hover:scale-105 ${
             imgLoaded ? 'opacity-100' : 'opacity-0'
           }`}
         />

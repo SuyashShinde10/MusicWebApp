@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 if (typeof window !== 'undefined') {
@@ -69,4 +70,8 @@ afterEach(() => {
 
 afterAll(() => {
   ScrollTrigger.killAll(false);
+  gsap.globalTimeline.clear();
+  if (typeof globalThis.requestAnimationFrame === 'undefined') {
+    globalThis.requestAnimationFrame = (cb) => setTimeout(cb, 16) as unknown as number;
+  }
 });

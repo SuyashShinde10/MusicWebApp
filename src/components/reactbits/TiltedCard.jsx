@@ -128,6 +128,13 @@ const TiltedCard = ({
 
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     const coarse = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false;
+
+    // On touch devices, keep cards flat and free of pointer/gyro RAF loops so scrolling stays 60fps
+    if (coarse) {
+      body.style.opacity = '';
+      body.style.transform = '';
+      return;
+    }
     const state = {
       rx: 0,
       vrx: 0,

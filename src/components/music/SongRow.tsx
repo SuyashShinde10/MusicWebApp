@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import {
   ArrowDown,
   ArrowUp,
@@ -61,7 +61,7 @@ function getFrameColor(song: Song): string {
   return FRAME_COLORS[hash % FRAME_COLORS.length] ?? FRAME_COLORS[0];
 }
 
-export function SongRow({
+export const SongRow = memo(function SongRow({
   song,
   variant = 'row',
   index,
@@ -124,7 +124,7 @@ export function SongRow({
               aria-label={isCurrent && isPlaying ? `Pause ${song.title}` : `Play ${song.title}`}
               className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 bg-black/35 transition-opacity duration-200"
             >
-              <span className="w-10 h-10 rounded-full bg-white/25 hover:bg-[#198f85] backdrop-blur-md border border-white/40 text-white flex items-center justify-center transition-transform duration-200 translate-y-1.5 group-hover:translate-y-0">
+              <span className="w-10 h-10 rounded-full bg-black/55 hover:bg-[#198f85] md:bg-white/25 md:backdrop-blur-md border border-white/40 text-white flex items-center justify-center transition-transform duration-200 translate-y-1.5 group-hover:translate-y-0">
                 {isCurrent && isPlaying ? (
                   <Pause className="w-4 h-4 fill-current" />
                 ) : (
@@ -134,12 +134,12 @@ export function SongRow({
             </button>
 
             {isCurrent && isPlaying && (
-              <span className="absolute bottom-1.5 right-1.5 z-10 px-2 py-1 rounded-full bg-black/70 backdrop-blur-md border border-teal-400/40 flex items-center gap-1.5 pointer-events-none">
+              <span className="absolute bottom-1.5 right-1.5 z-10 px-2 py-1 rounded-full bg-black/80 md:bg-black/70 md:backdrop-blur-md border border-teal-400/40 flex items-center gap-1.5 pointer-events-none">
                 <EqualizerBars />
               </span>
             )}
 
-            <span className="absolute top-1.5 right-1.5 z-10 text-[10px] font-mono tabular-nums bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-white">
+            <span className="absolute top-1.5 right-1.5 z-10 text-[10px] font-mono tabular-nums bg-black/75 md:bg-black/60 md:backdrop-blur-md px-1.5 py-0.5 rounded text-white">
               {formattedDuration}
             </span>
 
@@ -154,10 +154,10 @@ export function SongRow({
                 }}
                 aria-label={`Add ${song.title} to playlist`}
                 title={isInActivePlaylist ? 'Already in active playlist' : 'Add to playlist'}
-                className={`absolute top-1.5 left-1.5 z-20 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 backdrop-blur-md ${
+                className={`absolute top-1.5 left-1.5 z-20 w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-150 active:scale-90 md:backdrop-blur-md ${
                   isInActivePlaylist
                     ? 'bg-[#198f85] text-white border border-teal-300/40'
-                    : 'bg-black/55 text-white hover:bg-[#198f85] border border-white/20 opacity-90 group-hover:opacity-100'
+                    : 'bg-black/70 md:bg-black/55 text-white hover:bg-[#198f85] border border-white/20 opacity-90 group-hover:opacity-100'
                 }`}
               >
                 {isInActivePlaylist ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
@@ -187,7 +187,8 @@ export function SongRow({
       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
         {showDragHandle && (
           <span
-            className="text-slate-400 hover:text-slate-700 dark:text-gray-500 dark:hover:text-gray-300 cursor-grab active:cursor-grabbing hidden sm:flex items-center shrink-0 transition-colors"
+            data-drag-handle="true"
+            className="text-slate-400 hover:text-slate-700 dark:text-gray-500 dark:hover:text-gray-300 cursor-grab active:cursor-grabbing flex items-center justify-center w-6 h-8 sm:w-auto sm:h-auto shrink-0 transition-colors"
             title="Drag to reorder or pull into slit to remove"
             aria-hidden="true"
           >
@@ -332,4 +333,4 @@ export function SongRow({
       </div>
     </div>
   );
-}
+});

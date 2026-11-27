@@ -46,6 +46,18 @@
   transform-origin: 50% 50%;
 }
 
+@media (hover: none) and (pointer: coarse) {
+  .shredder__item {
+    touch-action: pan-y;
+    cursor: default;
+  }
+
+  .shredder__item [data-drag-handle] {
+    touch-action: none;
+    cursor: grab;
+  }
+}
+
 .shredder__slot[data-active] .shredder__item {
   position: absolute;
   top: 0;

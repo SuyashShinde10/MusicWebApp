@@ -50,7 +50,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
     >
       <div
         ref={cardRef}
-        className={`bg-white/95 dark:bg-[#141821]/95 backdrop-blur-xl border ${ringMap[toast.variant]} text-slate-900 dark:text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between gap-3`}
+        className={`bg-white dark:bg-[#141821] md:bg-white/95 md:dark:bg-[#141821]/95 md:backdrop-blur-xl border ${ringMap[toast.variant]} text-slate-900 dark:text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between gap-3`}
       >
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-white/[0.06] flex items-center justify-center shrink-0">

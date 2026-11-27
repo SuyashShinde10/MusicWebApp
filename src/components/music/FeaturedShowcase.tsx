@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ChevronLeft, ChevronRight, Pause, Play, Plus } from 'lucide-react';
 import type { Song } from '../../types/music';
@@ -17,7 +17,7 @@ interface FeaturedShowcaseProps {
 const SWIPE_THRESHOLD = 46;
 const AUTO_SCROLL_INTERVAL_MS = 3500;
 
-export function FeaturedShowcase({
+export const FeaturedShowcase = memo(function FeaturedShowcase({
   songs,
   currentSongId,
   isPlaying,
@@ -293,7 +293,7 @@ export function FeaturedShowcase({
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#198f85] text-white shadow-sm">
                 {activeSong.genre}
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/45 backdrop-blur-md text-gray-200 border border-white/15">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/65 text-gray-200 border border-white/15">
                 Featured · Swipe
               </span>
             </div>
@@ -302,7 +302,7 @@ export function FeaturedShowcase({
               onPointerDown={(e) => e.stopPropagation()}
               onClick={() => onAddToPlaylist(activeSong)}
               aria-label={`Add ${activeSong.title} to playlist`}
-              className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/25 text-white flex items-center justify-center active:scale-90 transition"
+              className="w-8 h-8 rounded-full bg-black/65 border border-white/25 text-white flex items-center justify-center active:scale-90 transition"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -513,4 +513,4 @@ export function FeaturedShowcase({
       </div>
     </section>
   );
-}
+});

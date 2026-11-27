@@ -445,6 +445,15 @@ export function App() {
     [currentSongId]
   );
 
+  const handlePlayLibrarySong = useCallback(
+    (song: Song) => playSong(song, { type: 'library' }),
+    [playSong]
+  );
+
+  const handleRequestAddSong = useCallback((song: Song) => {
+    setSongToAdd(song);
+  }, []);
+
   const playNext = useCallback(() => {
     if (playbackQueue.length === 0) return;
     const currentIndex = playbackQueue.findIndex((s) => s.id === currentSongId);
@@ -705,7 +714,7 @@ export function App() {
     : false;
 
   return (
-    <div className="min-h-screen lg:h-screen w-full max-w-full overflow-x-hidden lg:overflow-hidden bg-[#f6f7f9] text-slate-900 dark:bg-[#0b0d11] dark:text-gray-200 flex relative transition-colors duration-200">
+    <div className="min-h-screen lg:h-screen w-full max-w-full overflow-x-clip lg:overflow-hidden bg-[#f6f7f9] text-slate-900 dark:bg-[#0b0d11] dark:text-gray-200 flex relative transition-colors duration-200">
       {/* Desktop Sidebar (lg+) full height above PlayerBar */}
       <aside
         ref={sidebarRef}
@@ -1006,7 +1015,7 @@ export function App() {
         }`}
       >
         {/* Sticky Top Header */}
-        <header className="sticky top-0 z-30 bg-[#f6f7f9]/90 dark:bg-[#0b0d11]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-2.5 border-b border-slate-200/70 dark:border-white/[0.04] transition-colors duration-200">
+        <header className="sticky top-0 z-30 bg-[#f6f7f9]/95 dark:bg-[#0b0d11]/95 md:bg-[#f6f7f9]/90 md:dark:bg-[#0b0d11]/90 md:backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-2.5 border-b border-slate-200/70 dark:border-white/[0.04] transition-colors duration-200">
           <div className="flex items-center justify-between gap-3 max-w-7xl mx-auto">
             {/* Mobile / Tablet Menu Button + Brand Logo */}
             <div className="flex lg:hidden items-center gap-2.5 shrink-0">
@@ -1345,8 +1354,8 @@ export function App() {
                   songs={songs}
                   currentSongId={currentSongId}
                   isPlaying={isPlaying}
-                  onPlay={(song) => playSong(song, { type: 'library' })}
-                  onAddToPlaylist={(song) => setSongToAdd(song)}
+                  onPlay={handlePlayLibrarySong}
+                  onAddToPlaylist={handleRequestAddSong}
                 />
               )
             ))}
@@ -1544,8 +1553,8 @@ export function App() {
                       isCurrent={currentSongId === song.id}
                       isPlaying={currentSongId === song.id && isPlaying}
                       isInActivePlaylist={activePlaylistSongIdSet.has(song.id)}
-                      onPlay={(s) => playSong(s, { type: 'library' })}
-                      onAddToPlaylist={(s) => setSongToAdd(s)}
+                      onPlay={handlePlayLibrarySong}
+                      onAddToPlaylist={handleRequestAddSong}
                     />
                   ))}
                 </div>
@@ -1560,7 +1569,7 @@ export function App() {
                   frame={false}
                   gap={8}
                   itemClassName="!p-0 !bg-transparent !shadow-none"
-                  onItemSelect={(song) => playSong(song, { type: 'library' })}
+                  onItemSelect={handlePlayLibrarySong}
                   renderItem={(song, idx) => (
                     <SongRow
                       song={song}
@@ -1569,8 +1578,8 @@ export function App() {
                       isCurrent={currentSongId === song.id}
                       isPlaying={currentSongId === song.id && isPlaying}
                       isInActivePlaylist={activePlaylistSongIdSet.has(song.id)}
-                      onPlay={(s) => playSong(s, { type: 'library' })}
-                      onAddToPlaylist={(s) => setSongToAdd(s)}
+                      onPlay={handlePlayLibrarySong}
+                      onAddToPlaylist={handleRequestAddSong}
                     />
                   )}
                 />
@@ -1722,7 +1731,7 @@ export function App() {
       {/* Mobile Bottom Navigation (< md) */}
       <nav
         aria-label="Mobile navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 h-[62px] bg-white/95 border-t border-slate-200 dark:bg-[#15171c]/95 dark:border-white/[0.08] backdrop-blur-2xl z-30 px-4 flex items-center justify-around"
+        className="md:hidden fixed bottom-0 left-0 right-0 h-[62px] bg-white border-t border-slate-200 dark:bg-[#15171c] dark:border-white/[0.08] z-30 px-4 flex items-center justify-around"
       >
         {NAV_ITEMS.map(({ id, label, Icon }) => {
           const active = activeSection === id;
@@ -1814,7 +1823,8 @@ export function App() {
         onTimeUpdate={() => {
           const audio = audioRef.current;
           if (!audio || !Number.isFinite(audio.currentTime)) return;
-          setElapsedSeconds(Math.floor(audio.currentTime));
+          const next = Math.floor(audio.currentTime);
+          setElapsedSeconds((prev) => (prev === next ? prev : next));
         }}
         onEnded={() => {
           if (!isRepeat) {

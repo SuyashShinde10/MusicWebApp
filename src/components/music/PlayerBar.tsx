@@ -129,7 +129,7 @@ export function PlayerBar({
       className="fixed bottom-[66px] md:bottom-0 left-3 right-3 md:left-0 md:right-0 z-40"
     >
       {/* Mobile Compact Floating Player (< md) */}
-      <div className="md:hidden relative bg-white/95 border-slate-200 dark:bg-[#15171c]/95 dark:border-white/10 backdrop-blur-xl border rounded-2xl p-2.5 shadow-xl dark:shadow-floating-player space-y-1">
+      <div className="md:hidden relative bg-white border-slate-200 dark:bg-[#15171c] dark:border-white/10 border rounded-2xl p-2.5 shadow-xl dark:shadow-floating-player space-y-1">
         <div className="flex items-center justify-between gap-2">
           <button
             type="button"

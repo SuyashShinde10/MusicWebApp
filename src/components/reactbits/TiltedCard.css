@@ -168,3 +168,22 @@
   transform-origin: 0 0;
   will-change: transform, opacity;
 }
+
+/* Disable heavy blur shadows, 3D preserve-3d, and glare compositing on mobile touch viewports */
+@media (hover: none) and (pointer: coarse) {
+  .tilted-card__shadow,
+  .tilted-card__glare,
+  .tilted-card__edge {
+    display: none;
+  }
+
+  .tilted-card__body {
+    transform-style: flat;
+  }
+
+  .tilted-card__face {
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    isolation: auto;
+  }
+}

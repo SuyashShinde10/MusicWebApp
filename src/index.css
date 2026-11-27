@@ -7,9 +7,10 @@
   body {
     background-color: #f6f7f9;
     color: #0f172a;
-    overflow-x: hidden;
+    overflow-x: clip;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
   }
 
   html.dark,
