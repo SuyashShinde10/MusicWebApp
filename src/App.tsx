@@ -1033,7 +1033,7 @@ export function App() {
             </div>
 
             {/* Advanced Search Input Pill */}
-            <div className="hidden sm:block flex-1 max-w-md min-w-0">
+            <div className="hidden sm:block flex-1 max-w-md lg:max-w-lg min-w-0 sm:mx-auto">
               <AdvancedSearch
                 ref={searchInputRef}
                 query={searchQuery}
